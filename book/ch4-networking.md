@@ -175,7 +175,9 @@ How to setup runit service:
 mkdir -p /etc/sv/apt-cacher-ng
 ```
 
-Create [/etc/sv/apt-cacher-ng/run]() file:
+Create
+[/etc/sv/apt-cacher-ng/run](https://github.com/amateur80lvl/lxcex/tree/main/etc/sv/apt-cacher-ng/run)
+file:
 ```bash
 #!/usr/bin/env /lib/runit/invoke-run
 
