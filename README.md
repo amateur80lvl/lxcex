@@ -36,7 +36,6 @@ But in general, the rationale is as follows:
 * Weston terminal does not honour user's shell from /etc/passwd and uses `sh`
   if Weston is started by runit, where parent shell is `sh`.
 * When maximizing Chromium, top left position sometimes remains unchanged.
-* In Kate text is not displayed on vertical tabs (Documents, File System)
 * Copy-pasting from Kate to Weston terminal drops newlines.
 
 ## TODO
