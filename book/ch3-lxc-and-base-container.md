@@ -9,7 +9,7 @@ debootstrap lxc lxcfs lxc-templates cgroupfs-mount \
 libvirt0 libpam-cgfs uidmap debootstrap distro-info
 ```
 
-Personally I don't use `lxcnet`, if you're not a fan of it too, make sure `/etc/default/lxc-net` contains:
+Personally I don't use `lxc-net`, if you're not a fan of it too, make sure `/etc/default/lxc-net` contains:
 ```
 USE_LXC_BRIDGE="false"
 ```

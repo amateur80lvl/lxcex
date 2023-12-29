@@ -2,7 +2,7 @@
 # Installing the base system with debootstrap
 
 I have a bad habit to use debootstrap everywhere for the smallest system it produces.
-If you prefer installer, you can glance at system tweaks and go to the next chapter.
+If you prefer an installer, you can glance at system tweaks and go to the next chapter.
 
 Although you can use any distro for the base system, my choice is Devuan with sysvinit.
 Not because I'm a fan of sysvinit, it's the worst init system IMAO :) but all others are even worse.
