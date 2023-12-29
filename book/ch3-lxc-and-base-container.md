@@ -81,7 +81,7 @@ LXC documentation is silent on how to remap UIDs and GIDs for your containers.
 I found [this utility](https://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/download/head:/uidmapshift.c)
 very simple and convenient.
 
-You can download binary from [Releases](https://github.com/amateur80lvl/lxcex/releases) section
+You can download binary from [Releases](https://github.com/amateur80lvl/lxcex/tree/main/releases) section
 or compile it by yourself:
 ```bash
 wget https://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/download/head:/uidmapshift.c
@@ -104,12 +104,12 @@ You'll have to create these directories as well.
 I found native boot mode perfect for containers where you don't run many services.
 Basically, you don't need anything in `/etc/runit/boot-run`,
 however, you may find a few useful scripts
-[over here](https://github.com/amateur80lvl/lxcex/base-container/etc/runit/boot-run):
-* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/base-container/etc/runit/boot-run/10-sysctl.sh)
-* [20-mount-run.sh](https://github.com/amateur80lvl/lxcex/base-container/etc/runit/boot-run/20-mount-run.sh)
-* [30-hostname.sh](https://github.com/amateur80lvl/lxcex/base-container/etc/runit/boot-run/30-hostname.sh)
+[over here](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run):
+* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/10-sysctl.sh)
+* [20-mount-run.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/20-mount-run.sh)
+* [30-hostname.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/30-hostname.sh)
   (although, hostname is managed by LXC)
-* [40-nftables.sh](https://github.com/amateur80lvl/lxcex/base-container/etc/runit/boot-run/40-nftables.sh)
+* [40-nftables.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/40-nftables.sh)
 
 
 ## The base container
@@ -143,7 +143,7 @@ Configure locales
 dpkg-reconfigure locales
 ```
 and
-[/etc/apt/sources.list](https://github.com/amateur80lvl/lxcex/common-files/etc/apt/sources.list).
+[/etc/apt/sources.list](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/sources.list).
 
 Plus, you will need to setup runit in native boot mode:
 ```bash
@@ -155,8 +155,8 @@ for f in /etc/service/getty* ; do unlink $f ; done
 ```
 
 Put the following files in `/etc/runit/boot-run`:
-* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/common-files/etc/runit/boot-run/10-sysctl.sh)
-* [20-mount-run.sh](https://github.com/amateur80lvl/lxcex/common-files/etc/runit/boot-run/20-mount-run.sh)
+* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/10-sysctl.sh)
+* [20-mount-run.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/20-mount-run.sh)
 
 It's okay to exit chrooted environment now:
 ```bash

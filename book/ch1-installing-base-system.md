@@ -135,7 +135,7 @@ A while ago, when I played with systemd-based Arch and derivatives, I could only
 
 ### Sources list for APT package manager
 
-Next, configure [/etc/apt/sources.list](https://github.com/amateur80lvl/lxcex/common-files/etc/apt/sources.list):
+Next, configure [/etc/apt/sources.list](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/sources.list):
 ```
 deb http://deb.devuan.org/merged daedalus main contrib non-free non-free-firmware
 deb http://deb.devuan.org/merged daedalus-security main contrib non-free non-free-firmware
@@ -159,7 +159,7 @@ intel-microcode amd64-microcode
 
 ### /etc/fstab
 
-Edit [/etc/fstab](https://github.com/amateur80lvl/lxcex/base-system/etc/fstab).
+Edit [/etc/fstab](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/fstab).
 Use your real UUID, you can find it in `blkid` output.
 ```
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
@@ -182,7 +182,7 @@ Write desired hostname to `/etc/hostname` and `/etc/hosts`.
 
 Wayland may not work good with Nvidia cards. It does not work good either, but things
 are much worse with Nvidia. You may need
-[/etc/modprobe.d/blacklist-nvidia-nouveau.conf](https://github.com/amateur80lvl/lxcex/base-system/etc/modprobe.d/blacklist-nvidia-nouveau.conf)
+[/etc/modprobe.d/blacklist-nvidia-nouveau.conf](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/modprobe.d/blacklist-nvidia-nouveau.conf)
 containing the following:
 ```
 blacklist nouveau

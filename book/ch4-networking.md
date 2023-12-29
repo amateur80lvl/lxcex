@@ -70,7 +70,7 @@ chmod -x /etc/init.d/basic-networking
 This won't delete it forever and we remove executable bit with the last command just to make
 `update-rc.d` happy.
 
-Add [virtual-network](https://github.com/amateur80lvl/lxcex/common-files/etc/init.d/virtual-network)
+Add [virtual-network](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/init.d/virtual-network)
 to `/etc/init.d/` and create configuration file `/etc/default/virtual-network` for it:
 ```
 BRIDGE=br0
@@ -137,15 +137,15 @@ uidmapshift -b /var/lib/lxc/networking 0 100000 65536
 ```
 
 Although `ifupdown` could be the best choice, personaly I still use my
-[basic-networking, adapted for runit](https://github.com/amateur80lvl/lxcex/networking-container/etc/runit/boot-run/basic-networking.sh)
+[basic-networking, adapted for runit](https://github.com/amateur80lvl/lxcex/tree/main/networking-container/etc/runit/boot-run/basic-networking.sh)
 with configuration file
-[etc/default/basic-networking](https://github.com/amateur80lvl/lxcex/base-system/etc/default/basic-networking)
+[etc/default/basic-networking](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/default/basic-networking)
 from the base system.
 
 Configure NAT and a simple firewall with SSH DNAT -- see
-[/etc/nftables.conf](https://github.com/amateur80lvl/lxcex/base-system/etc/nftables.conf).
+[/etc/nftables.conf](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/nftables.conf).
 It will be started at boot by
-[40-nftables.sh](https://github.com/amateur80lvl/lxcex/base-container/etc/runit/boot-run/40-nftables.sh).
+[40-nftables.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/40-nftables.sh).
 
 And don't forget to set `net.ipv4.ip_forward=1` in `/etc/sysctl.conf`.
 
@@ -164,7 +164,7 @@ tcp dport 3142 accept
 ```
 
 In all containers and in the base system you need to place
-[00aptproxy](https://github.com/amateur80lvl/lxcex/common-files/etc/apt/apt.conf.d/00aptproxy)
+[00aptproxy](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/apt.conf.d/00aptproxy)
 to `/etc/apt/apt.conf.d/`. It contains a single line:
 ```
 Acquire::http::Proxy "http://10.0.0.1:3142";

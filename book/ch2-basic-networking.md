@@ -13,11 +13,11 @@ You have a few options:
 * use an init script if you get tired to type ip address add after each reboot.
 
 Here is that script:
-[/etc/init.d/basic-networking](https://github.com/amateur80lvl/lxcex/base-system/etc/init.d/basic-networking)
+[/etc/init.d/basic-networking](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/init.d/basic-networking)
 
 And here is a sample configuration file for it:
 
-[/etc/default/basic-networking](https://github.com/amateur80lvl/lxcex/base-system/etc/default/basic-networking)
+[/etc/default/basic-networking](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/default/basic-networking)
 
 How to install and run:
 ```bash

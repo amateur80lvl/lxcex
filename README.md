@@ -60,10 +60,10 @@ But in general, the rationale is as follows:
 
 ## The book
 
-* [Chapter 1. Installing the base system with debootstrap](https://github.com/amateur80lvl/lxcex/book/ch1-installing-base-system.md)
-* [Chapter 2. The basic networking](https://github.com/amateur80lvl/lxcex/book/ch2-basic-networking.md)
-* [Chapter 3. LXC and the base container](https://github.com/amateur80lvl/lxcex/book/ch3-lxc-and-base-container.md)
-* [Chapter 4. Networking](https://github.com/amateur80lvl/lxcex/book/ch4-networking.md)
+* [Chapter 1. Installing the base system with debootstrap](https://github.com/amateur80lvl/lxcex/tree/main/book/ch1-installing-base-system.md)
+* [Chapter 2. The basic networking](https://github.com/amateur80lvl/lxcex/tree/main/book/ch2-basic-networking.md)
+* [Chapter 3. LXC and the base container](https://github.com/amateur80lvl/lxcex/tree/main/book/ch3-lxc-and-base-container.md)
+* [Chapter 4. Networking](https://github.com/amateur80lvl/lxcex/tree/main/book/ch4-networking.md)
 
 
 ## Miscellaneous notes
