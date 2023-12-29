@@ -30,9 +30,11 @@ But in general, the rationale is as follows:
 
 ## Quirks
 
-* Drop-down menus in Kate have significant offset to the right and appear with a delay.
-  The latter, however, might be visual effects that don't work properly and can be turned off in
-  the configuration center, I presume. GTK apps, e.g. Thunar, don't have such quirks.
+* Drop-down menus in Kate have significant offset to the right -- fixed after playing with systemsettings,
+  need to reproduce; -- and appear with a delay -- sympthoms look like those described in merge request 1123.
+ * The latter, however, might be visual effects that don't work properly and can be turned off in
+   the configuration center, I presume. -- Nope
+ * XFCE apps, e.g. Thunar, don't have such quirks. -- because of XWayland?
 * Weston terminal does not honour user's shell from /etc/passwd and uses `sh`
   if Weston is started by runit, where parent shell is `sh`.
 * When maximizing Chromium, top left position sometimes remains unchanged.
