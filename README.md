@@ -30,11 +30,11 @@ But in general, the rationale is as follows:
 
 ## Quirks
 
-* Drop-down menus Kate have significant offset to the right and appear with a delay.
+* Drop-down menus in Kate have significant offset to the right and appear with a delay.
   The latter, however, might be visual effects that don't work properly and can be turned off in
   the configuration center, I presume. GTK apps, e.g. Thunar, don't have such quirks.
 * Weston terminal does not honour user's shell from /etc/passwd and uses `sh`
-  if Weston started by runit, where parent shell is `sh`.
+  if Weston is started by runit, where parent shell is `sh`.
 * When maximizing Chromium, top left position sometimes remains unchanged.
 * In Kate text is not displayed on vertical tabs (Documents, File System)
 * Copy-pasting from Kate to Weston terminal drops newlines.
