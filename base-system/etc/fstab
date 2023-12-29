@@ -1,0 +1,4 @@
+# <file system> <mount point> <type> <options> <dump> <pass>
+UUID=12345678-9abc-def0-1234-567890abcdef / ext4 relatime,errors=remount-ro 0 1
+tmpfs  /tmp      tmpfs  nosuid,nodev,mode=1777,size=32M       0 1
+tmpfs  /var/log  tmpfs  nosuid,noexec,nodev,mode=755,size=8M  0 1

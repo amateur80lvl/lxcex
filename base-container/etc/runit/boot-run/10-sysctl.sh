@@ -1,0 +1,1 @@
+/sbin/sysctl -p

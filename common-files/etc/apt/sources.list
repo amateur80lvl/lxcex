@@ -1,0 +1,4 @@
+deb http://deb.devuan.org/merged daedalus main contrib non-free non-free-firmware
+deb http://deb.devuan.org/merged daedalus-security main contrib non-free non-free-firmware
+deb http://deb.devuan.org/merged daedalus-updates main contrib non-free non-free-firmware
+deb http://deb.devuan.org/merged daedalus-backports main contrib non-free non-free-firmware

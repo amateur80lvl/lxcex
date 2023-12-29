@@ -1,0 +1,79 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          networking
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     S
+# Default-Stop:      0 6
+# Short-Description: Basic network configuration.
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+INTERFACE=
+IP_ADDR=
+GATEWAY=
+
+[ -f /etc/default/basic-networking ] && . /etc/default/basic-networking
+
+do_start()
+{
+    log_action_begin_msg "Initializing networking"
+
+    if ! ip link set dev $INTERFACE up ; then
+        log_action_end_msg 1 "Cannot set $INTERFACE up"
+        return 1
+    fi
+
+    if ! ip address add $IP_ADDR dev $INTERFACE ; then
+        log_action_end_msg 1 "Cannot assign address $IP_ADDR to $INTERFACE"
+        return 1
+    fi
+
+    if ! ip route add default via $GATEWAY ; then
+        log_action_end_msg 1 "Cannot set default gateway $GATEWAY"
+        return 1
+    fi
+
+    if [ -x /etc/nftables.conf ] && ! /etc/nftables.conf ; then
+        log_action_end_msg 1 "Cannot configure netfilter"
+        return 1
+    fi
+
+    log_action_end_msg 0
+    return 0
+}
+
+do_stop()
+{
+    log_action_begin_msg "Stopping networking"
+    ip address flush dev $INTERFACE
+    log_action_end_msg 0
+}
+
+show_status()
+{
+    ip address show dev $INTERFACE
+    ip route show
+}
+
+
+case $1 in
+(start)
+    do_start
+    ;;
+(restart|reload|force-reload)
+    do_stop
+    do_start
+    ;;
+(stop)
+    do_stop
+    ;;
+(status)
+    show_status
+    ;;
+(*)
+    echo >&2 "Usage: $0 {start|stop|restart|reload|force-reload|status}"
+    exit 3
+        ;;
+esac
