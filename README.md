@@ -67,6 +67,19 @@ But in general, the rationale is as follows:
 * [Chapter 4. Networking](https://github.com/amateur80lvl/lxcex/tree/main/book/ch4-networking.md)
 
 
+## Changelog
+
+### Dec 30, 2023
+
+Tag: 0.0.2
+* Misc. tweaks.
+* Made --no-install-recommends the default option, chapters 1-4 need testing.
+
+### Dec 29, 2023
+
+Initial commit and release.
+
+
 ## Miscellaneous notes
 
 ### From which deb package is this file?
