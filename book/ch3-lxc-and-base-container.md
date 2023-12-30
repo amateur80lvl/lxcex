@@ -4,8 +4,7 @@
 ## Installing LXC
 
 ```bash
-apt install --no-install-recommends \
-debootstrap lxc lxcfs lxc-templates cgroupfs-mount \
+apt install debootstrap lxc lxcfs lxc-templates cgroupfs-mount \
 libvirt0 libpam-cgfs uidmap debootstrap distro-info
 ```
 
@@ -143,7 +142,9 @@ Configure locales
 dpkg-reconfigure locales
 ```
 and
-[/etc/apt/sources.list](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/sources.list).
+[/etc/apt/sources.list](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/sources.list)
+with
+[01norecommends](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/apt.conf.d/01norecommends).
 
 Plus, you will need to setup runit in native boot mode:
 ```bash

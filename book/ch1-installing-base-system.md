@@ -133,7 +133,7 @@ XKBOPTIONS="grp:alt_shift_toggle"
 A while ago, when I played with systemd-based Arch and derivatives, I could only dream of this.
 
 
-### Sources list for APT package manager
+### Configure APT package manager
 
 Next, configure [/etc/apt/sources.list](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/sources.list):
 ```
@@ -145,6 +145,16 @@ deb http://deb.devuan.org/merged daedalus-backports main contrib non-free non-fr
 and run
 ```bash
 apt update
+```
+
+As long as our system is minimalistic, you might want, and I strongly
+suggest to configure APT not to install recommended packages.
+You'll need to place
+[01norecommends](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/apt.conf.d/01norecommends)
+file in `/etc/apt/apt.conf.d`. It contains a couple of settings:
+```
+APT::Install-Recommends "0";
+APT::Install-Suggests "0";
 ```
 
 ## Install kernel and bootloader packages
@@ -245,12 +255,12 @@ apt clean
 
 Ah!
 ```bash
-apt install no-install-recommends smartmontools
+apt install smartmontools
 ```
 
 And as the first step to desktop (you'll need this anyway):
 ```bash
-apt install --no-install-recommends desktop-base
+apt install desktop-base
 ```
 This makes GRUB boot screen look cool. Well, in Devuan at least.
 

@@ -198,5 +198,5 @@ ln -s /etc/sv/apt-cacher-ng /etc/service/
 
 Ah,
 ```bash
-apt install --no-install-recommends tcpdump
+apt install tcpdump
 ```
