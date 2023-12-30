@@ -195,3 +195,8 @@ lxc-attach base
 ```
 
 It's working, isn't it?
+
+Clean it up:
+```bash
+apt clean
+```
