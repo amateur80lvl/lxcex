@@ -50,7 +50,8 @@ chroot /var/lib/lxc/networking/rootfs
 and install a few more packages:
 ```bash
 apt install apt-cacher-ng iproute2 iputils-ping\
-iputils-tracepath netbase nftables
+iputils-tracepath iw netbase nftables rfkill\
+wireless-tools wpasupplicant
 ```
 Apt-cacher-ng is started automatically, kill it.
 Exit chroot and unmount `/var/lib/lxc/networking/rootfs/dev`.
