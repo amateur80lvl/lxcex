@@ -160,7 +160,7 @@ BindAddress: 10.0.0.1
 Make sure the input filter chain in `/etc/nftables.conf` contains
 ```
 # accept apt-cacher-ng
-tcp dport 3142 accept
+iif { ethv, lo } tcp dport 3142 accept
 ```
 
 In all containers and in the base system you need to place
