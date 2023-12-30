@@ -51,7 +51,7 @@ and install a few more packages:
 ```bash
 apt install apt-cacher-ng iproute2 iputils-ping\
 iputils-tracepath iw netbase nftables rfkill\
-wireless-tools wpasupplicant
+tcpdump wireless-tools wpasupplicant
 ```
 Apt-cacher-ng is started automatically, kill it.
 Exit chroot and unmount `/var/lib/lxc/networking/rootfs/dev`.
@@ -192,11 +192,4 @@ exec chpst -u apt-cacher-ng /usr/sbin/apt-cacher-ng -c /etc/apt-cacher-ng ForeGr
 and symlink it to `/etc/service`
 ```
 ln -s /etc/sv/apt-cacher-ng /etc/service/
-```
-
-## Anything else?
-
-Ah,
-```bash
-apt install tcpdump
 ```

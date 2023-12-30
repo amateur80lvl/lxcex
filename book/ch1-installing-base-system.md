@@ -41,13 +41,14 @@ and use `--keyring=./devuan-keyring.gpg` option for debootstrap command below.
 Assuming you have an USB stick formatted with ext4 and mounted on `/mnt/devuan`, run:
 ```bash
 debootstrap --variant=minbase \
---include=acl,apparmor,apt-utils,bash-completion,bsdextrautils,chrony,\
-console-setup,cpio,cron,dialog,ethtool,eudev,fdisk,file,findutils,gpm,\
-iputils-ping,iputils-tracepath,iproute2,iw,less,libc-l10n,locales,\
-lsb-release,lsof,man-db,manpages,nano,netbase,nftables,openssh-server,\
-openssh-sftp-server,parted,pciutils,procps,psmisc,psutils,rfkill,rsync,\
-rsyslog,screen,sudo,sysfsutils,tree,tzdata,usbutils,wireless-regdb,\
-wpasupplicant,xz-utils,zstd \
+--include=acl,apparmor,apt-utils,bash-completion,bsdextrautils,\
+chrony,console-setup,cpio,cron,desktop-base,dialog,ethtool,eudev,\
+fdisk,file,findutils,gpm,iputils-ping,iputils-tracepath,iproute2,\
+iw,less,libc-l10n,locales,lsb-release,lsof,man-db,manpages,nano,\
+netbase,nftables,openssh-server,openssh-sftp-server,parted,pciutils,\
+procps,psmisc,psutils,rfkill,rsync,rsyslog,screen,smartmontools,\
+sudo,sysfsutils,tree,tzdata,usbutils,wireless-regdb,wpasupplicant,\
+xz-utils,zstd \
 --exclude=vim-common,vim-tiny \
 daedalus /mnt/devuan \
 http://deb.devuan.org/merged/
@@ -82,6 +83,10 @@ Notes on packages:
   in the base system for backup purposes at least
 * `chrony`, `cron`, `rsyslog` - that's what any distro must have
 * `cpio`, `zstd` are needed by initramfs
+* `smartmontools`: useful thing, I recommend to install it
+* `desktop-base` is not absolutely necessary for a pure console system where
+  it only makes GRUB boot screen look cool.
+  But we're going towards a desktop system, aren't we?
 
 Some of above packages can be installed implicitly as dependencies, but I prefer
 to list them explicitly.
@@ -150,7 +155,7 @@ apt update
 As long as our system is minimalistic, you might want, and I strongly
 suggest to configure APT not to install recommended packages.
 You'll need to place
-[01norecommends](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/apt.conf.d/01norecommends)
+[01norecommends](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/apt/apt.conf.d/01 norecommends)
 file in `/etc/apt/apt.conf.d`. It contains a couple of settings:
 ```
 APT::Install-Recommends "0";
@@ -250,19 +255,6 @@ grub-install /dev/<your-storage-device>
 ```bash
 apt clean
 ```
-
-### Anything else?
-
-Ah!
-```bash
-apt install smartmontools
-```
-
-And as the first step to desktop (you'll need this anyway):
-```bash
-apt install desktop-base
-```
-This makes GRUB boot screen look cool. Well, in Devuan at least.
 
 ### Boot from your media
 
