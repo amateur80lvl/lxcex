@@ -42,10 +42,10 @@ Assuming you have an USB stick formatted with ext4 and mounted on `/mnt/devuan`,
 ```bash
 debootstrap --variant=minbase \
 --include=acl,apparmor,apt-utils,bash-completion,bsdextrautils,\
-chrony,console-setup,cpio,cron,desktop-base,dialog,ethtool,eudev,\
-fdisk,file,findutils,gpm,iputils-ping,iputils-tracepath,iproute2,\
-iw,less,libc-l10n,locales,lsb-release,lsof,man-db,manpages,nano,\
-netbase,nftables,openssh-server,openssh-sftp-server,parted,pciutils,\
+chrony,console-setup,cpio,cron,dialog,ethtool,eudev,fdisk,file,\
+findutils,gpm,iputils-ping,iputils-tracepath,iproute2,iw,less,\
+libc-l10n,locales,lsb-release,lsof,man-db,manpages,nano,netbase,\
+nftables,openssh-server,openssh-sftp-server,parted,pciutils,\
 procps,psmisc,psutils,rfkill,rsync,rsyslog,screen,smartmontools,\
 sudo,sysfsutils,tree,tzdata,usbutils,wireless-regdb,wpasupplicant,\
 xz-utils,zstd \
@@ -84,9 +84,6 @@ Notes on packages:
 * `chrony`, `cron`, `rsyslog` - that's what any distro must have
 * `cpio`, `zstd` are needed by initramfs
 * `smartmontools`: useful thing, I recommend to install it
-* `desktop-base` is not absolutely necessary for a pure console system where
-  it only makes GRUB boot screen look cool.
-  But we're going towards a desktop system, aren't we?
 
 Some of above packages can be installed implicitly as dependencies, but I prefer
 to list them explicitly.
@@ -275,3 +272,9 @@ umount /mnt/root
 
 * Close this book and walk [console way](https://unix.stackexchange.com/questions/117936/options-to-show-images-when-on-the-console).
 * Go reading the next chapter of this nonsense.
+
+Also, you can install `desktop-base` package for a nice GRUB theme.
+It can't be installed at debootstrap stage because of weird dependencies
+which debootstrap is unable to handle.
+All packages it pulls aren't necessary for a pure console system,
+but for graphical interface you'll need this anyway.
