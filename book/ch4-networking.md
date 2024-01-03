@@ -53,7 +53,7 @@ apt install apt-cacher-ng iproute2 iputils-ping\
 iputils-tracepath iw netbase nftables rfkill\
 tcpdump wireless-tools wpasupplicant
 ```
-Apt-cacher-ng is started automatically, kill it.
+Apt-cacher-ng is started automatically, kill it for now.
 Exit chroot and unmount `/var/lib/lxc/networking/rootfs/dev`.
 
 
