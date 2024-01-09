@@ -108,7 +108,7 @@ Basically, you don't need anything in `/etc/runit/boot-run`,
 however, you may find a few useful scripts
 [over here](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run):
 * [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/10-sysctl.sh)
-* [20-mount-run.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/20-mount-run.sh)
+* [20-mountall.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/20-mountall.sh)
 * [30-hostname.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/30-hostname.sh)
   (although, hostname is managed by LXC)
 * [40-nftables.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/40-nftables.sh)
@@ -162,7 +162,7 @@ for f in /etc/service/getty* ; do unlink $f ; done
 
 Put the following files in `/etc/runit/boot-run`:
 * [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/10-sysctl.sh)
-* [20-mount-run.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/20-mount-run.sh)
+* [20-mountall.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/20-mountall.sh)
 
 It's okay to exit chrooted environment now:
 ```bash
