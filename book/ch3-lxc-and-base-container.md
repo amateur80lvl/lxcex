@@ -140,6 +140,8 @@ mount --bind /dev /var/lib/lxc/base/rootfs/dev
 chroot /var/lib/lxc/base/rootfs
 ```
 
+XXX why mounting /dev is needed?
+
 Configure locales
 ```bash
 dpkg-reconfigure locales

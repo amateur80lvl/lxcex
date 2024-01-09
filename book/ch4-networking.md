@@ -44,7 +44,6 @@ lxc-copy -n base -N networking
 
 Don't start it, just chroot:
 ```bash
-mount --bind /dev /var/lib/lxc/networking/rootfs/dev
 chroot /var/lib/lxc/networking/rootfs
 ```
 and install a few more packages:
@@ -53,8 +52,7 @@ apt install apt-cacher-ng iproute2 iputils-ping\
 iputils-tracepath iw netbase nftables rfkill\
 tcpdump wireless-tools wpasupplicant
 ```
-Apt-cacher-ng is started automatically, kill it for now.
-Exit chroot and unmount `/var/lib/lxc/networking/rootfs/dev`.
+Apt-cacher-ng is started automatically, kill it for now and exit chrooted environment.
 
 
 ## Reconfigure the base system
