@@ -54,13 +54,14 @@ of container's configuration file:
 ```
 lxc.mount.auto=
 ```
-This, however will make `lxcfs`, to fail because it depends on `/proc` and `/sys`.
+This, however will make `lxcfs` to fail because it depends on `/proc` and `/sys`.
 You can fix `/usr/share/lxcfs/lxc.mount.hook`, see https://github.com/lxc/lxcfs/pull/625.
 
 The position of empty `lxc.mount.auto` directive in the end of file is important.
 Strictly speaking, it should be placed after all `lxc.include` directives, as long as
-included files usually enable mounting everything after resetting `lxc.mount.auto`.
-You can harden security of your containers by enabling only specific mounts.
+included files usually enable mounting everything.
+You can harden security of your containers by enabling only specific mounts
+after resetting `lxc.mount.auto`.
 Refer to `man lxc.container.conf` for details.
 However, all those options aren't sufficient if you want to avoid leaking any sensitive
 information about the base system to containers.
@@ -71,7 +72,7 @@ and we'll discuss this in next chapters in details.
 In particular, procfs can be restricted with `hidepid` and `subset` options,
 but AFAIK there's no way to restrict sysfs and one approach is mounting
 `tmpfs` and `/dev/null` on directories and files you don't want to expose.
-However bear in mind, root in the unprivileged container can unmount all your stubs
+However bear in mind, the root user in unprivileged container can unmount all your stubs
 and get access to the original content.
 Thus, even in unprivileged container don't run anything as root.
 
