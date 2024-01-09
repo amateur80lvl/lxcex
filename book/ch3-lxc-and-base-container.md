@@ -49,30 +49,32 @@ For example, you could deploy some [plausible deniability](https://github.com/am
 but if your `/proc/cmdline` remains readable in the container where you're going to run
 all potentially malicious software, your encryption may get no longer deniable.
 
-Procfs can be restricted, see its `hidepid` and `subset` options,
-but AFAIK there's no way to restrict sysfs.
+You can turn this off by placing the following line in the end
+of container's configuration file:
+```
+lxc.mount.auto=
+```
+This, however will make `lxcfs`, to fail because it depends on `/proc` and `/sys`.
+You can fix `/usr/share/lxcfs/lxc.mount.hook`, see https://github.com/lxc/lxcfs/pull/625.
 
-You can mount `tmpfs` and `/dev/null` on directories and files you don't want to expose.
-However bear in mind, root can unmount all your stubs and get access to the original content.
+The position of empty `lxc.mount.auto` directive in the end of file is important.
+Strictly speaking, it should be placed after all `lxc.include` directives, as long as
+included files usually enable mounting everything after resetting `lxc.mount.auto`.
+You can harden security of your containers by enabling only specific mounts.
+Refer to `man lxc.container.conf` for details.
+However, all those options aren't sufficient if you want to avoid leaking any sensitive
+information about the base system to containers.
+
+A way to hardening container security is custom mount hook for `/proc` and `/sys`
+and we'll discuss this in next chapters in details.
+
+In particular, procfs can be restricted with `hidepid` and `subset` options,
+but AFAIK there's no way to restrict sysfs and one approach is mounting
+`tmpfs` and `/dev/null` on directories and files you don't want to expose.
+However bear in mind, root in the unprivileged container can unmount all your stubs
+and get access to the original content.
 Thus, even in unprivileged container don't run anything as root.
 
-I believe there's a better way to improve security but I haven't found it so far.
-
-So, by default LXC mounts `/proc` and `/sys`. If you prepared configuration file for your container
-following the documentation or some wiki page, I bet 100% it contains
-`lxc.include=/usr/share/lxc/config…`
-where mounting gets enabled and you can't do anything with that.
-
-Somewhere on the Internet I stumbled across a recommendation to clear mount points with empty
-`lxc.mount.auto=` option. I have tried that, they lie.
-
-The only thing you can do is to unroll all those `include` into a single file.
-You'll get something like this
-where you'll have full control on things.
-
-Another point: `lxcfs` depend on `/proc` and `/sys`.
-Luckily, if you mount stubs, it will work simply because it mounts its own virtualized files
-over your stubs.
 
 ## Useful tools
 
