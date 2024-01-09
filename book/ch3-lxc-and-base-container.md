@@ -136,11 +136,8 @@ Notes on packages:
 You don't need all the tweaks you did for the base system.
 To finish setting up the container chroot to it:
 ```bash
-mount --bind /dev /var/lib/lxc/base/rootfs/dev
 chroot /var/lib/lxc/base/rootfs
 ```
-
-XXX why mounting /dev is needed?
 
 Configure locales
 ```bash
@@ -164,11 +161,7 @@ Put the following files in `/etc/runit/boot-run`:
 * [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/10-sysctl.sh)
 * [20-mountall.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/20-mountall.sh)
 
-It's okay to exit chrooted environment now:
-```bash
-exit
-umount /var/lib/lxc/base/rootfs/dev
-```
+It's okay to exit chrooted environment now.
 
 Example configuration file `/var/lib/lxc/base/config`:
 ```
