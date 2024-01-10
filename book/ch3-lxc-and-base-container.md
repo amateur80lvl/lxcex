@@ -106,12 +106,12 @@ You'll have to create these directories as well.
 I found native boot mode perfect for containers where you don't run many services.
 Basically, you don't need anything in `/etc/runit/boot-run`,
 however, you may find a few useful scripts
-[over here](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run):
-* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/10-sysctl.sh)
-* [20-mountall.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/20-mountall.sh)
-* [30-hostname.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/30-hostname.sh)
+[over here](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run):
+* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run/10-sysctl.sh)
+* [20-mountall.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run/20-mountall.sh)
+* [30-hostname.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run/30-hostname.sh)
   (although, hostname is managed by LXC)
-* [40-nftables.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/40-nftables.sh)
+* [40-nftables.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run/40-nftables.sh)
 
 
 ## The base container

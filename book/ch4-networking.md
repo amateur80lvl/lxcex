@@ -136,7 +136,7 @@ uidmapshift -b /var/lib/lxc/networking 0 100000 65536
 ```
 
 Although `ifupdown` could be the best choice, personaly I still use my
-[basic-networking, adapted for runit](https://github.com/amateur80lvl/lxcex/tree/main/networking-container/etc/runit/boot-run/basic-networking.sh)
+[basic-networking, adapted for runit](https://github.com/amateur80lvl/lxcex/tree/main/containers/networking/rootfs/etc/runit/boot-run/basic-networking.sh)
 with configuration file
 [etc/default/basic-networking](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/default/basic-networking)
 from the base system.
@@ -144,7 +144,7 @@ from the base system.
 Configure NAT and a simple firewall with SSH DNAT -- see
 [/etc/nftables.conf](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/nftables.conf).
 It will be started at boot by
-[40-nftables.sh](https://github.com/amateur80lvl/lxcex/tree/main/base-container/etc/runit/boot-run/40-nftables.sh).
+[40-nftables.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run/40-nftables.sh).
 
 And don't forget to set `net.ipv4.ip_forward=1` in `/etc/sysctl.conf`.
 
