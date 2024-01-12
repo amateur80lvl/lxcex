@@ -52,7 +52,7 @@ all potentially malicious software, your encryption may get no longer deniable.
 You can turn this off by placing the following line in the end
 of container's configuration file:
 ```
-lxc.mount.auto=
+lxc.mount.auto =
 ```
 This, however will make `lxcfs` to fail because it depends on `/proc` and `/sys`.
 You can fix `/usr/share/lxcfs/lxc.mount.hook`, see https://github.com/lxc/lxcfs/pull/625.
@@ -66,12 +66,15 @@ Refer to `man lxc.container.conf` for details.
 However, all those options aren't sufficient if you want to avoid leaking any sensitive
 information about the base system to containers.
 
-A way to hardening container security is custom mount hook for `/proc` and `/sys`
-and we'll discuss this in next chapters in details.
+A way to hardening container security is custom mount hook
+[restricted-proc](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/restricted-proc)
+which mounts `/proc` with `hidepid=2` and `subset=pid` options.
 
-In particular, procfs can be restricted with `hidepid` and `subset` options,
-but AFAIK there's no way to restrict sysfs and one approach is mounting
-`tmpfs` and `/dev/null` on directories and files you don't want to expose.
+AFAIK there's no way to restrict sysfs and for security reasons it's better not to mount it at all
+or mount only necessary entries, such as DRI.
+
+Less restrictive approach for `proc` and `sys` could be mounting `tmpfs` and `/dev/null`
+on directories and files you don't want to expose.
 However bear in mind, the root user in unprivileged container can unmount all your stubs
 and get access to the original content.
 Thus, even in unprivileged container don't run anything as root.
