@@ -49,6 +49,7 @@ Notes on packages:
 * `foot`: terminal application
 * `x11-xkb-utils` is necessary for keyboard layout
 * `wev` could be useful to discover key codes
+
 You also may need `sway-backgrounds`. Sway does not have a strict dependency, nevertheless,
 its default configuration refers to a file from that package.
 Personally, I don't use backgrounds, so I don't install it.
