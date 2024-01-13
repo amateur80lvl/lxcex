@@ -64,7 +64,7 @@ how to disable this. I suggest to drop `user:` line from both files.
 Here is my [configuration file for Sway](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/.config/sway/config).
 It 's a restructured version of the original `/etc/sway/config` with the following major changes:
 * All key binbgings are grouped together and compacted. Most important bindings come first,
-  to print and hang them as a cheatsheet on the wall.
+  to make it easy to print and hang them as a cheatsheet on the wall.
 * Added `--to-code` for letter keys to make such keybingings working when non-English keyboard layout is active.
 * Disabled XWayland for security reasons. Although, it's okay to run XWayland in nested compositors.
 * Disabled running anything from `/etc/sway/config.d`. The only `50-systemd-user.conf`
@@ -221,7 +221,7 @@ lxc-attach -n gui-base -u 1000 -g 100 -- cage glxgears
 
 With the minimal configuration described in previous section, compositors will use
 software rendering backend. To enable DRI in containers,
-a couple of tweaks are required.
+a couple of tweaks is required.
 
 First, you should make `/dev/dri/renderD128` accessible from the container.
 Add the following lines to container's config:
@@ -235,7 +235,7 @@ setfacl -m 201000 /dev/dri/renderD128
 ```
 
 Second, a device entry that provides DRM should be accessible in container's `/sys`.
-This entry can be found by reading `/sys/class/drm/renderD128` or `/sys/dev/char/226:128` symlinks
+This entry can be found by reading `/sys/class/drm/renderD128` or `/sys/dev/char/226:128` symlink
 and stripping off two last components, i.e. on x86-64 system the link could be:
 ```
 /sys/dev/char/226:128 -> ../../devices/pci0000:00/0000:00:02.0/drm/renderD128
@@ -247,7 +247,7 @@ on Allwinner H6 boards this may look like this:
 ```
 so device entry will be `/sys/devices/platform/soc/1800000.gpu`
 
-Note that `/sys/dev/char/226:128` symlink must exist,
+Note that `/sys/dev/char/226:128` symlink must exist in the container,
 but `/sys/class/drm/renderD128` is not necessary.
 
 If you don't mount `sysfs` in container, and this is very sensible
@@ -280,7 +280,7 @@ Where and how to manage user runtime directories and set environment variables i
 Normally this is performed by `libpam-elogind`, but when we start an app with `lxc-attach`,
 PAM is not honored. Besides, `libpam-elogind` deletes runtime directory on session end,
 i.e. when you exit `su user`. Also, if we used PAM we'd have to create links by a custom script.
-There's `libpam-script` package, but its configuration is weird and default priorities are not what
+There's `libpam-script` package, but its configuration is weird and default priorities is not what
 we need, i.e. scripts start when `/run/user/<uid>` does not exist yet.
 
 For now, runtime directories and links are created by
@@ -293,7 +293,8 @@ This means `WAYLAND_DISPLAY` will be hardcoded. Normally we should take it from 
 and pass to the container. There's a configuration directive `lxc.environment`
 which looks perfectly suited for that, but unlike shells, if the variable does not exist,
 all `lxc-*` commands will fail to process the configuration.
-Here we go.
+You can re-compile and re-package LXC with a patch [from here](https://github.com/lxc/lxc/issues/4385).
+Here we go. Good luck.
 
 ### base system
 
