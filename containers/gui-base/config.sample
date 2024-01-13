@@ -1,0 +1,39 @@
+lxc.apparmor.profile = unconfined
+
+lxc.net.0.type = veth
+lxc.net.0.name = ethv
+lxc.net.0.link = br0
+lxc.net.0.flags = up
+lxc.net.0.hwaddr = 00:16:5d:16:3e:16
+lxc.net.0.ipv4.address = 10.0.0.3/24
+
+# Common configuration
+lxc.include = /usr/share/lxc/config/devuan.common.conf
+
+# Container specific configuration
+lxc.tty.max = 4
+lxc.arch = amd64
+lxc.pty.max = 1024
+lxc.rootfs.path = dir:/var/lib/lxc/gui-base/rootfs
+lxc.uts.name = gui-base
+
+lxc.include = /usr/share/lxc/config/devuan.userns.conf
+lxc.idmap = u 0 200000 65536
+lxc.idmap = g 0 200000 65536
+
+# don't mount procfs, sysfs, etc.
+lxc.mount.auto =
+
+lxc.cgroup.devices.allow = c 226:128 rwm
+lxc.mount.entry = /dev/dri/renderD128 dev/dri/renderD128 none bind,create=file 0 0
+lxc.hook.mount = /var/lib/lxc/gui-base/enable-dri
+
+lxc.hook.mount = /var/lib/lxc/gui-base/restricted-proc
+lxc.hook.mount = /var/lib/lxc/gui-base/xdg-runtime-dir
+
+# lxcfs is invoked automagically, the following options aren't necessary:
+#lxc.mount.auto = cgroup:mixed
+#lxc.autodev = 1
+#lxc.include = /usr/share/lxc/config/common.conf.d/00-lxcfs.conf
+
+lxc.start.auto = 0

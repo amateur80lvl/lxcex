@@ -1,0 +1,33 @@
+lxc.apparmor.profile = unconfined
+
+lxc.net.0.type = veth
+lxc.net.0.name = ethv
+lxc.net.0.link = br0
+lxc.net.0.flags = up
+lxc.net.0.hwaddr = 00:16:36:47:95:1a
+lxc.net.0.ipv4.address = 10.0.0.1/24
+
+lxc.net.1.type = phys
+lxc.net.1.link = enp3s0
+lxc.net.1.flags = up
+
+# Common configuration
+lxc.include = /usr/share/lxc/config/devuan.common.conf
+
+# lxcfs is invoked automagically, the following options aren't necessary:
+#lxc.mount.auto = cgroup:mixed
+#lxc.autodev = 1
+#lxc.include = /usr/share/lxc/config/common.conf.d/00-lxcfs.conf
+
+# Container specific configuration
+lxc.tty.max = 4
+lxc.arch = amd64
+lxc.pty.max = 1024
+lxc.rootfs.path = dir:/var/lib/lxc/networking/rootfs
+lxc.uts.name = networking
+
+lxc.include = /usr/share/lxc/config/devuan.userns.conf
+lxc.idmap = u 0 100000 65536
+lxc.idmap = g 0 100000 65536
+
+lxc.start.auto = 1

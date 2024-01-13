@@ -1,0 +1,19 @@
+lxc.apparmor.profile = unconfined
+
+lxc.rootfs.path = dir:/var/lib/lxc/base/rootfs
+
+# Common configuration
+lxc.include = /usr/share/lxc/config/devuan.common.conf
+
+# lxcfs is invoked automagically, the following options aren't necessary:
+#lxc.mount.auto = cgroup:mixed
+#lxc.autodev = 1
+#lxc.include = /usr/share/lxc/config/common.conf.d/00-lxcfs.conf
+
+# Container specific configuration
+lxc.tty.max = 4
+lxc.uts.name = base
+lxc.arch = amd64
+lxc.pty.max = 1024
+
+lxc.start.auto = 0
