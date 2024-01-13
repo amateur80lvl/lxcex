@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ -z "${XDG_RUNTIME_DIR}" ] ; then
+    echo "XDG_RUNTIME_DIR is not set"
+    exit 1
+fi
+
+if [ -z "${WAYLAND_DISPLAY}" ] ; then
+    echo "WAYLAND_DISPLAY is not set"
+    exit 1
+fi
+
+for container_name in $@ ; do
+
+    CONTAINER_ROOTFS="/var/lib/lxc/${container_name}/rootfs"
+
+    for userdir in ${CONTAINER_ROOTFS}/home/* ; do
+        username=`basename ${userdir}`
+
+        container_userid=`stat -c %u ${userdir}`
+
+        setfacl -m $container_userid:rw /dev/dri/renderD128
+
+        setfacl -m $container_userid:--x "${XDG_RUNTIME_DIR}"
+        setfacl -m $container_userid:rw "${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}"
+
+        export HOST_XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}"
+        export HOST_WAYLAND_DISPLAY="${WAYLAND_DISPLAY}"
+        if [ `lxc-info -sH ${container_name}` = "STOPPED" ] ; then
+            lxc-start ${container_name}
+        fi
+    done
+done

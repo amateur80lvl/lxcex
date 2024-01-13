@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+# Share host's sysfs DRI entries.
+
+# We're dealing with mount entries, so expand any symlink
+LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
+
+SYS_DRM_LINK="/sys/dev/char/226:128"
+SYS_DRM_PATH=$(readlink -f "${SYS_DRM_LINK}")
+SYS_DRM_DEV_PATH=$(dirname `dirname "${SYS_DRM_PATH}"`)
+
+mkdir -p "${LXC_ROOTFS_MOUNT}${SYS_DRM_DEV_PATH}"
+mount --bind "${SYS_DRM_DEV_PATH}" "${LXC_ROOTFS_MOUNT}${SYS_DRM_DEV_PATH}"
+
+mkdir -p "${LXC_ROOTFS_MOUNT}/sys/dev/char"
+[ -e "${LXC_ROOTFS_MOUNT}${SYS_DRM_LINK}" ] && unlink "${LXC_ROOTFS_MOUNT}${SYS_DRM_LINK}"
+ln -s `readlink "${SYS_DRM_LINK}"` "${LXC_ROOTFS_MOUNT}${SYS_DRM_LINK}"

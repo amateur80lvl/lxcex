@@ -57,6 +57,8 @@ But in general, the rationale is as follows:
 * A decent replacement for runit.
 * Stand-alone Kate fork. Its debian package pulls a lot of dependencies.
   Probably I simply should compile it by myself.
+* Weston and wlroots-based compositors close session when connection to the socket
+  is lost. Need re-connect feature.
 
 
 ## The book
@@ -65,6 +67,7 @@ But in general, the rationale is as follows:
 * [Chapter 2. The basic networking](https://github.com/amateur80lvl/lxcex/tree/main/book/ch2-basic-networking.md)
 * [Chapter 3. LXC and the base container](https://github.com/amateur80lvl/lxcex/tree/main/book/ch3-lxc-and-base-container.md)
 * [Chapter 4. Networking](https://github.com/amateur80lvl/lxcex/tree/main/book/ch4-networking.md)
+* [Chapter 5. Desktop Environment](https://github.com/amateur80lvl/lxcex/tree/main/book/ch5-desktop-environment.md)
 
 
 ## Changelog

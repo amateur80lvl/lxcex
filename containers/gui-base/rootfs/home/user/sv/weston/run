@@ -1,0 +1,13 @@
+#!/usr/bin/env /lib/runit/invoke-run
+
+exec 2>&1
+
+if [ -e /etc/runit/verbose ]; then
+    echo "invoke-run: starting ${PWD##*/}"
+fi
+
+export XDG_SESSION_ID=2
+export XDG_RUNTIME_DIR=/run/user/1000
+export WAYLAND_DISPLAY=wayland-1
+
+exec /usr/bin/weston -Swayland-2 --width 1280 --height 720
