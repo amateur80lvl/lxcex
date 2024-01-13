@@ -290,7 +290,7 @@ For interactive sessions I suggest adding `XDG_RUNTIME_DIR` and `WAYLAND_DISPLAY
 environment variables to `.bashrc`.
 This means `WAYLAND_DISPLAY` will be hardcoded. Normally we should take it from the base system
 and pass to the container. There's a configuration directive `lxc.environment`
-which looks perfectly suited foor that, but unlike shells, if the variable does not exist,
+which looks perfectly suited for that, but unlike shells, if the variable does not exist,
 all `lxc-*` commands will fail to process the configuration.
 Here we go.
 
