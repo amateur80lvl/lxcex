@@ -84,14 +84,9 @@ Let's add the following lines to the end of `/home/user/.profile`:
 ```bash
 # if logged in from console
 if [ x"$TERM" = "xlinux" ] ; then
-    # and Sway is not running, start it
-    if [ ! -e "${XDG_RUNTIME_DIR}/wayland-*" ] ; then
-        exec dbus-run-session -- sway
-    fi
+    exec sway
 fi
 ```
-`dbus-run-session` is not necessary for now, it will be required later for pipewire.
-`exec` makes user to log out when they exit Sway.
 
 Now, check if Sway is running if you login from console and proceed to the next section.
 
