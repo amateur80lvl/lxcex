@@ -425,8 +425,8 @@ Xwayland version shipped with Devuan Daedalus)
 or simply switch to full screen in Sway.
 
 If you want to start XFCE when container starts, create the following files:
-* [/home/user/sv/xwayland/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xwayland/run):
-* [/home/user/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xfce/run):
+* [/home/user/sv/xwayland/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xwayland/run)
+* [/home/user/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xfce/run)
 
 and create links:
 ```bash
