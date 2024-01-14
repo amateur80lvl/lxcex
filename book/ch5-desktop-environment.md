@@ -39,7 +39,7 @@ yet 10 years ago!
 
 So we'll simply run Sway under unprivileged user. Let's install it:
 ```bash
-apt install sway bemenu waybar fonts-font-awesome foot wev x11-xkb-utils
+apt install sway bemenu waybar fonts-font-awesome foot wev
 ```
 Notes on packages:
 * `waybar`: slightly better than the default swaybar.
@@ -47,7 +47,6 @@ Notes on packages:
   `fonts-font-awesome` is necessary to display icons.
 * `bemenu`: application launcher
 * `foot`: terminal application
-* `x11-xkb-utils` is necessary for keyboard layout
 * `wev` could be useful to discover key codes
 
 You also may need `sway-backgrounds`. Sway does not have a strict dependency, nevertheless,
