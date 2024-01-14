@@ -139,7 +139,7 @@ plus these directives (you may need to fix `/usr/share/lxcfs/lxc.mount.hook`,
 see [procfs and sysfs section in Chapter 3](ch3-lxc-and-base-container.md#procfs-and-sysfs):
 ```
 lxc.mount.auto =
-lxc.mount.hook = /var/lib/lxc/gui-base/restricted-proc
+lxc.mount.hook = /var/lib/lxc/gui-base/restricted-proc.mount
 ```
 Mounting `/proc` with the mount hook is necessary to make `dbus` working.
 We could do that with `lxc.mount.auto = proc:mixed`, but this would be less secure.
@@ -179,18 +179,18 @@ somewhere in the container and symlink socket to user's runtime directory:
 |    ...            |  |    wayland-1 ------------+      |
 +-------------------+  +---------------------------------+
 ```
-[xdg-runtime-dir](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir)
+[xdg-runtime-dir.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.mount)
 script can be used as a mount hook to mount `/run/host-xdg-runtime-dir`
 in the container. Add it to the container config:
 ```
-lxc.hook.mount = /var/lib/lxc/gui-base/xdg-runtime-dir
+lxc.hook.mount = /var/lib/lxc/gui-base/xdg-runtime-dir.mount
 ```
 Basically, we could use `lxc.mount.entry` for that purpose, but the hook
 is better because it does without hardcoded user ids and paths.
 Except `/run/host-xdg-runtime-dir` of course, but that's a static thing.
 
 To make socket accessible from container, the following permissions
-should be set on the host:
+could be set on the host:
 ```bash
 seftacl -m 201000:--x /run/user/1000
 setfacl -m 201000:rw- /run/user/1000/wayland-1
@@ -200,6 +200,21 @@ where 201000 is container's user id on the host system, given that container's s
 `--x` on `/run/user/1000` is a pass-through permission to disable reading directory content.
 This means `ls /run/host-xdg-runtime-dir` will fail, but the socket will be accessible
 as long as we've granted `rw-` permissions on it.
+
+However, a better way is to grant permissions to a whole group `users`.
+There are a couple of hooks:
+* [xdg-runtime-dir.start-host](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.start-host)
+  grants permissions when container starts, and
+* [xdg-runtime-dir.stop](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.stop)
+  revokes permissions when it stops.
+
+Group id is provided as a parameter to hooks in the configuration:
+```
+lxc.hook.start-host = /var/lib/lxc/gui-base/xdg-runtime-dir.start-host 200100
+lxc.hook.stop = /var/lib/lxc/gui-base/xdg-runtime-dir.stop 200100
+```
+i.e. 200100 is container's subordinate gid 200000 plus 100 which corresponds `users`
+group. That's why we specified `--ingroup users` above.
 
 When all the above is done, we can try nested compositors. Restart the container and run:
 ```bash
@@ -246,14 +261,26 @@ so device entry will be `/sys/devices/platform/soc/1800000.gpu`
 Note that `/sys/dev/char/226:128` symlink must exist in the container,
 but `/sys/class/drm/renderD128` is not necessary.
 
+The following hooks grant and revoke permissions on `/dev/dri/renderD128`
+to `users` group, similar to xdg-runtime-dir above:
+* [enable-dri.start-host](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/enable-dri.start-host)
+* [enable-dri.stop](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/enable-dri.stop)
+
+Configuration parameters:
+```
+lxc.hook.start-host = /var/lib/lxc/gui-base/enable-dri.start-host 200100
+lxc.hook.stop = /var/lib/lxc/gui-base/enable-dri.stop 200100
+```
+
 If you don't mount `sysfs` in container, and this is very sensible
 approach for security reasons, you'll need to add
-[enable-dri](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/enable-dri)
+[enable-dri.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/enable-dri.mount)
 mount hook to container's config:
 ```
-lxc.hook.mount = /var/lib/lxc/gui-base/enable-dri
+lxc.hook.mount = /var/lib/lxc/gui-base/enable-dri.mount
 ```
 which does all the job to share DRI entries from `/sys`.
+
 
 Restart the container and run
 ```bash
@@ -279,8 +306,8 @@ i.e. when you exit `su user`. Also, if we used PAM we'd have to create links by 
 There's `libpam-script` package, but its configuration is weird and default priorities is not what
 we need, i.e. scripts start when `/run/user/<uid>` does not exist yet.
 
-For now, runtime directories and links are created by
-[xdg-runtime-dir](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir).
+For now, runtime directories and links are created by runit script
+[/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run).
 It's not a nice solution either.
 
 For interactive sessions I suggest adding `XDG_RUNTIME_DIR` and `WAYLAND_DISPLAY`
@@ -318,23 +345,7 @@ As root, create [user service](https://docs.voidlinux.org/config/services/user-s
 ```bash
 mkdir /etc/sv/runsvdir-user
 ```
-Create [/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run):
-```bash
-#!/bin/sh
-
-export USER=user
-export HOME=/home/user
-
-groups="$(id -Gn "$USER" | tr ' ' ':')"
-svdir="$HOME/service"
-
-exec chpst -u "$USER:$groups" runsvdir "$svdir"
-```
-make it executable and symlink the service to `/etc/services`:
-```bash
-chmod +x /etc/sv/runsvdir-user/run
-ln -s /etc/sv/runsvdir-user /etc/service
-```
+Create [/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run).
 
 Then,
 ```bash
@@ -356,8 +367,6 @@ if [ -e /etc/runit/verbose ]; then
 fi
 
 export XDG_SESSION_ID=2
-export XDG_RUNTIME_DIR=/run/user/1000
-export WAYLAND_DISPLAY=wayland-1
 
 exec /usr/bin/weston -Swayland-2 --width 1280 --height 720
 ```
@@ -414,3 +423,13 @@ WAYLAND_DISPLAY= DISPLAY=:0 startxfce4
 You may want to adjust height with `-geometry` option (not supported in
 Xwayland version shipped with Devuan Daedalus)
 or simply switch to full screen in Sway.
+
+If you want to start XFCE when container starts, create the following files:
+* [/home/user/sv/xwayland/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xwayland/run):
+* [/home/user/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xfce/run):
+
+and create links:
+```bash
+ln -s ../sv/xwayland /home/user/service
+ln -s ../sv/xfce4 /home/user/service
+```

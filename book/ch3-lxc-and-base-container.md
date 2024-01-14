@@ -67,7 +67,7 @@ However, all those options aren't sufficient if you want to avoid leaking any se
 information about the base system to containers.
 
 A way to hardening container security is custom mount hook
-[restricted-proc](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/restricted-proc)
+[restricted-proc.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/restricted-proc.mount)
 which mounts `/proc` with `hidepid=2` and `subset=pid` options.
 
 AFAIK there's no way to restrict sysfs and for security reasons it's better not to mount it at all

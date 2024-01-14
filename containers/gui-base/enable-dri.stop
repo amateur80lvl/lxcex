@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+# revoke permissions
+setfacl -x g:$1 /dev/dri/renderD128

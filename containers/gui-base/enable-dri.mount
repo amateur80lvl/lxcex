@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-# Share host's sysfs DRI entries.
+# Share host's sysfs DRI entries mount hook.
 
 # We're dealing with mount entries, so expand any symlink
 LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")

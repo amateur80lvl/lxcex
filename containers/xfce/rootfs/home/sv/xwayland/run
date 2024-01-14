@@ -6,6 +6,4 @@ if [ -e /etc/runit/verbose ]; then
     echo "invoke-run: starting ${PWD##*/}"
 fi
 
-export XDG_SESSION_ID=2
-
-exec /usr/bin/weston -Swayland-2 --width 1280 --height 720
+exec /usr/bin/Xwayland :0

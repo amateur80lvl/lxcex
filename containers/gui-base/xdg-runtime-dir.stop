@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+if [ -z "${HOST_XDG_RUNTIME_DIR}" ] ; then
+    # exit 1
+    # or use some default value:
+    HOST_XDG_RUNTIME_DIR=/run/user/1000
+fi
+
+if [ -z "${HOST_WAYLAND_DISPLAY}" ] ; then
+    # exit 1
+    # or use some default value:
+    HOST_WAYLAND_DISPLAY=wayland-1
+fi
+
+# revoke permissions
+setfacl -x g:$1 "${HOST_XDG_RUNTIME_DIR}"
+setfacl -x g:$1 "${HOST_XDG_RUNTIME_DIR}/${HOST_WAYLAND_DISPLAY}"

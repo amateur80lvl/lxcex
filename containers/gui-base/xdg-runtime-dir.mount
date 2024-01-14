@@ -1,0 +1,25 @@
+#!/bin/sh -e
+
+# Share host's XDG_RUNTIME_DIR.
+# This hook relies on HOST_XDG_RUNTIME_DIR and HOST_WAYLAND_DISPLAY
+# environment variables which are set by /usr/local/bin/start-user-containers
+
+if [ -z "${HOST_XDG_RUNTIME_DIR}" ] ; then
+    # exit 1
+    # or use some default value:
+    HOST_XDG_RUNTIME_DIR=/run/user/1000
+fi
+
+if [ -z "${HOST_WAYLAND_DISPLAY}" ] ; then
+    # exit 1
+    # or use some default value:
+    HOST_WAYLAND_DISPLAY=wayland-1
+fi
+
+# We're dealing with mount entries, so expand any symlink
+LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
+
+# Mount /run and /run/host-xdg-runtime-dir in the container.
+mount -t tmpfs -o noexec,nodev,nosuid,mode=755,size=4M tmpfs "${LXC_ROOTFS_MOUNT}/run"
+mkdir -p "${LXC_ROOTFS_MOUNT}/run/host-xdg-runtime-dir"
+mount --bind "${HOST_XDG_RUNTIME_DIR}" "${LXC_ROOTFS_MOUNT}/run/host-xdg-runtime-dir"

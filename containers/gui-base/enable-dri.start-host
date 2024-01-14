@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+# grant permissions on device
+setfacl -m g:$1:rw /dev/dri/renderD128

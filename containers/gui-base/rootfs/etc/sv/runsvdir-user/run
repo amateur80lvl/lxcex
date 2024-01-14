@@ -6,4 +6,17 @@ export HOME=/home/user
 groups="$(id -Gn "$USER" | tr ' ' ':')"
 svdir="$HOME/service"
 
+# Create /run/user/<uid> directory and make links to host socket.
+if [ -z "${HOST_WAYLAND_DISPLAY}" ] ; then
+    # some default value
+    HOST_WAYLAND_DISPLAY=wayland-1
+fi
+
+export WAYLAND_DISPLAY=${HOST_WAYLAND_DISPLAY}
+export XDG_RUNTIME_DIR=/run/user/`id -u $USER`
+mkdir -p "${XDG_RUNTIME_DIR}"
+chown $USER "${XDG_RUNTIME_DIR}"
+chmod 700 "${XDG_RUNTIME_DIR}"
+ln -s "../../host-xdg-runtime-dir/${HOST_WAYLAND_DISPLAY}" "${XDG_RUNTIME_DIR}"
+
 exec chpst -u "$USER:$groups" runsvdir "$svdir"
