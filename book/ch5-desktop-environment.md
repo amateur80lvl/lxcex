@@ -85,7 +85,7 @@ Let's add the following lines to `/home/user/.profile`:
 # if logged in from console
 if [ x"$TERM" = "xlinux" ] ; then
     # and Sway is not running, start it
-    if [ ! -e "${XDG_RUNTIME_DIR}/wayland-1" ] ; then
+    if [ ! -e "${XDG_RUNTIME_DIR}/wayland-*" ] ; then
         sway
     fi
 fi
