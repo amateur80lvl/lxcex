@@ -21,5 +21,4 @@ LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
 
 # Mount /run and /run/host-xdg-runtime-dir in the container.
 mount -t tmpfs -o noexec,nodev,nosuid,mode=755,size=4M tmpfs "${LXC_ROOTFS_MOUNT}/run"
-mkdir -p "${LXC_ROOTFS_MOUNT}/run/host-xdg-runtime-dir"
-mount --bind "${HOST_XDG_RUNTIME_DIR}" "${LXC_ROOTFS_MOUNT}/run/host-xdg-runtime-dir"
+mount --bind --mkdir=700 "${HOST_XDG_RUNTIME_DIR}" "${LXC_ROOTFS_MOUNT}/run/host-xdg-runtime-dir"
