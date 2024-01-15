@@ -55,7 +55,8 @@ of container's configuration file:
 lxc.mount.auto =
 ```
 This, however will make `lxcfs` to fail because it depends on `/proc` and `/sys`.
-You can fix `/usr/share/lxcfs/lxc.mount.hook`, see https://github.com/lxc/lxcfs/pull/625.
+Hopefully, they fixed `/usr/share/lxcfs/lxc.mount.hook`, see https://github.com/lxc/lxcfs/pull/626.
+But while it's not in your release you have to fix that manually.
 
 The position of empty `lxc.mount.auto` directive in the end of file is important.
 Strictly speaking, it should be placed after all `lxc.include` directives, as long as
