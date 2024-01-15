@@ -310,9 +310,12 @@ For now, runtime directories and links are created by runit script
 [/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run).
 It's not a nice solution either.
 
-For interactive sessions I suggest adding `XDG_RUNTIME_DIR` and `WAYLAND_DISPLAY`
-environment variables to `.bashrc`.
-This means `WAYLAND_DISPLAY` will be hardcoded. Normally we should take it from the base system
+For interactive sessions I suggest adding
+```bash
+. /usr/local/share/lxcex-xdg.sh
+```
+to `.bashrc`.
+For now `WAYLAND_DISPLAY` will be hardcoded. Normally we should take it from the base system
 and pass to the container. There's a configuration directive `lxc.environment`
 which looks perfectly suited for that, but unlike shells, if the variable does not exist,
 all `lxc-*` commands will fail to process the configuration.
@@ -341,11 +344,14 @@ exists.
 
 ### container
 
-As root, create [user service](https://docs.voidlinux.org/config/services/user-services.html):
+As root, create [user service](https://docs.voidlinux.org/config/services/user-services.html).
+First, create a directory for it:
 ```bash
 mkdir /etc/sv/runsvdir-user
 ```
-Create [/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run).
+Next, create files:
+ * [/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run)
+ * [/usr/local/share/lxcex-xdg.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/usr/local/share/lxcex-xdg.sh)
 
 Then,
 ```bash
