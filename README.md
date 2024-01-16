@@ -14,9 +14,7 @@ Work in progress.
 * Virtual internal network provides truly static IP addresses to containers,
   making more or less complex routing robust when external IP address and/or devices change.
 * Additional networking containers may run different VPNs for work, entertainment, banking, etc.
-* User containers run Weston instances which get nested in Sway.
-  Other combination of compositors can be evaluated. However, this is the only stable configuration
-  I managed to run so far.
+* User containers run Weston, Cage, Xwayland, etc. instances which get nested in Sway.
 
 At the moment, this system reflects my experience and is full of personal preferences.
 Some of them are quite baseless.
@@ -30,10 +28,10 @@ But in general, the rationale is as follows:
 
 ## Quirks
 
-* Drop-down menus in Kate have significant offset to the right -- fixed after playing with systemsettings,
-  need to reproduce; -- and appear with a delay -- sympthoms look like those described in merge request 1123.
- * The latter, however, might be visual effects that don't work properly and can be turned off in
-   the configuration center, I presume. -- Nope
+* Drop-down menus in Kate have significant offset to the right:
+ * fixed after playing with systemsettings, need to reproduce
+ * appear with a significant delay
+  * sympthoms look like those described in merge request 1123
  * XFCE apps, e.g. Thunar, don't have such quirks. -- because of XWayland?
 * Weston terminal does not honour user's shell from /etc/passwd and uses `sh`
   if Weston is started by runit, where parent shell is `sh`.
@@ -84,6 +82,18 @@ Initial commit and release.
 
 
 ## Miscellaneous notes
+
+### mount namespaces and shared subtrees
+
+* https://lwn.net/Articles/689856/
+* https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt
+
+Still don't get why I have to
+```bash
+mount --make-shared /run
+```
+i.e. `/run`, not `/run/user` if I `mount --rbind /run/user "${LXC_ROOTFS_MOUNT}/run/host/run/user"`
+in containers and want all uid submounts to propagate.
 
 ### From which deb package is this file?
 
