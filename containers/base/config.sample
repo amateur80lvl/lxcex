@@ -5,6 +5,10 @@ lxc.rootfs.path = dir:/var/lib/lxc/base/rootfs
 # Common configuration
 lxc.include = /usr/share/lxc/config/devuan.common.conf
 
+# Mount /proc in highly restricted mode.
+# Note that lxcfs won't be able to mount its files and all those df, uptime, etc. won't work at all.
+#lxc.mount.entry = proc proc proc noexec,nodev,nosuid,hidepid=2,subset=pid 0 0
+
 # lxcfs is invoked automagically, the following options aren't necessary:
 #lxc.mount.auto = cgroup:mixed
 #lxc.autodev = 1

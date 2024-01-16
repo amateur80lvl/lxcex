@@ -32,7 +32,9 @@ lxc.hook.start-host = /var/lib/lxc/xfce4/enable-dri.start-host 200100
 lxc.hook.mount = /var/lib/lxc/xfce4/enable-dri.mount
 lxc.hook.stop = /var/lib/lxc/xfce4/enable-dri.stop 200100
 
-lxc.hook.mount = /var/lib/lxc/xfce4/restricted-proc.mount
+# Mount /proc in highly restricted mode.
+# Note that lxcfs won't be able to mount its files and all those df, uptime, etc. won't work at all.
+lxc.mount.entry = proc proc proc noexec,nodev,nosuid,hidepid=2,subset=pid 0 0
 
 lxc.hook.start-host = /var/lib/lxc/xfce4/xdg-runtime-dir.start-host 200100
 lxc.hook.mount = /var/lib/lxc/xfce4/xdg-runtime-dir.mount

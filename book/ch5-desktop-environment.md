@@ -139,9 +139,9 @@ plus these directives (you may need to fix `/usr/share/lxcfs/lxc.mount.hook`,
 see [procfs and sysfs section in Chapter 3](ch3-lxc-and-base-container.md#procfs-and-sysfs):
 ```
 lxc.mount.auto =
-lxc.mount.hook = /var/lib/lxc/gui-base/restricted-proc.mount
+lxc.mount.entry = proc proc proc noexec,nodev,nosuid,hidepid=2,subset=pid 0 0
 ```
-Mounting `/proc` with the mount hook is necessary to make `dbus` working.
+Mounting `/proc` is necessary to make `dbus` working.
 We could do that with `lxc.mount.auto = proc:mixed`, but this would be less secure.
 
 Now we're ready to test the container:

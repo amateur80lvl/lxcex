@@ -1,9 +1,0 @@
-#!/bin/sh -e
-
-# Mount /proc in highly restricted mode.
-# lxcfs won't be able to mount its files and all those df, uptime, etc. won't work at all
-
-# We're dealing with mount entries, so expand any symlink
-LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
-
-mount -t proc -o noexec,nodev,nosuid,hidepid=2,subset=pid proc "${LXC_ROOTFS_MOUNT}/proc"

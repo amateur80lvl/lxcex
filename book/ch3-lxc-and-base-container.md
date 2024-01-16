@@ -67,9 +67,11 @@ Refer to `man lxc.container.conf` for details.
 However, all those options aren't sufficient if you want to avoid leaking any sensitive
 information about the base system to containers.
 
-A way to hardening container security is custom mount hook
-[restricted-proc.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/restricted-proc.mount)
-which mounts `/proc` with `hidepid=2` and `subset=pid` options.
+A way to hardening `/proc` is mounting it with `hidepid=2` and `subset=pid` options:
+```
+lxc.mount.entry = proc proc proc noexec,nodev,nosuid,hidepid=2,subset=pid 0 0
+```
+However, lxcfs won't be able to mount its files and all those df, uptime, etc. won't work at all.
 
 AFAIK there's no way to restrict sysfs and for security reasons it's better not to mount it at all
 or mount only necessary entries, such as DRI.
