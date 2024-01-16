@@ -168,29 +168,30 @@ The nice idea "everything is a file" simply breaks against them.
 You'll have to mount the entire host's `XDG_RUNTIME_DIR`
 somewhere in the container and symlink socket to user's runtime directory:
 ```
-+-------------------+  +---------------------------------+
-| Host              |  | Container                       |
-|                   |  |                                 |
-| Sway           mount --bind                            |
-| /run/user/1000 ------------> /run/host-xdg-runtime-dir |
-|    wayland-1      |  |         wayland-1   <----+      |
-|    wayland-1.lock |  |                          |      |
-|    sway-ipc...    |  | /run/user/1000   symlink |      |
-|    ...            |  |    wayland-1 ------------+      |
-+-------------------+  +---------------------------------+
++-----------------------+    +-------------------------------+
+| Host                  |    | Container                     |
+|                       |    |                               |
+| Sway             mount --bind                              |
+| /run/user -------------------> /run/host/run/user          |
+|    1000/              |    |       1000/wayland-1 <----+   |
+|        wayland-1      |    |                           |   |
+|        wayland-1.lock |    | /run/user/1000    symlink |   |
+|        sway-ipc...    |    |     wayland-1 ------------+   |
+|        ...            |    |                               |
++-----------------------+    +-------------------------------+
 ```
+The hook
 [xdg-runtime-dir.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.mount)
-script can be used as a mount hook to mount `/run/host-xdg-runtime-dir`
-in the container. Add it to the container config:
+mounts `/run/host/run/user` in the container and writes
+`HOST_WAYLAND_DISPLAY` and `HOST_XDG_RUNTIME_DIR` to `/run/host/xdg.env`.
+Scripts in the container use this information to create symlink.
+Add it to the container config:
 ```
 lxc.hook.mount = /var/lib/lxc/gui-base/xdg-runtime-dir.mount
 ```
-Basically, we could use `lxc.mount.entry` for that purpose, but the hook
-is better because it does without hardcoded user ids and paths.
-Except `/run/host-xdg-runtime-dir` of course, but that's a static thing.
 
 To make socket accessible from container, the following permissions
-could be set on the host:
+could be granted on the host:
 ```bash
 seftacl -m 201000:--x /run/user/1000
 setfacl -m 201000:rw- /run/user/1000/wayland-1
@@ -307,20 +308,8 @@ There's `libpam-script` package, but its configuration is weird and default prio
 we need, i.e. scripts start when `/run/user/<uid>` does not exist yet.
 
 For now, runtime directories and links are created by runit script
-[/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run).
+[/usr/local/share/lxcex-xdg.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/usr/local/share/lxcex-xdg.sh).
 It's not a nice solution either.
-
-For interactive sessions I suggest adding
-```bash
-. /usr/local/share/lxcex-xdg.sh
-```
-to `.bashrc`.
-For now `WAYLAND_DISPLAY` will be hardcoded. Normally we should take it from the base system
-and pass to the container. There's a configuration directive `lxc.environment`
-which looks perfectly suited for that, but unlike shells, if the variable does not exist,
-all `lxc-*` commands will fail to process the configuration.
-You can re-compile and re-package LXC with a patch [from here](https://github.com/lxc/lxc/issues/4385).
-Here we go. Good luck.
 
 ### base system
 
@@ -352,6 +341,12 @@ mkdir /etc/sv/runsvdir-user
 Next, create files:
  * [/etc/sv/runsvdir-user/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/etc/sv/runsvdir-user/run)
  * [/usr/local/share/lxcex-xdg.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/usr/local/share/lxcex-xdg.sh)
+
+For trying Wayland from interactive sessions add
+```bash
+. /usr/local/share/lxcex-xdg.sh
+```
+to `/home/user/.bashrc`.
 
 Then,
 ```bash

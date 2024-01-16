@@ -1,24 +1,21 @@
 #!/bin/sh -e
 
-# Share host's XDG_RUNTIME_DIR.
-# This hook relies on HOST_XDG_RUNTIME_DIR and HOST_WAYLAND_DISPLAY
-# environment variables which are set by /usr/local/bin/start-user-containers
-
-if [ -z "${HOST_XDG_RUNTIME_DIR}" ] ; then
-    # exit 1
-    # or use some default value:
-    HOST_XDG_RUNTIME_DIR=/run/user/1000
-fi
-
-if [ -z "${HOST_WAYLAND_DISPLAY}" ] ; then
-    # exit 1
-    # or use some default value:
-    HOST_WAYLAND_DISPLAY=wayland-1
-fi
-
 # We're dealing with mount entries, so expand any symlink
 LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
 
-# Mount /run and /run/host-xdg-runtime-dir in the container.
+# Mount /run in the container.
 mount -t tmpfs -o noexec,nodev,nosuid,mode=755,size=4M tmpfs "${LXC_ROOTFS_MOUNT}/run"
-mount --bind --mkdir=700 "${HOST_XDG_RUNTIME_DIR}" "${LXC_ROOTFS_MOUNT}/run/host-xdg-runtime-dir"
+# Bind host's /run/user to /run/host/run/user.
+# Using such a long path to avoid path manipulation in scripts that use it.
+mount --rbind --mkdir=711 /run/user "${LXC_ROOTFS_MOUNT}/run/host/run/user"
+
+if [ -n "${HOST_XDG_RUNTIME_DIR}" ] && [ -n "${HOST_WAYLAND_DISPLAY}" ] ; then
+
+    # Share host's HOST_XDG_RUNTIME_DIR and HOST_WAYLAND_DISPLAY provided
+    # by /usr/local/bin/start-user-containers
+    #
+    # These variables are autimagically propagated from host's environment
+    # to this hook, although it's not a documented feature, it just works.
+
+    echo HOST_XDG_RUNTIME_DIR="${HOST_XDG_RUNTIME_DIR}"\\nHOST_WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" >"${LXC_ROOTFS_MOUNT}/run/host/xdg.env"
+fi

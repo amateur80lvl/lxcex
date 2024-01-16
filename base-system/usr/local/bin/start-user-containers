@@ -10,11 +10,24 @@ if [ -z "${WAYLAND_DISPLAY}" ] ; then
     exit 1
 fi
 
+# Make sure /run is shared.
+# This is necessary for containers to be able to re-reconnect
+# to the base compositor after it gets restarted.
+# XXX sharing /run/user, which we mount in containers, won't work. Need to share top-level /run. Why?
+mount --make-shared /run
+
 export HOST_XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}"
 export HOST_WAYLAND_DISPLAY="${WAYLAND_DISPLAY}"
 for container_name in $@ ; do
     CONTAINER_ROOTFS="/var/lib/lxc/${container_name}/rootfs"
-    if [ `lxc-info -sH ${container_name}` = "STOPPED" ] ; then
-        lxc-start ${container_name}
+    if [ x`lxc-info -sH ${container_name}` = xSTOPPED ] ; then
+        lxc-start -n ${container_name} --logfile=/tmp/${container_name}.log --logpriority=DEBUG
+    else
+        # If container is already running, grant permission on wayland socket:
+        # invoke xdg-runtime-dir.start-host exactly as in config, with group id
+        cmd=`lxc-info -n ${container_name} -c lxc.hook.start-host | grep xdg-runtime-dir`
+        if [ -n "${cmd}" ] ; then
+            sh -c "${cmd}"
+        fi
     fi
 done
