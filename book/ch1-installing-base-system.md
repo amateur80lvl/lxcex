@@ -42,13 +42,13 @@ Assuming you have an USB stick formatted with ext4 and mounted on `/mnt/devuan`,
 ```bash
 debootstrap --variant=minbase \
 --include=acl,apparmor,apt-utils,bash-completion,bsdextrautils,\
-chrony,console-setup,cpio,cron,dialog,ethtool,eudev,fdisk,file,\
-findutils,gpm,iputils-ping,iputils-tracepath,iproute2,iw,less,\
-libc-l10n,locales,lsb-release,lsof,man-db,manpages,nano,netbase,\
-nftables,openssh-server,openssh-sftp-server,parted,pciutils,\
-procps,psmisc,psutils,rfkill,rsync,rsyslog,screen,smartmontools,\
-sudo,sysfsutils,tree,tzdata,usbutils,wireless-regdb,wpasupplicant,\
-xz-utils,zstd \
+ca-certificates,chrony,console-setup,cpio,cron,dialog,ethtool,\
+eudev,fdisk,file,findutils,gpm,iputils-ping,iputils-tracepath,\
+iproute2,iw,less,libc-l10n,locales,lsb-release,lsof,man-db,\
+manpages,nano,netbase,nftables,openssh-server,openssh-sftp-server,\
+parted,pciutils,procps,psmisc,psutils,rfkill,rsync,rsyslog,screen,\
+smartmontools,sudo,sysfsutils,tree,tzdata,usbutils,wireless-regdb,\
+wpasupplicant,xz-utils,zstd \
 --exclude=vim-common,vim-tiny \
 daedalus /mnt/devuan \
 http://deb.devuan.org/merged/
@@ -84,6 +84,7 @@ Notes on packages:
 * `chrony`, `cron`, `rsyslog` - that's what any distro must have
 * `cpio`, `zstd` are needed by initramfs
 * `smartmontools`: useful thing, I recommend to install it
+* `ca-certificates`: you definitely need this to download anything with `wget` over HTTPS.
 
 Some of above packages can be installed implicitly as dependencies, but I prefer
 to list them explicitly.
