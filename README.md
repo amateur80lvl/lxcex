@@ -87,6 +87,11 @@ Initial commit and release.
 
 ## Miscellaneous notes
 
+### links
+
+* [Awesome Wayland: A curated list of Wayland code and resources.](https://github.com/natpen/awesome-wayland)
+* [Sway wiki](https://github.com/swaywm/sway/wiki)
+
 ### mount namespaces and shared subtrees
 
 * https://lwn.net/Articles/689856/
