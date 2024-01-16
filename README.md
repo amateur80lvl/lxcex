@@ -70,6 +70,10 @@ But in general, the rationale is as follows:
 
 ## Changelog
 
+### Jan 16, 2024
+
+XFCE desktop environment is working!
+
 ### Dec 30, 2023
 
 Tag: 0.0.2
