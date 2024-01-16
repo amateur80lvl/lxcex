@@ -434,3 +434,10 @@ and create links:
 ln -s ../sv/xwayland /home/user/service
 ln -s ../sv/xfce4 /home/user/service
 ```
+
+Note that we use the following command instead of `exec startxfce4`:
+```bash
+exec dbus-run-session xfce4-session
+```
+because `startxfce4` does not exit properly when Xwayland terminates or not available.
+This causes problems when you restart Sway on the host system.
