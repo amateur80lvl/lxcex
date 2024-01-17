@@ -12,7 +12,7 @@ But you can easily set up more elaborated configurations with multiple virtual n
 +---------------+  +----------+   +-----------+ +-----------+
 | Entertainment |  |   Work    |  |  Banking  | | Domestic  |
 |   10.0.0.10   |  | 10.0.0.11 |  | 10.0.0.12 | | 10.0.0.13 |
-|    Gateway:   |  | Gateway:  |  | Gateway:  | | Gateway:  |
+|  socks5 proxy:|  | Gateway:  |  | Gateway:  | | Gateway:  |
 |    10.0.0.3   |  | 10.0.0.4  |  | 10.0.0.5  | | 10.0.0.1  |
 +-------+-------+  +-----+-----+  +-----+-----+ +-----+-----+
         |                |             |              | +-------------+
