@@ -180,6 +180,15 @@ somewhere in the container and symlink socket to user's runtime directory:
 |        ...            |    |                               |
 +-----------------------+    +-------------------------------+
 ```
+Strictly speaking, we mount parent directory of `XDG_RUNTIME_DIR`, because
+`XDG_RUNTIME_DIR` is a `tmpfs` mount point and when you logout and login again
+to the base system, container loses its track.
+But when we mount parent directory, changes are propagared to container
+mount namespace if we say
+```bash
+mount --make-shared /run
+```
+
 The hook
 [xdg-runtime-dir.mount](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/xdg-runtime-dir.mount)
 mounts `/run/host/run/user` in the container and writes
