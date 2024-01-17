@@ -43,7 +43,6 @@ But in general, the rationale is as follows:
 
 * improve UX
 * copy-paste across containers
-* fix keypad when numlock is off? (disease of most distros I know)
 * shared folders
 * pipewire (video)
 * composefs, when kernel 6.6 gets in stable release
@@ -53,8 +52,6 @@ But in general, the rationale is as follows:
 * A decent panel for Sway.
 * Disable window decoration in Weston's wayland backend, not only in headless.
 * A decent replacement for runit.
-* Stand-alone Kate fork. Its debian package pulls a lot of dependencies.
-  Probably I simply should compile it by myself.
 * Weston and wlroots-based compositors close session when connection to the socket
   is lost. Need re-connect feature.
 
