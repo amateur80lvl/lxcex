@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Clean /tmp directory
+if [ -n "$LXC_ROOTFS_PATH" ] ; then
+    cd "${LXC_ROOTFS_PATH}/tmp"
+    find . -depth -path './*' -delete
+fi
