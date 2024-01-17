@@ -1,7 +1,8 @@
 # LXCex
 
 Lightweight security-focused desktop operating system based on Devuan and LXC.
-Yet another attempt to make an alternative to [Qubes OS](https://www.qubes-os.org/).
+A project for self-education and yet another attempt to make an alternative
+to [Qubes OS](https://www.qubes-os.org/).
 This is not a distro, this is an instruction and a set of files and patches,
 similar to [LFS](https://www.linuxfromscratch.org/).
 
@@ -112,16 +113,3 @@ mount --make-shared /run
 ```
 i.e. `/run`, not `/run/user` if I `mount --rbind /run/user "${LXC_ROOTFS_MOUNT}/run/host/run/user"`
 in containers and want all uid submounts to propagate.
-
-### From which deb package is this file?
-
-`dpkg -S /path/to/file`
-
-### How to examine the content of a deb file
-
-Let it be base-files:
-```
-apt download base-files
-mkdir base-files
-dpkg-deb -R base-files*.deb base-files
-```
