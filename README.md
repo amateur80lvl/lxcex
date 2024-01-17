@@ -71,6 +71,10 @@ But in general, the rationale is as follows:
 
 ## Changelog
 
+### Jan 17, 2024
+
+It plays music! Initial version of Chapter 6 is out, to be updated.
+
 ### Jan 16, 2024
 
 XFCE desktop environment is working!
