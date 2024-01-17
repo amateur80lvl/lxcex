@@ -42,10 +42,9 @@ But in general, the rationale is as follows:
 
 * improve UX
 * copy-paste across containers
-* fix keypad when numlock is off (disease of most distros I know)
+* fix keypad when numlock is off? (disease of most distros I know)
 * shared folders
-* pipewire
-* dbus in containers
+* pipewire (video)
 * composefs, when kernel 6.6 gets in stable release
 
 ## Wishes (TODO list?)
