@@ -10,8 +10,8 @@ lxc.include = /usr/share/lxc/config/devuan.common.conf
 #lxc.mount.entry = proc proc proc noexec,nodev,nosuid,hidepid=2,subset=pid 0 0
 
 # clean /tmp dir
-#lxc.hook.pre-start = /var/lib/lxc/base/clean-tmp
-#lxc.hook.post-stop = /var/lib/lxc/base/clean-tmp
+#lxc.hook.pre-start = /usr/local/share/lxcex/hooks/clean-tmp
+#lxc.hook.post-stop = /usr/local/share/lxcex/hooks/clean-tmp
 
 # lxcfs is invoked automagically, the following options aren't necessary:
 #lxc.mount.auto = cgroup:mixed

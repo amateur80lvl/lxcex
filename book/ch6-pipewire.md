@@ -66,9 +66,9 @@ is to share its host socket `/run/user/<uid>/pipewire-0`. Amended scripts:
 * [/usr/local/bin/start-user-containers](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/bin/start-user-containers):
   added `HOST_PIPEWIRE_REMOTE`. Just to hardcode default value
   in a single place https://docs.pipewire.org/page_module_protocol_native.html
-* [xdg-runtime-dir.start-host](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.start-host):
+* [xdg-runtime-dir.start-host](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/xdg-runtime-dir.start-host):
   added permissions setting for pipewire and pulseaudio sockets
-* [xdg-runtime-dir.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.mount):
+* [xdg-runtime-dir.mount](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/xdg-runtime-dir.mount):
   simplified a bit.
 * [/usr/local/share/lxcex-xdg.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/usr/local/share/lxcex-xdg.sh):
   create links to pipewire and pulseaudio sockets.

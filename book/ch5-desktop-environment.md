@@ -181,7 +181,7 @@ somewhere in the container and symlink socket to user's runtime directory:
 +-----------------------+    +-------------------------------+
 ```
 The hook
-[xdg-runtime-dir.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.mount)
+[xdg-runtime-dir.mount](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/xdg-runtime-dir.mount)
 mounts `/run/host/run/user` in the container and writes
 `HOST_WAYLAND_DISPLAY` and `HOST_XDG_RUNTIME_DIR` to `/run/host/xdg.env`.
 Scripts in the container use this information to create symlink.
@@ -204,15 +204,15 @@ as long as we've granted `rw-` permissions on it.
 
 However, a better way is to grant permissions to a whole group `users`.
 There are a couple of hooks:
-* [xdg-runtime-dir.start-host](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.start-host)
+* [xdg-runtime-dir.start-host](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/xdg-runtime-dir.start-host)
   grants permissions when container starts, and
-* [xdg-runtime-dir.stop](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/xdg-runtime-dir.stop)
+* [xdg-runtime-dir.stop](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/xdg-runtime-dir.stop)
   revokes permissions when it stops.
 
 Group id is provided as a parameter to hooks in the configuration:
 ```
-lxc.hook.start-host = /var/lib/lxc/gui-base/xdg-runtime-dir.start-host 200100
-lxc.hook.stop = /var/lib/lxc/gui-base/xdg-runtime-dir.stop 200100
+lxc.hook.start-host = /usr/local/share/lxcex/hooks/xdg-runtime-dir.start-host 200100
+lxc.hook.stop = /usr/local/share/lxcex/hooks/xdg-runtime-dir.stop 200100
 ```
 i.e. 200100 is container's subordinate gid 200000 plus 100 which corresponds `users`
 group. That's why we specified `--ingroup users` above.
@@ -264,18 +264,18 @@ but `/sys/class/drm/renderD128` is not necessary.
 
 The following hooks grant and revoke permissions on `/dev/dri/renderD128`
 to `users` group, similar to xdg-runtime-dir above:
-* [enable-dri.start-host](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/enable-dri.start-host)
-* [enable-dri.stop](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/enable-dri.stop)
+* [enable-dri.start-host](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/enable-dri.start-host)
+* [enable-dri.stop](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/share/lxcex/hooks/enable-dri.stop)
 
 Configuration parameters:
 ```
-lxc.hook.start-host = /var/lib/lxc/gui-base/enable-dri.start-host 200100
-lxc.hook.stop = /var/lib/lxc/gui-base/enable-dri.stop 200100
+lxc.hook.start-host = /usr/local/share/lxcex/hooks/enable-dri.start-host 200100
+lxc.hook.stop = /usr/local/share/lxcex/hooks/enable-dri.stop 200100
 ```
 
 If you don't mount `sysfs` in container, and this is very sensible
 approach for security reasons, you'll need to add
-[enable-dri.mount](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/enable-dri.mount)
+[enable-dri.mount](https://github.com/amateur80lvl/lxcex/tree/main/usr/local/share/lxcex/hooks/enable-dri.mount)
 mount hook to container's config:
 ```
 lxc.hook.mount = /var/lib/lxc/gui-base/enable-dri.mount
