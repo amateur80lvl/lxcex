@@ -1,0 +1,26 @@
+#!/bin/sh -e
+
+# We're dealing with mount entries, so expand any symlink
+LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
+
+# Include helper functions
+. `dirname $0`/fs-helpers.sh
+
+mount -t proc -o noexec,nodev,nosuid,hidepid=2 proc "${LXC_ROOTFS_MOUNT}/proc"
+
+# clobber files/directories in /proc except pid directories and symbolic links
+for entry in "${LXC_ROOTFS_MOUNT}"/proc/* ; do
+    name=`basename "${entry}"`
+    if [ $name -ge 0 ] 2>/dev/null ; then
+        # skip pid directories
+        continue
+    fi
+    if [ $name = sys ] ; then
+        # process sys separately
+        continue
+    fi
+    # clobber all the rest
+    clobber_fs_entry "${entry}"
+done
+
+clobber "${LXC_ROOTFS_MOUNT}/proc/sys" "fs"

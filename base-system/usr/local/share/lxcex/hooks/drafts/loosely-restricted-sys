@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+# We're dealing with mount entries, so expand any symlink
+LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
+
+# Include helper functions
+. `dirname $0`/fs-helpers.sh
+
+mount -t sysfs -o noexec,nodev,nosuid sysfs "${LXC_ROOTFS_MOUNT}/sys"
+clobber "${LXC_ROOTFS_MOUNT}/sys" "dev devices"
+clobber "${LXC_ROOTFS_MOUNT}/sys/dev" "char"
+clobber "${LXC_ROOTFS_MOUNT}/sys/devices" "pci0000:00"
+clobber "${LXC_ROOTFS_MOUNT}/sys/devices/pci0000:00" "0000:00:02.0"
