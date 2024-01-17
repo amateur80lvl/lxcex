@@ -1,4 +1,4 @@
-#!/bin/sh -e
+!/bin/sh -e
 
 # We're dealing with mount entries, so expand any symlink
 LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
@@ -9,13 +9,13 @@ mount -t tmpfs -o noexec,nodev,nosuid,mode=755,size=4M tmpfs "${LXC_ROOTFS_MOUNT
 # Using such a long path to avoid path manipulation in scripts that use it.
 mount --rbind --mkdir=711 /run/user "${LXC_ROOTFS_MOUNT}/run/host/run/user"
 
-if [ -n "${HOST_XDG_RUNTIME_DIR}" ] && [ -n "${HOST_WAYLAND_DISPLAY}" ] ; then
+if [ -n "${HOST_XDG_RUNTIME_DIR}" ] ; then
 
-    # Share host's HOST_XDG_RUNTIME_DIR and HOST_WAYLAND_DISPLAY provided
+    # Share host's HOST_XDG_RUNTIME_DIR and other HOST_* variables provided
     # by /usr/local/bin/start-user-containers
     #
     # These variables are autimagically propagated from host's environment
     # to this hook, although it's not a documented feature, it just works.
 
-    echo HOST_XDG_RUNTIME_DIR="${HOST_XDG_RUNTIME_DIR}"\\nHOST_WAYLAND_DISPLAY="${HOST_WAYLAND_DISPLAY}" >"${LXC_ROOTFS_MOUNT}/run/host/xdg.env"
+    env | grep HOST_ >"${LXC_ROOTFS_MOUNT}/run/host/xdg.env"
 fi

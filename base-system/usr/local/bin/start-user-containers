@@ -1,23 +1,28 @@
 #!/bin/sh
 
-if [ -z "${XDG_RUNTIME_DIR}" ] ; then
-    echo "XDG_RUNTIME_DIR is not set"
-    exit 1
-fi
-
-if [ -z "${WAYLAND_DISPLAY}" ] ; then
-    echo "WAYLAND_DISPLAY is not set"
-    exit 1
-fi
-
 # Make sure /run is shared.
 # This is necessary for containers to be able to re-reconnect
 # to the base compositor after it gets restarted.
 # XXX sharing /run/user, which we mount in containers, won't work. Need to share top-level /run. Why?
 mount --make-shared /run
 
-export HOST_XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}"
-export HOST_WAYLAND_DISPLAY="${WAYLAND_DISPLAY}"
+# Pass essentials to container startup hooks via HOST_* environment variables.
+
+if [ -n "${XDG_RUNTIME_DIR}" ] ; then
+    export HOST_XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}"
+fi
+
+if [ -n "${WAYLAND_DISPLAY}" ] ; then
+    export HOST_WAYLAND_DISPLAY="${WAYLAND_DISPLAY}"
+fi
+
+if [ -n "${PIPEWIRE_REMOTE}" ] ; then
+    export HOST_PIPEWIRE_REMOTE="${PIPEWIRE_REMOTE}"
+else
+    export HOST_PIPEWIRE_REMOTE=pipewire-0
+fi
+
+# Start containers.
 for container_name in $@ ; do
     CONTAINER_ROOTFS="/var/lib/lxc/${container_name}/rootfs"
     if [ x`lxc-info -sH ${container_name}` = xSTOPPED ] ; then

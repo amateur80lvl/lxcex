@@ -1,7 +1,25 @@
 #!/bin/sh -e
 
-if [ -n "${HOST_XDG_RUNTIME_DIR}" ] && [ -n "${HOST_WAYLAND_DISPLAY}" ] ; then
-    # grant permissions on socket
-    setfacl -m g:$1:--x "${HOST_XDG_RUNTIME_DIR}"
-    setfacl -m g:$1:rw "${HOST_XDG_RUNTIME_DIR}/${HOST_WAYLAND_DISPLAY}"
+# Grant permissions on sockets.
+
+if [ -n "${HOST_XDG_RUNTIME_DIR}" ] ; then
+
+    # Wayland
+    if [ -n "${HOST_WAYLAND_DISPLAY}" ] ; then
+        setfacl -m g:$1:--x "${HOST_XDG_RUNTIME_DIR}"
+        setfacl -m g:$1:rw "${HOST_XDG_RUNTIME_DIR}/${HOST_WAYLAND_DISPLAY}"
+    fi
+
+    # Pipewire
+    if [ -n "${HOST_PIPEWIRE_REMOTE}" ] && [ -S "${HOST_XDG_RUNTIME_DIR}/${HOST_PIPEWIRE_REMOTE}" ] ; then
+        setfacl -m g:$1:rw "${HOST_XDG_RUNTIME_DIR}/${HOST_PIPEWIRE_REMOTE}"
+    fi
+
+    # Pulseaudio
+    if [ -S "${HOST_XDG_RUNTIME_DIR}/pulse/native" ] ; then
+        # chmod is necessasy along with setfacl to make up effective rights
+        chmod g+x "${HOST_XDG_RUNTIME_DIR}/pulse"
+        setfacl -m g:$1:--x "${HOST_XDG_RUNTIME_DIR}/pulse"
+        setfacl -m g:$1:rw "${HOST_XDG_RUNTIME_DIR}/pulse/native"
+    fi
 fi

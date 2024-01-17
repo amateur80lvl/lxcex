@@ -1,0 +1,9 @@
+#!/bin/sh
+
+/usr/bin/runsvdir /home/$USER/service &
+runit_pid=$?
+
+/usr/bin/sway
+
+kill -HUP $runit_pid
+wait $runit_pid

@@ -1,0 +1,19 @@
+#!/usr/bin/env /lib/runit/invoke-run
+
+# libpulse resets directory permissions each time an app wants the socket.
+# Try fixing permissions to make pulse socket accessible from containers.
+
+exec 2>&1
+
+if [ -e /etc/runit/verbose ]; then
+    echo "invoke-run: starting ${PWD##*/}"
+fi
+
+pulse_dir=/run/user/`id -u`/pulse
+
+set -e
+
+while [ 1 ] ; do
+    chmod g+x $pulse_dir
+    inotifywait -e attrib $pulse_dir
+done

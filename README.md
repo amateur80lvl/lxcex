@@ -66,6 +66,7 @@ But in general, the rationale is as follows:
 * [Chapter 3. LXC and the base container](https://github.com/amateur80lvl/lxcex/tree/main/book/ch3-lxc-and-base-container.md)
 * [Chapter 4. Networking](https://github.com/amateur80lvl/lxcex/tree/main/book/ch4-networking.md)
 * [Chapter 5. Desktop Environment](https://github.com/amateur80lvl/lxcex/tree/main/book/ch5-desktop-environment.md)
+* [Chapter 6. Pipewire](https://github.com/amateur80lvl/lxcex/tree/main/book/ch6-pipewire.md)
 
 
 ## Changelog
@@ -91,6 +92,15 @@ Initial commit and release.
 
 * [Awesome Wayland: A curated list of Wayland code and resources.](https://github.com/natpen/awesome-wayland)
 * [Sway wiki](https://github.com/swaywm/sway/wiki)
+* [PipeWire Guide](https://github.com/mikeroyal/PipeWire-Guide)
+
+### socket proxies
+
+Discovered this article when wrote chapter 6:
+https://discuss.linuxcontainers.org/t/audio-via-pulseaudio-inside-container/8768
+They use LXD and it's worth to take a look at the implementation od socket proxies.
+Can we use them to retain container socket and reconnect to the host socket when
+the base compositor gets restarted? Or when a container resumes from hibernation?
 
 ### mount namespaces and shared subtrees
 
