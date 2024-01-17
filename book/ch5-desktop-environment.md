@@ -399,9 +399,10 @@ Let's install XFCE in a cloned `gui-base` container:
 lxc-copy -n gui-base -N xfce
 lxc-start xfce
 lxc-attach xfce
-apt install xfce4 atk-spi2-core
+apt install xfce4 xfce4-terminal atk-spi2-core
 ```
 Notes on packages:
+* `xfce4-terminal`: you'll need this to test things
 * `atk-spi2-core`: this package doesn't contain too much harm
   but makes XFCE a little bit happier.
 
