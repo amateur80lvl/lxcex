@@ -96,6 +96,9 @@ wget https://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/download/head:/uidm
 gcc -o /usr/local/bin/uidmapshift uidmapshift.c
 strip /usr/local/bin/uidmapshift
 ```
+Update: revising an LXC article I found this comment refers to the same utility
+https://stgraber.org/2014/01/17/lxc-1-0-unprivileged-containers/#comment-182646
+Strangely enough, it's not a part of LXC project.
 
 ## Initialization system for containers
 
