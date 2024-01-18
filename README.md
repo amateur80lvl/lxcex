@@ -94,6 +94,7 @@ Initial commit and release.
 * [Awesome Wayland: A curated list of Wayland code and resources.](https://github.com/natpen/awesome-wayland)
 * [Sway wiki](https://github.com/swaywm/sway/wiki)
 * [PipeWire Guide](https://github.com/mikeroyal/PipeWire-Guide)
+* About [Xwayland](https://ofourdan.blogspot.com/2023/10/xwayland-rootful-part1.html). However, -geometry does not work for me.
 
 ### socket proxies
 
