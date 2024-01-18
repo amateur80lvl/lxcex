@@ -431,9 +431,13 @@ Xwayland :0 &
 WAYLAND_DISPLAY= DISPLAY=:0 startxfce4
 ```
 
-You may want to adjust height with `-geometry` option (not supported in
-Xwayland version shipped with Devuan Daedalus)
-or simply switch to full screen in Sway.
+The version of Xwayland in Devuan Daedalus is way too old and uses full screen
+resolution, so its display is moved down by the height of waybar.
+You have to switch to full screen in Sway.
+
+Starting from Devuan Excalibur (Debian Trixie) the situation is much better.
+Although I failed to set initial screen size with -geometry option,
+this can be changed in XFCE display settings and this setting is preserved.
 
 If you want to start XFCE when container starts, create the following files:
 * [/home/user/sv/xwayland/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xwayland/run)
