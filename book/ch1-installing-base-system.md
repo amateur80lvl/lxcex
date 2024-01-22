@@ -221,7 +221,7 @@ Anyway, you need to set password for root to be able to log in.
 ### Disable su root
 
 Although this tweak is not necessary you may find it useful.
-Add the following line to `/etc/pam.d/su` after `auth required pam_rootok.so`:
+Add the following line to `/etc/pam.d/su` after `auth sufficient pam_rootok.so`:
 ```
 auth       requisite pam_rootok.so
 ```
