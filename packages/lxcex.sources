@@ -1,6 +1,6 @@
 Types: deb
 URIs: https://github.com/amateur80lvl/lxcex/raw/main/packages/devuan/
-Suites: sid
+Suites: daedalus
 Components: main
 Signed-By:
  -----BEGIN PGP PUBLIC KEY BLOCK-----
