@@ -1,0 +1,16 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: uidmapshift
+Upstream-Contact: Serge Hallyn <serge.hallyn@ubuntu.com>
+Source: http://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/view/head:/uidmapshift.c
+
+Files:     *
+Copyright: 2024 Anonymous
+License:   GPL-2.0
+
+Files:     uidmapshift.c
+Copyright: 2012-2016 Canonical, Inc
+License:   GPL-2.0
+
+License: GPL-2.0
+  On Debian systems the full text of the GPL-2 can be found in
+  /usr/share/common-licenses/GPL-2

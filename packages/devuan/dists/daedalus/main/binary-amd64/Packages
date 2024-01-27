@@ -1,0 +1,36 @@
+Package: uidmapshift
+Version: 27-1
+Architecture: amd64
+Maintainer: Anonymous Person <amateur80lvl@gmail.org>
+Installed-Size: 25
+Depends: libc6 (>= 2.34)
+Homepage: http://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/view/head:/uidmapshift.c
+Priority: optional
+Section: utils
+Filename: pool/main/u/uidmapshift/uidmapshift_27-1_amd64.deb
+Size: 4888
+SHA256: ced3f6c8b19bc97e45d660dda5e2cd51536b883e42db8e309d8dfee4b00176aa
+SHA1: b836603b1a7de3feff2f5c923ddeadd8d5f09375
+MD5sum: 4756f760205e2f90363ffc6934d9abbc
+Description: shift user/group ids
+ A simple utility to shift user/group ids.
+ Useful for creating unprivileged LXC containers.
+
+Package: uidmapshift-dbgsym
+Source: uidmapshift
+Version: 27-1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Anonymous Person <amateur80lvl@gmail.org>
+Installed-Size: 22
+Depends: uidmapshift (= 27-1)
+Priority: optional
+Section: debug
+Filename: pool/main/u/uidmapshift/uidmapshift-dbgsym_27-1_amd64.deb
+Size: 7624
+SHA256: 39aadcbfbc037daf9aa7b1c209535606e828069d21c272acf474e061cc0d994f
+SHA1: f5d3489f3f56e38acff6bbce5b7e7c7df9d21dd1
+MD5sum: 5e0ff3056521af8c6d45b602cd611805
+Description: debug symbols for uidmapshift
+Build-Ids: 65b94635b17b239aa8e99f9e55f6e235b53740d1
+

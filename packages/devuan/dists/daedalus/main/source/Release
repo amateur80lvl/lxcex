@@ -1,0 +1,5 @@
+Component: main
+Origin: lxcex
+Label: apt repository
+Architecture: source
+Description: LXCex devuan package repo

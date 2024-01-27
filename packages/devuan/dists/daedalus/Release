@@ -1,0 +1,28 @@
+Origin: lxcex
+Label: apt repository
+Codename: daedalus
+Date: Sat, 27 Jan 2024 19:43:35 UTC
+Architectures: amd64
+Components: main
+Description: LXCex devuan package repo
+MD5Sum:
+ 67a89cec5445c2d2e65665330c798f78 1227 main/binary-amd64/Packages
+ 5dedf7d0d56ea5e740bbc848652c94ee 671 main/binary-amd64/Packages.gz
+ 237aa690117e742c9c38c52c3df11304 111 main/binary-amd64/Release
+ 78bb44715b34b2bd3067c75621364c26 1270 main/source/Sources
+ 05df1d52f0bf6bf74f8d6862d013f430 718 main/source/Sources.gz
+ 1994b620992a200f88a238233daa7a45 112 main/source/Release
+SHA1:
+ 368d3a35f626257453b0815e711c220070f2276c 1227 main/binary-amd64/Packages
+ 1feebb2f02cba801bb0d9ea547b49f052b2698c4 671 main/binary-amd64/Packages.gz
+ 9be476b350d82bf3b77847d7173231ce93e80744 111 main/binary-amd64/Release
+ f40e765748f99e77e973ed0d8ef8f417bc99a934 1270 main/source/Sources
+ 94580f99c4447430bf31835d2931de202ede1451 718 main/source/Sources.gz
+ 964fb340428caabccb6b8d2dd09509e98a45b10f 112 main/source/Release
+SHA256:
+ cbb622e87255f676620b79e1ef9e8bdc79b3a6348ecf9f3bfddd4623846fb580 1227 main/binary-amd64/Packages
+ b8a67b0fe52587cd590311b167dc0405ae78692df2f41b653ef26f9ce88e6543 671 main/binary-amd64/Packages.gz
+ 449b323583fb8af152df50eb46c3941877f1dcdcf4ed52ca2a2befd7b71c5262 111 main/binary-amd64/Release
+ 17238db08ba9dc622926b62509ca0ccb0e42d52e244ecdb70728d5ed29fe55c3 1270 main/source/Sources
+ 0eca6b241807c21b7e0a7614cace04a0a5e083c6b52f073ffda3e635b4c3b237 718 main/source/Sources.gz
+ 058491c8b1bac97fff9aeddf9a03a27941d9fca8b8e2f993a945bfbdc631bffb 112 main/source/Release

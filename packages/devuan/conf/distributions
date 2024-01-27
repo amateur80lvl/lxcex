@@ -1,0 +1,7 @@
+Origin: lxcex
+Label: apt repository
+Codename: daedalus
+Architectures: amd64 source
+Components: main
+Description: LXCex devuan package repo
+SignWith: 20AF4264DF49BDDCF73F8FBC30CABB8050CDD5F2

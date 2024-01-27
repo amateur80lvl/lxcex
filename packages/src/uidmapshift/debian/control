@@ -1,0 +1,17 @@
+Source: uidmapshift
+Section: utils
+Priority: optional
+Maintainer: Anonymous Person <amateur80lvl@gmail.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: http://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/view/head:/uidmapshift.c
+Rules-Requires-Root: no
+#Vcs-Git: https://
+Vcs-Browser: https://github.com/amateur80lvl/lxcex/packages/uidmapshift
+
+Package: uidmapshift
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: shift user/group ids
+ A simple utility to shift user/group ids.
+ Useful for creating unprivileged LXC containers.
