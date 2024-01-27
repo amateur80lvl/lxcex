@@ -1,0 +1,6 @@
+BRIDGE=br0
+VETH_HOST_SIDE=vhost
+VETH_BRIDGE_SIDE=vbridge
+IP_ADDR=10.0.0.2/24
+ROUTE1="default via 10.0.0.1"
+ROUTE2="192.168.0.0/24 via 10.0.0.1"

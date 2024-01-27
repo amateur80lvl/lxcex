@@ -1,0 +1,108 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          networking
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     S
+# Default-Stop:      0 6
+# Short-Description: Internal virtual network configuration.
+# Description:       Internal virtual network configuration.
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+BRIDGE=
+VETH_HOST_SIDE=
+VETH_BRIDGE_SIDE=
+IP_ADDR=
+ROUTE1=
+ROUTE2=
+ROUTE3=
+ROUTE4=
+
+[ -f /etc/default/virtual-network ] && . /etc/default/virtual-network
+
+do_start()
+{
+    log_action_begin_msg "Initializing virtual network"
+
+    if ! ip link add name $BRIDGE type bridge ; then
+        log_action_end_msg 1 "Cannot add device $BRIDGE"
+        return 1
+    fi
+
+    if ! ip link set $BRIDGE up ; then
+        log_action_end_msg 1 "Cannot set $BRIDGE up"
+        return 1
+    fi
+
+    if ! ip link add dev $VETH_HOST_SIDE type veth peer name $VETH_BRIDGE_SIDE ; then
+        log_action_end_msg 1 "Cannot add veth device $VETH_HOST_SIDE/$VETH_BRIDGE_SIDE"
+        return 1
+    fi
+
+    if ! ip address add $IP_ADDR dev $VETH_HOST_SIDE ; then
+        log_action_end_msg 1 "Cannot assign address $IP_ADDR to $VETH_HOST_SIDE"
+        return 1
+    fi
+
+    if ! ip link set $VETH_BRIDGE_SIDE master $BRIDGE ; then
+        log_action_end_msg 1 "Cannot init $BRIDGE with $VETH_BRIDGE_SIDE"
+        return 1
+    fi
+
+    if ! ip link set $VETH_HOST_SIDE up ; then
+        log_action_end_msg 1 "Cannot set $VETH_HOST_SIDE up"
+        return 1
+    fi
+
+    if ! ip link set $VETH_BRIDGE_SIDE up ; then
+        log_action_end_msg 1 "Cannot set $VETH_BRIDGE_SIDE up"
+        return 1
+    fi
+
+    for ROUTE in "$ROUTE1" "$ROUTE2" "$ROUTE3" "$ROUTE4" ; do
+        if [ -n "$ROUTE" ] && ! ip route add $ROUTE ; then
+            log_action_end_msg 1 "Cannot add route $ROUTE"
+            return 1
+        fi
+    done
+
+    log_action_end_msg 0
+    return 0
+}
+
+do_stop()
+{
+    log_action_begin_msg "Stopping virtual network"
+    ip link del dev $VETH_HOST_SIDE
+    ip link del dev $BRIDGE
+    log_action_end_msg 0
+}
+
+show_status()
+{
+    ip address show dev $VETH_HOST_SIDE
+    ip route show
+}
+
+
+case $1 in
+(start)
+    do_start
+    ;;
+(restart|reload|force-reload)
+    do_stop
+    do_start
+    ;;
+(stop)
+    do_stop
+    ;;
+(status)
+    show_status
+    ;;
+(*)
+    echo >&2 "Usage: $0 {start|stop|restart|reload|force-reload|status}"
+    exit 3
+        ;;
+esac
