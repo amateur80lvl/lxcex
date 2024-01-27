@@ -68,6 +68,17 @@ But in general, the rationale is as follows:
 
 ## Changelog
 
+### Jan 27, 2024
+
+Packages repo is out. For now the only package there is uidmapshift.
+Planning to add patched version of libpulse, thus getting rid of file permission fixer.
+
+Although death from laugh is not my ultimate goal, I had to add signing key for me, anonymous.
+
+Automation is on the way. Commenced after I managed to crash the system simply by remounting /var/lib/lxc with running containers.
+Did not realize it's so dangerous.
+This action destroyed all mounted partitions including backup USB stick which had nothing to do with that. Why???
+
 ### Jan 17, 2024
 
 It plays music! Initial version of Chapter 6 is out, to be updated.
