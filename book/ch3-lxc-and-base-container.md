@@ -167,8 +167,8 @@ for f in /etc/service/getty* ; do unlink $f ; done
 ```
 
 Put the following files in `/etc/runit/boot-run`:
-* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/10-sysctl.sh)
-* [20-mountall.sh](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/runit/boot-run/20-mountall.sh)
+* [10-sysctl.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run/10-sysctl.sh)
+* [20-mountall.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/base/rootfs/etc/runit/boot-run/20-mountall.sh)
 
 It's okay to exit chrooted environment now.
 
