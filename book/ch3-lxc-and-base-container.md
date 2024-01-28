@@ -89,7 +89,7 @@ LXC documentation is silent on how to remap UIDs and GIDs for your containers.
 I found [this utility](https://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/download/head:/uidmapshift.c)
 very simple and convenient.
 
-You can download binary from [Releases](https://github.com/amateur80lvl/lxcex/releases) section
+You can download [deb package](https://github.com/amateur80lvl/lxcex/tree/main/packages/devuan/pool/main/u/uidmapshift)
 or compile it by yourself:
 ```bash
 wget https://bazaar.launchpad.net/~serge-hallyn/+junk/nsexec/download/head:/uidmapshift.c
