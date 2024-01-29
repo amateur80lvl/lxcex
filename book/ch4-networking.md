@@ -69,7 +69,7 @@ chmod -x /etc/init.d/basic-networking
 This won't delete it forever and we remove executable bit with the last command just to make
 `update-rc.d` happy.
 
-Add [virtual-network](https://github.com/amateur80lvl/lxcex/tree/main/common-files/etc/init.d/virtual-network)
+Add [virtual-network](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/init.d/virtual-network)
 to `/etc/init.d/` and create configuration file `/etc/default/virtual-network` for it:
 ```
 BRIDGE=br0
