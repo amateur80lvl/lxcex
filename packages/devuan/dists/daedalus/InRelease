@@ -4,44 +4,44 @@ Hash: SHA512
 Origin: lxcex
 Label: apt repository
 Codename: daedalus
-Date: Tue, 30 Jan 2024 07:21:24 UTC
+Date: Tue, 30 Jan 2024 07:33:56 UTC
 Architectures: amd64
 Components: main
 Description: LXCex devuan package repo
 MD5Sum:
- 7ce5beda2cbd4c83faf443cade7da184 7426 main/binary-amd64/Packages
- 9d3b3353f3fd7f9485c6689451e402fd 2476 main/binary-amd64/Packages.gz
+ ec56fa61a703498f9b5535e0e4e9f4d2 9079 main/binary-amd64/Packages
+ 56784e7295db9ca328b1707c5e25d53b 2789 main/binary-amd64/Packages.gz
  237aa690117e742c9c38c52c3df11304 111 main/binary-amd64/Release
  78bb44715b34b2bd3067c75621364c26 1270 main/source/Sources
  05df1d52f0bf6bf74f8d6862d013f430 718 main/source/Sources.gz
  1994b620992a200f88a238233daa7a45 112 main/source/Release
 SHA1:
- e9cb1ed6583a4b5b7236eb312efeeeef432dff97 7426 main/binary-amd64/Packages
- 9d8fd405c56a878fb43ad1144eac8077ef10c8dc 2476 main/binary-amd64/Packages.gz
+ 3cb5f259efb737afe2b5913eb1b47ac60901caf3 9079 main/binary-amd64/Packages
+ 9b3fae537a282acdc6c32576afb3f7873185f299 2789 main/binary-amd64/Packages.gz
  9be476b350d82bf3b77847d7173231ce93e80744 111 main/binary-amd64/Release
  f40e765748f99e77e973ed0d8ef8f417bc99a934 1270 main/source/Sources
  94580f99c4447430bf31835d2931de202ede1451 718 main/source/Sources.gz
  964fb340428caabccb6b8d2dd09509e98a45b10f 112 main/source/Release
 SHA256:
- 89ca94044025d03eef0e4bae8f31ac9e33bed99206592067e7a51d4b3d701065 7426 main/binary-amd64/Packages
- 21821b1ca819c9786e923c441d01d8cb07696f7389fa7cd1cb7f51ab648bd1dd 2476 main/binary-amd64/Packages.gz
+ 38614358a5384875586907b792a7381079b4d302a0511de345a832ad4d021f47 9079 main/binary-amd64/Packages
+ 4377a9ce212f2347d572f37763773d410f9d44f2fba87119d8c873c2aad9cef4 2789 main/binary-amd64/Packages.gz
  449b323583fb8af152df50eb46c3941877f1dcdcf4ed52ca2a2befd7b71c5262 111 main/binary-amd64/Release
  17238db08ba9dc622926b62509ca0ccb0e42d52e244ecdb70728d5ed29fe55c3 1270 main/source/Sources
  0eca6b241807c21b7e0a7614cace04a0a5e083c6b52f073ffda3e635b4c3b237 718 main/source/Sources.gz
  058491c8b1bac97fff9aeddf9a03a27941d9fca8b8e2f993a945bfbdc631bffb 112 main/source/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEIK9CZN9Jvdz3P4+8MMq7gFDN1fIFAmW4o3UACgkQMMq7gFDN
-1fJUcQ//WzceS0bU4c0hKcXgtpstOqIICCTA7Najc45orX5Aydz1dAGU+ntIaj3b
-G+FW9DIAQHnoYItnrFIVX1Q0mKdYENUAluMTfh6wQJd7E+a9zCRNdjRwEGyS7Ffw
-Kp6zJ7NDZbmQsY95CTiOqATikWb2NTuxg/VDDCPtNs1lQ+hHvzbSluZva8Zvc4zR
-czQB9L6LL/zxmOLFutvdjTWa7OtHHz5+keZ3+nzWHOZU6vdqgXI2biesYX3Hm1IA
-t2XBoCPAwcsg0jiwsFE8d5koQcRJ732pYysY35WKbvkvcgHPzNQwfdu0EEhVqvKe
-e0R189m7IFXiJ9Qqk9mxya5hhTVkm8xSYEKlq+LJCR+som6anmTaGY689GqYRFjT
-YLXXNIby8bmi8nD8OmtW8JVD6hGTCM0bv+NhNKNKQgygZGRG1t+zHIX/SQgwIvuR
-Q6EU2RqvDXq4/qXEJxFoOndJHsYgzf4I+tRWFbER0SspdysmGn+MevD8K7kpaCAR
-G7udzUYdkSFosHaFzBZBvnAza8wmLoDNpjYTJKlvXPIYrSqtBLzFJfDPhmuSMxQQ
-LGGOphMYCXq0fYw8feFcQwZoFbK1+9HARFxrJbqYPFBaniMgxIzaRlfvVPyW3fCX
-UGDaZKwNSscC8UFkBGDg4/Vx0IPdfbYkXNT4S9lxhRSVTvHIVjw=
-=q9oG
+iQIzBAEBCgAdFiEEIK9CZN9Jvdz3P4+8MMq7gFDN1fIFAmW4pmcACgkQMMq7gFDN
+1fKKihAApG0IU0AXcSNPE1pGeh/68qHIYHnPGa4FNSmV6rkQtRaJXnUonvarzO5y
+fxTCHRlu1T7h963z4Wk6s7LcOtrjN5I4BgOZnFJL+lqIgKZGsrKkayoB+7sBbzvX
+IzKIxd7sJJniSHx/OnKonpEFqg+jAmuNwNF2w3s9o9PvCo9Wfy0e8hh+GaRHkXT4
+ibLu6d8NjyrFssv1QYF1OAGlxeu00mqKkbqRGf+MpnGtR9TzJrbjdtC1leuiUP7/
+mD1B3PszvPRcW83mnZ2NOeH6XJYbeDwdIYcw6IEovj3jhqHFEONigIdN2XPEjwsY
+s+Sr1yY9ZW02zlI0MJ9R5+As/dWMxs53l7IshtyyGXjY8oCeGUG7p+xvnddbOFto
+r8HNJKE+B0uxtdREjGzJD1o3aBXrm2suu47DakKVDfBvKdKBzgMFnDkHY28iwRFy
+raqzotiQtrALwjXCHoK2YbaN3R5atAikPUX3zddJEz8ygLwNkmhrullQ+Cch+D8Q
+ukKBqBk1310aJdupdracISo+Z0xGCfSVI8jZHqPE6r/4zJnw/HCm7MIyC0JxcRAA
+11F41W+hgDmG+Kqr3dm6mzd6qT1vtC7yP74alOef/5C9TuwfKSX2YQbnr0Hp94kC
+XfCKSaSfzEKy0sJklfaI78vnyGyD1LvkHDrbsYH/vqm/7i1IZ8A=
+=DpOC
 -----END PGP SIGNATURE-----
