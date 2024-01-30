@@ -1,3 +1,48 @@
+Package: libpulse-mainloop-glib0
+Source: pulseaudio
+Version: 16.1+dfsg1-2+lxcex1
+Architecture: amd64
+Maintainer: Pulseaudio maintenance team <pkg-pulseaudio-devel@lists.alioth.debian.org>
+Installed-Size: 69
+Depends: libc6 (>= 2.4), libglib2.0-0 (>= 2.28.0), libpulse0 (= 16.1+dfsg1-2+lxcex1)
+Multi-Arch: same
+Homepage: https://www.pulseaudio.org
+Priority: optional
+Section: libs
+Filename: pool/main/p/pulseaudio/libpulse-mainloop-glib0_16.1+dfsg1-2+lxcex1_amd64.deb
+Size: 27072
+SHA256: 27c97ce16f57603e0be27b50d7e9ab2ac1669774ef064dbaa86d26c9a9baa55e
+SHA1: 6358f291f140341c267b146c6b90e7407bfa6a49
+MD5sum: 736164b27306ba30ae9837a7d426b7a3
+Description: PulseAudio client libraries (glib support)
+ PulseAudio, previously known as Polypaudio, is a sound server for POSIX and
+ WIN32 systems. It is a drop in replacement for the ESD sound server with
+ much better latency, mixing/re-sampling quality and overall architecture.
+ .
+ Client libraries used by applications that access a PulseAudio sound server
+ via PulseAudio's native interface.
+ .
+ This package adds support for glib2 client applications.
+
+Package: libpulse-mainloop-glib0-dbgsym
+Source: pulseaudio
+Version: 16.1+dfsg1-2+lxcex1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Pulseaudio maintenance team <pkg-pulseaudio-devel@lists.alioth.debian.org>
+Installed-Size: 32
+Depends: libpulse-mainloop-glib0 (= 16.1+dfsg1-2+lxcex1)
+Multi-Arch: same
+Priority: optional
+Section: debug
+Filename: pool/main/p/pulseaudio/libpulse-mainloop-glib0-dbgsym_16.1+dfsg1-2+lxcex1_amd64.deb
+Size: 17392
+SHA256: f0d76e0267f083156fe2d76ef88611c5bd820e7014a83683f8bfd3a0f2b797ae
+SHA1: 3f6964bf618248fe70278fe1d036a1eff057951a
+MD5sum: 8bb638be7332db12e291136553e904be
+Description: debug symbols for libpulse-mainloop-glib0
+Build-Ids: 34be9845e49e784d37061384180860f5bc017373
+
 Package: libpulse0
 Source: pulseaudio
 Version: 16.1+dfsg1-2+lxcex1
@@ -41,6 +86,59 @@ SHA1: f95b1d849ca0a8f578a77b190ce9dd9605e2c656
 MD5sum: 9a38d5d0bcdddee903582666532b6dc3
 Description: debug symbols for libpulse0
 Build-Ids: 71828ebd0b622c19984d0c9e217bdd2ba03f4164 71cd0533ac686367f0f2316857063400466d3323 87eba490e12432789ee0382a33e64c174492a9e6
+
+Package: pulseaudio-utils
+Source: pulseaudio
+Version: 16.1+dfsg1-2+lxcex1
+Architecture: amd64
+Maintainer: Pulseaudio maintenance team <pkg-pulseaudio-devel@lists.alioth.debian.org>
+Installed-Size: 333
+Depends: libc6 (>= 2.34), libpulse0 (= 16.1+dfsg1-2+lxcex1), libsndfile1 (>= 1.0.20), libx11-6, libx11-xcb1 (>= 2:1.8.4), libxcb1, libpulsedsp
+Suggests: avahi-daemon, pulseaudio
+Breaks: pulseaudio (<< 14.2-3~)
+Replaces: pulseaudio (<< 14.2-3~)
+Homepage: https://www.pulseaudio.org
+Priority: optional
+Section: sound
+Filename: pool/main/p/pulseaudio/pulseaudio-utils_16.1+dfsg1-2+lxcex1_amd64.deb
+Size: 88596
+SHA256: 63411f614afff9e878b5e722ef21f5bcff43252e9602505751f56cc4105df42b
+SHA1: 72e37a7aa1287610619b1f50f0f7285ae337fa4e
+MD5sum: 236d0e6e50bbc2baef47d65a061c9e8f
+Description: Command line tools for the PulseAudio sound server
+ PulseAudio, previously known as Polypaudio, is a sound server for POSIX and
+ WIN32 systems. It is a drop in replacement for the ESD sound server with
+ much better latency, mixing/re-sampling quality and overall architecture.
+ .
+ These tools provide command line access to various features of the
+ PulseAudio sound server. Included tools are:
+ .
+   paplay - Playback a WAV file via a PulseAudio sink.
+   pacat - Cat raw audio data to a PulseAudio sink.
+   parec - Cat raw audio data from a PulseAudio source.
+   pacmd - Connect to PulseAudio's built-in command line control interface.
+   pactl - Send a control command to a PulseAudio server.
+   padsp - /dev/dsp wrapper to transparently support OSS applications.
+   pax11publish - Store/retrieve PulseAudio default server/sink/source
+                  settings in the X11 root window.
+
+Package: pulseaudio-utils-dbgsym
+Source: pulseaudio
+Version: 16.1+dfsg1-2+lxcex1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Pulseaudio maintenance team <pkg-pulseaudio-devel@lists.alioth.debian.org>
+Installed-Size: 180
+Depends: pulseaudio-utils (= 16.1+dfsg1-2+lxcex1)
+Priority: optional
+Section: debug
+Filename: pool/main/p/pulseaudio/pulseaudio-utils-dbgsym_16.1+dfsg1-2+lxcex1_amd64.deb
+Size: 115916
+SHA256: e84a4c34b3588acfdbaff7fe893c4d37631c8173c3acc8f5de97e5816d3cd5e4
+SHA1: bb79f877a18a07f7134063e25e2f0a597bc1f69c
+MD5sum: 51c04a0ddc7b912a12e119b0fbd5e16c
+Description: debug symbols for pulseaudio-utils
+Build-Ids: 5fb15feac767962936e90ec51ede3bd8e44d38e6 8d0cc87b6e67f65c5683a250155ba5013e6bb603 bd1304de0937f4f34a5970bae0e2b7d64a22c673 e5da0e1799898e4add3cbfb2bf8e4272bb0694bc fbb942f08586c3ae14f324dfac7d2d1806ed937c
 
 Package: uidmapshift
 Version: 27-1
