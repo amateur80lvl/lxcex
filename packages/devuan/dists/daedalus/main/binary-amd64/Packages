@@ -1,3 +1,47 @@
+Package: libpulse0
+Source: pulseaudio
+Version: 16.1+dfsg1-2+lxcex1
+Architecture: amd64
+Maintainer: Pulseaudio maintenance team <pkg-pulseaudio-devel@lists.alioth.debian.org>
+Installed-Size: 968
+Depends: libasyncns0 (>= 0.3), libc6 (>= 2.34), libdbus-1-3 (>= 1.9.14), libsndfile1 (>= 1.0.20), libsystemd0, libx11-6, libx11-xcb1 (>= 2:1.8.4), libxcb1
+Suggests: pulseaudio
+Multi-Arch: same
+Homepage: https://www.pulseaudio.org
+Priority: optional
+Section: libs
+Filename: pool/main/p/pulseaudio/libpulse0_16.1+dfsg1-2+lxcex1_amd64.deb
+Size: 273104
+SHA256: b6c1dd552af5e7c1c197c864054f9ade3c6b15d7ef314b9173c1c645637464fd
+SHA1: a4870aa19585ceb10eca56d5882638ccf311d2ad
+MD5sum: 31209ad612d348f4ea12e8c178f10f5f
+Description: PulseAudio client libraries
+ PulseAudio, previously known as Polypaudio, is a sound server for POSIX and
+ WIN32 systems. It is a drop in replacement for the ESD sound server with
+ much better latency, mixing/re-sampling quality and overall architecture.
+ .
+ Client libraries used by applications that access a PulseAudio sound server
+ via PulseAudio's native interface.
+
+Package: libpulse0-dbgsym
+Source: pulseaudio
+Version: 16.1+dfsg1-2+lxcex1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Pulseaudio maintenance team <pkg-pulseaudio-devel@lists.alioth.debian.org>
+Installed-Size: 866
+Depends: libpulse0 (= 16.1+dfsg1-2+lxcex1)
+Multi-Arch: same
+Priority: optional
+Section: debug
+Filename: pool/main/p/pulseaudio/libpulse0-dbgsym_16.1+dfsg1-2+lxcex1_amd64.deb
+Size: 723080
+SHA256: d66e4d68c8dba5885019796b737228c46fa745f4877959a9b67d17ffda4d010d
+SHA1: f95b1d849ca0a8f578a77b190ce9dd9605e2c656
+MD5sum: 9a38d5d0bcdddee903582666532b6dc3
+Description: debug symbols for libpulse0
+Build-Ids: 71828ebd0b622c19984d0c9e217bdd2ba03f4164 71cd0533ac686367f0f2316857063400466d3323 87eba490e12432789ee0382a33e64c174492a9e6
+
 Package: uidmapshift
 Version: 27-1
 Architecture: amd64

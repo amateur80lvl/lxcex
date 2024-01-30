@@ -4,44 +4,44 @@ Hash: SHA512
 Origin: lxcex
 Label: apt repository
 Codename: daedalus
-Date: Sat, 27 Jan 2024 19:43:35 UTC
+Date: Tue, 30 Jan 2024 04:02:02 UTC
 Architectures: amd64
 Components: main
 Description: LXCex devuan package repo
 MD5Sum:
- 67a89cec5445c2d2e65665330c798f78 1227 main/binary-amd64/Packages
- 5dedf7d0d56ea5e740bbc848652c94ee 671 main/binary-amd64/Packages.gz
+ f50590937c4a92dcb7001454074eb0d2 3074 main/binary-amd64/Packages
+ f1492e992c57c684deae76d299ce03f4 1410 main/binary-amd64/Packages.gz
  237aa690117e742c9c38c52c3df11304 111 main/binary-amd64/Release
  78bb44715b34b2bd3067c75621364c26 1270 main/source/Sources
  05df1d52f0bf6bf74f8d6862d013f430 718 main/source/Sources.gz
  1994b620992a200f88a238233daa7a45 112 main/source/Release
 SHA1:
- 368d3a35f626257453b0815e711c220070f2276c 1227 main/binary-amd64/Packages
- 1feebb2f02cba801bb0d9ea547b49f052b2698c4 671 main/binary-amd64/Packages.gz
+ 04006911719ed3d11d6594ea8b6c960d690df0e3 3074 main/binary-amd64/Packages
+ 3d840d19094efba3fef5c93f35aaa7887ad1e563 1410 main/binary-amd64/Packages.gz
  9be476b350d82bf3b77847d7173231ce93e80744 111 main/binary-amd64/Release
  f40e765748f99e77e973ed0d8ef8f417bc99a934 1270 main/source/Sources
  94580f99c4447430bf31835d2931de202ede1451 718 main/source/Sources.gz
  964fb340428caabccb6b8d2dd09509e98a45b10f 112 main/source/Release
 SHA256:
- cbb622e87255f676620b79e1ef9e8bdc79b3a6348ecf9f3bfddd4623846fb580 1227 main/binary-amd64/Packages
- b8a67b0fe52587cd590311b167dc0405ae78692df2f41b653ef26f9ce88e6543 671 main/binary-amd64/Packages.gz
+ afe4f3c4f25c0384d48956d2cba9ff5b6fe76937d4c870efc7b6291c896c7c7e 3074 main/binary-amd64/Packages
+ 938e680e407f1687b5849e77aacbd159ececa9f5258d784e6381a5e49bfa9f7e 1410 main/binary-amd64/Packages.gz
  449b323583fb8af152df50eb46c3941877f1dcdcf4ed52ca2a2befd7b71c5262 111 main/binary-amd64/Release
  17238db08ba9dc622926b62509ca0ccb0e42d52e244ecdb70728d5ed29fe55c3 1270 main/source/Sources
  0eca6b241807c21b7e0a7614cace04a0a5e083c6b52f073ffda3e635b4c3b237 718 main/source/Sources.gz
  058491c8b1bac97fff9aeddf9a03a27941d9fca8b8e2f993a945bfbdc631bffb 112 main/source/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEIK9CZN9Jvdz3P4+8MMq7gFDN1fIFAmW1XOwACgkQMMq7gFDN
-1fJWcw/+IjqP9sGN1Tv3vS8k1QNRvhSygETTRTLGbLuTvrcyiEUlWbwCD/q1nB2Q
-7pOwoYmCQ3ClZlIxOL9QamafhfZ1dvRqOuZEXRAk0bEgILNuD3TsvsriCFUJ4BKO
-V1T3HmLRnM98Lq+YUmGmchjsXR5iCaG+gvMpaUcQNkXBKqQFkkCzM6TNMg4WnNHd
-OdY0wit9c33pRAIGisQIMLTfUUB4fJNMw4ajr2nyLHc6ri8YpCYE/FWBacVa1rFp
-d9XVf1/+olq5pzdMTGTZ0YtsTHakhxECWrcM7SmU7HLaXjQc8lCnPW5tEl4+38LG
-zw/vTSUaePb4Xt2xUzjd0EDCSyVRP97/Hu+HGRcNeEk3OOJuBnWFGUuNvS65WYk1
-4sWV2u4o6mRt9Rk2m0ser34gCXba7tq0bYhTVmnet8SJyn2rTwtIbM6bV6iWNBPI
-eB0OFuIrfoDOZsqlREc8tgRoshosWmzoFAIMwqm7Dddk1gJtyk9jhvL6l1dqFY0Y
-qVL9ISNiYMJlOdv5Hz671aFpPArYdMwBofkQ7CjuZ47KX7URmhfqW8pzmELcELfU
-wV4NjrEoBfV12PGJey8Jb30ejtARWwX+iuITC2XfcvYonQUUMv4+PwSbMvX/ktuM
-hewlMaKF5ZqdpyLQuZVPTQeyHEaOmmVtooaqO3mERCDRCMVZpvM=
-=MrvM
+iQIzBAEBCgAdFiEEIK9CZN9Jvdz3P4+8MMq7gFDN1fIFAmW4dMAACgkQMMq7gFDN
+1fL6NA//YZQU2oWs8J/YIT31pS/smGJ9fqjdM7WqPQ9S2xlxH4vmvhiGfJXGYCm/
+5BRLr+qU2+UW+otv2z8xuPBfncWrkgLRX8rSAOB+0MCYNmM9yPAISxi4siMngro+
+vgkcKvG2a8ckhQYYMxbAxRyEIADgtY8+rXmqcaagIZaG+qYiozmQArsUqJQJSK1v
+5KcJW5O01qw4X3l8ZDhrD817muPiVYat+FA/7esVHLAqBCN5RzHiKBuT7m8jN4vQ
+ppHDyEIz7NMnXZOFGF2ZzaA5n5jy5vRUwlexly75i4CazAUDozNTiEmmsXAs+5K+
+fy0fGD6P/LQJthrKq1iwIsi4KWBBolN5YUw8Z/BwBA/Axn1Fs+dPspAhMvZ4tbTs
+sg0lfrTbQNfwFKhp0NMvpi7GKQk1KeLuegyp7zp/nRumGQ5pgNTrQtQABIG5l4l7
+fJshug6JQ9K5G7KfJ3VOqgrm001ab9uAp4ebdIzQjYN1iSjeflKGfWE/DtTQFnml
+7a+/R4/3ilyP33vSX19MX01tRz6oAajwLaAfvc+FMHxGrKccJQGWVI2EIPudfuq7
+MAwUN2pDrxVwfAVGx7hCgBX3BlUFjg/J28plAMFU4BuJEd/BtMJdze8kmTNHW0vF
+lnCWAIIj7orGpfJRooYKq2ADUlBH5ruhcN744p4BmDSYQCl36Q0=
+=UxMw
 -----END PGP SIGNATURE-----
