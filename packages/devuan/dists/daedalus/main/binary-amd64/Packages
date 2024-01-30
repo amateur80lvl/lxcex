@@ -130,6 +130,29 @@ MD5sum: 251b849b5338046e75dc763399681421
 Description: debug symbols for libpulsedsp
 Build-Ids: 2021c2ee4189e0bfcfe8dce884306efa91b6f37c
 
+Package: lxcfs
+Version: 5.0.3-1+deb12u1+lxcex1
+Architecture: amd64
+Maintainer: pkg-lxc <pkg-lxc-devel@lists.alioth.debian.org>
+Installed-Size: 236
+Depends: lsb-base, libc6 (>= 2.34), libfuse3-3 (>= 3.2.3), libgcc-s1 (>= 3.3.1)
+Homepage: https://linuxcontainers.org
+Priority: optional
+Section: admin
+Filename: pool/main/l/lxcfs/lxcfs_5.0.3-1+deb12u1+lxcex1_amd64.deb
+Size: 77244
+SHA256: bb244d83f5ed272b44e20fd7a986d1df5860fa1cc60987fd809899183bc2dfad
+SHA1: a36424c48758bae415b639206abccf877c18390b
+MD5sum: 60a25ff0d0115bb9b26a914453dab1bb
+Description: FUSE based filesystem for LXC
+ LXCFS provides a FUSE based filesystem to improve the LXC experience
+ within the containers.
+ .
+ This filesystem offers both a cgroupfs-like view for use by
+ unprivileged containers which wouldn't otherwise be allowed to mount
+ cgroupfs. And a set of files that are meant to be bind-mounted over
+ their /proc equivalent to make them cgroup-aware.
+
 Package: pulseaudio-utils
 Source: pulseaudio
 Version: 16.1+dfsg1-2+lxcex1
