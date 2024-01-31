@@ -24,7 +24,7 @@ set $menu bemenu-run -l 20 -W 0.2 -B 2 -p "run:"
 
 input "type:keyboard" {
     xkb_model "pc105"
-    xkb_layout "us,ru"
+    xkb_layout "us,ua,ro,ru"
     xkb_options "grp:alt_shift_toggle"
     repeat_delay 250
     repeat_rate 30

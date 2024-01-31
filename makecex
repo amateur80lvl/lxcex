@@ -263,7 +263,7 @@ def console_tweaks():
 
 
 def keyboard_tweaks():
-    change_env_var(dest_dir, '/etc/default/keyboard', 'XKBLAYOUT', '"us,ro,ru,ua"')
+    change_env_var(dest_dir, '/etc/default/keyboard', 'XKBLAYOUT', '"us,ua,ro,ru"')
     change_env_var(dest_dir, '/etc/default/keyboard', 'XKBOPTIONS', '"grp:alt_shift_toggle"')
 
 fstab_template = '''\
