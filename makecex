@@ -1,0 +1,1324 @@
+#!/usr/bin/env python3
+
+'''
+The script requires root privileges for mounting and formatting
+destination device, for installing grub on it, and for assigning
+file permissions.
+'''
+
+codename = 'daedalus'
+
+devuan_mirror = 'http://deb.devuan.org/merged'
+
+devuan_keys = [
+    '0022D0AB5275F140',
+    '94532124541922FB'
+]
+
+apt_sources_list = f'''\
+deb {devuan_mirror} {codename} main contrib non-free non-free-firmware
+deb {devuan_mirror} {codename}-security main contrib non-free non-free-firmware
+deb {devuan_mirror} {codename}-updates main contrib non-free non-free-firmware
+deb {devuan_mirror} {codename}-backports main contrib non-free non-free-firmware
+'''
+
+# if not specified, the device won't be mounted and formatted;
+# grub installation will be skipped as well
+dest_device = None # '/dev/sdb'
+
+# if specified, the device won't be partitioned
+dest_partition = None # 1
+
+dest_dir = '/mnt/devuan'
+
+# /etc/hostname
+hostname = 'computer'
+
+# password options:
+# None: do not set
+# 'ask': prompt for password
+# any other string: root password
+root_password = '12345'
+
+user_number_one = 'user'            # same for base system and containers
+user_number_one_id = 1000
+user_number_one_password = '12345'  # options are same as for root_password
+user_number_one_shell = '/bin/bash'
+
+primary_network_interface = 'eth0'
+ipv4_address = '192.168.0.2/24'
+ipv4_gateway = '192.168.0.1'
+ipv4_local_network = '192.168.0.0/24'
+# TODO DHCP
+
+root_ssh_keys = '''\
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOsfWsjKjzAdlNXo/mvKO+ATg2nspxLHADECELdNhKg8 sample-key@example.org
+'''
+
+ssh_trusted_hosts = [
+    '192.168.0.3',
+    '192.168.0.4'
+]
+
+networking = 'basic'  # options: ifupdown, basic
+networking_config = {
+    'ifupdown': {
+        'base_system_packages': [
+            'ifupdown'
+        ],
+        'networking_container_packages': [
+            'ifupdown'
+        ]
+    },
+    'basic': {
+        'base_system_packages': [
+        ],
+        'networking_container_packages': [
+        ]
+    }
+}
+networking_script_name = f'configure_{networking}_networking'
+
+internal_bridge = 'br0'
+internal_ipv4_addr = '10.0.0.2/24'
+
+desktop = 'sway'  # no other options for now
+
+desktop_config = {
+    'sway': {
+        'packages': [
+            'sway',    # you may want wayfire
+            'bemenu',  # application launcher
+            'waybar',  # slightly better than the default swaybar
+            'fonts-font-awesome', # necessary to display icons in waybar
+            'foot'     # terminal application
+            #'wev'      # could be useful to discover key codes
+        ]
+    }
+}
+desktop_script_name = f'configure_{desktop}_desktop'
+
+disable_ipv6 = True
+blacklist_nvidia = True
+
+# subordinate user/group ids
+subid_range = lambda: range(100000, 4000000, 100000)
+
+containers = {
+    'base': {
+        'subid': 0,
+        'autostart': 0
+    },
+    'networking': {
+        'subid': 100000,
+        'ipv4_addr': '10.0.0.1/24',
+        'autostart': 1
+    },
+    'gui-base': {
+        'subid': 0,
+        'gui': True,
+        'autostart': 0
+    },
+    'weston': {
+        'subid': 200000,
+        'ipv4_addr': '10.0.0.3/24',
+        'gui': True,
+        'autostart': 0
+    },
+    'xfce4': {
+        'subid': 300000,
+        'ipv4_addr': '10.0.0.4/24',
+        'gui': True,
+        'autostart': 1
+    }
+}
+if tuple(containers.keys())[:3] != ('base', 'networking', 'gui-base'):
+    # dict should retain the order, this is guaranteed starting from python 3.7
+    raise Exception('Python 3.7 or above is required')
+
+container_script_template = 'create_{container_name}_container'
+
+user_containers = [
+    'xfce4'
+]
+
+# the very minimum packages for debootstrap;
+# avoid adding more because it does not handle dependencies well
+
+flavor_include = ['nano']
+flavor_exclude = ['vim-common', 'vim-tiny']
+
+essentials_include = [
+    'apt-transport-https',  # at the moment lxcex repo is on github, https only
+    'ca-certificates',  # you definitely need this to download anything over HTTPS
+    'dialog',           # necessary for dpkg-reconfigure
+    'libc-l10n',        # required for localization
+    'locales'           # required for localization
+]
+
+# install all the rest with apt:
+
+base_system_packages = [
+    # essentials:
+    'acl',              # required to grant permissions on `/dev/dri`, etc. to containers
+    'apparmor',         # required by some packages
+    'apt-utils',        # this is what you surely need
+    'console-setup',    # for keyboard layouts and console fonts
+    'cpio',             # needed by initramfs
+    'eudev',            # simply required
+    'fdisk',            # to manipulate partition tables on storage devices, not absolutely necessary
+    'less',             # is not necessary if you can do without it
+    'parted',           # to manipulate partition tables on storage devices
+    'sudo',             # required for "desktop integration" with containers
+    'wireless-regdb',   # usually required by wireless drivers, otherwise they may puke their
+                        # complaints over the boot screen
+    'zstd',             # needed by initramfs
+
+    # any distro must have the following:
+    'chrony',
+    'cron',
+    'rsyslog',
+
+    # useful stuff:
+    'bash-completion',
+    'bsdextrautils',
+    'desktop-base',     # for GRUB theme, at least
+    'file',
+    'findutils',
+    'gpm',              # is needed if you want mouse in text console
+    'lsb-release',
+    'lsof',
+    'man-db',
+    'manpages',
+    'pciutils',
+    'procps',
+    'psmisc',
+    'psutils',
+    'screen',
+    'smartmontools',
+    'sysfsutils',
+    'tree',
+    'tzdata',
+    'usbutils',
+    'xz-utils',
+
+    # networking essentials
+    'iputils-ping',
+    'iputils-tracepath',
+    'iproute2',
+    'netbase',
+
+    # for remote access and/or backups:
+    'openssh-server',
+    'openssh-sftp-server',
+    'rsync',
+
+    # LXC
+    'cgroupfs-mount',
+    'debootstrap',
+    'distro-info',
+    'lxc',
+    'lxcfs',
+    'lxc-templates',
+    'libpam-cgfs',
+    'libvirt0',
+    'uidmap',
+
+    # Pipewire
+    'rtkit',
+    'pipewire-audio',
+    'pipewire-libcamera',
+    'libcamera-ipa',
+    'pulseaudio-utils',
+    'pavucontrol',
+    'runit',          # for managing user sessions
+
+    # lxcex packages
+    'uidmapshift'     # nice utility by Serge Hallyn
+]
+
+kernel_packages = [
+    'linux-image-amd64',
+    'initramfs-tools',
+    'grub2',
+    'firmware-linux-free',
+    'firmware-linux-nonfree',
+    'firmware-misc-nonfree',
+    'firmware-realtek',
+    'intel-microcode',
+    'amd64-microcode'
+]
+
+linux_cmdline = 'tsc=unstable lapic=notscdeadline intel_iommu=off'
+
+def lxc_net_tweaks():
+    change_env_var(dest_dir, '/etc/default/lxc-net', 'USE_LXC_BRIDGE', '"false"')
+    chroot(dest_dir, 'invoke-rc.d lxc-net stop')
+    chroot(dest_dir, 'update-rc.d lxc-net remove')
+
+
+def console_tweaks():
+    change_env_var(dest_dir, '/etc/default/console-setup', 'CHARMAP', '"UTF-8"')
+    change_env_var(dest_dir, '/etc/default/console-setup', 'CODESET', '"CyrSlav"')
+
+
+def keyboard_tweaks():
+    change_env_var(dest_dir, '/etc/default/keyboard', 'XKBLAYOUT', '"us,ro,ru,ua"')
+    change_env_var(dest_dir, '/etc/default/keyboard', 'XKBOPTIONS', '"grp:alt_shift_toggle"')
+
+fstab_template = '''\
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+
+UUID={uuid} / ext4 relatime,errors=remount-ro,commit=120 0 1
+
+# The following mounts are for plausible deniability.
+# Note that /var/tmp is heavily used by dpkg-reconfigure, consider using hidden volume
+tmpfs  /tmp      tmpfs  nosuid,nodev,mode=1777,size=32M       0 1
+tmpfs  /var/tmp  tmpfs  nosuid,nodev,mode=1777,size=512M      0 1
+tmpfs  /var/log  tmpfs  nosuid,noexec,nodev,mode=755,size=8M  0 1
+'''
+
+base_container_packages = [
+    # essentials
+    'apt-utils',        # this is what you surely need
+#    'console-setup',    # for keyboard layouts and console fonts -- XXX necessary?
+    'less',             # is not necessary if you can do without it
+    'lsb-release',
+    'lsof',
+    'procps',
+    'psutils',
+    'psmisc',
+    'runit',
+    'runit-init',
+
+    # networking essentials
+    'iputils-ping',
+    'iputils-tracepath',
+    'iproute2',
+    'netbase',
+
+    # useful stuff:
+    'bash-completion',
+    'bsdextrautils',
+    'file',
+    'findutils',
+    'lsb-release',
+    'lsof',
+    'procps',
+    'psmisc',
+    'psutils',
+    'tree',
+    'tzdata',
+    'xz-utils'
+]
+
+base_container_exclude = [
+    'bootlogd',
+    'dmidecode',
+    'sysvinit-core'
+]
+
+networking_container_packages = [
+    'apt-cacher-ng',
+    'iw',
+    'nftables',
+    'rfkill',
+    'tcpdump',
+    'wireless-tools',
+    'wpasupplicant'
+]
+
+gui_base_packages = [
+    'x11-common'       # lots of software still need it so let it be here
+]
+
+weston_packages = [
+    'weston'
+#    'cage',      # for running single apps
+#    'xwayland',  # for running X Window apps
+#    'mesa-utils' # for glxgears demo
+]
+
+xfce4_packages = [
+    'xfce4',
+    'xfce4-terminal',
+    'xwayland',       # XFCE does not support Wayland yet
+    'libegl1',        # Xwayland needs this but has no strict dependency
+    'at-spi2-core'    # this package doesn't contain too much harm but makes XFCE a little bit happier
+]
+
+nftables_conf = f'''\
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+define ssh_trusted_hosts = {{ {', '.join(ssh_trusted_hosts)} }}
+
+table inet filter {{
+    chain input {{
+        type filter hook input priority 0; policy drop;
+
+        # accept any localhost traffic
+        iif lo accept
+
+        # accept ICMP traffic
+        ip protocol icmp accept
+
+        # accept apt-cacher-ng
+        iif {{ ethv, lo}} tcp dport 3142 accept
+
+        # accept traffic originated from us
+        ct state established,related accept
+    }}
+    chain output {{
+        type filter hook output priority 0; policy accept;
+    }}
+}}
+
+table ip nat {{
+    chain prerouting {{
+        type nat hook prerouting priority -100; policy accept;
+
+        # DNAT ssh to the host system
+        ip saddr $ssh_trusted_hosts tcp dport 22 dnat to {internal_ipv4_addr.split('/')[0]}
+    }}
+    chain postrouting {{
+        type nat hook postrouting priority 100; policy accept;
+
+        iif ethv masquerade random,persistent
+    }}
+}}
+'''
+
+container_config_template = '''\
+lxc.apparmor.profile = unconfined
+
+{network_configuration}
+
+# Common configuration
+lxc.include = /usr/share/lxc/config/devuan.common.conf
+
+# Container specific configuration
+lxc.rootfs.path = dir:/var/lib/lxc/{container_name}/rootfs
+lxc.uts.name = {container_name}
+
+{idmap_configuration}
+
+{gui_configuration}
+
+lxc.start.auto = {autostart}
+'''
+
+network_configuration_template = '''\
+lxc.net.0.type = veth
+lxc.net.0.name = ethv
+lxc.net.0.link = {internal_bridge}
+lxc.net.0.flags = up
+lxc.net.0.ipv4.address = {ipv4_addr}
+'''
+
+idmap_configuration_template = '''\
+lxc.include = /usr/share/lxc/config/devuan.userns.conf
+lxc.idmap = u 0 {subid} 65536
+lxc.idmap = g 0 {subid} 65536
+'''
+
+gui_configuration_template = '''\
+# don't mount procfs, sysfs, etc.
+lxc.mount.auto =
+
+lxc.hook.version = 1
+
+lxc.cgroup.devices.allow = c 226:128 rwm
+lxc.mount.entry = /dev/dri/renderD128 dev/dri/renderD128 none bind,create=file 0 0
+lxc.hook.start-host = /usr/local/share/lxcex/hooks/enable-dri.start-host {users_subgid}
+lxc.hook.mount = /usr/local/share/lxcex/hooks/enable-dri.mount
+lxc.hook.stop = /usr/local/share/lxcex/hooks/enable-dri.stop {users_subgid}
+
+# Mount /proc in highly restricted mode.
+# Note that lxcfs won't be able to mount its files and all those df, uptime, etc. won't work at all.
+lxc.mount.entry = proc proc proc noexec,nodev,nosuid,hidepid=2,subset=pid 0 0
+
+lxc.hook.start-host = /usr/local/share/lxcex/hooks/xdg-runtime-dir.start-host {users_subgid}
+lxc.hook.mount = /usr/local/share/lxcex/hooks/xdg-runtime-dir.mount
+lxc.hook.stop = /usr/local/share/lxcex/hooks/xdg-runtime-dir.stop {users_subgid}
+'''
+
+def make_container_config(container_name):
+
+    params = containers[container_name]
+
+    network_configuration = ''
+    idmap_configuration = ''
+    gui_configuration = ''
+
+    subid = params.get('subid', 0)
+    if subid:
+        users_subgid = subid + 100  # XXX how to get id of `users` group?
+        idmap_configuration = idmap_configuration_template.format(
+            subid = subid
+        )
+    else:
+        subid = ''
+        users_subgid = ''
+
+    ipv4_addr = params.get('ipv4_addr', None)
+    if ipv4_addr is not None:
+        network_configuration = network_configuration_template.format(
+            primary_network_interface = primary_network_interface,
+            internal_bridge = internal_bridge,
+            ipv4_addr = ipv4_addr
+        )
+
+    if params.get('gui', False):
+        gui_configuration = gui_configuration_template.format(
+            users_subgid = users_subgid
+        )
+
+    return container_config_template.format(
+        container_name = container_name,
+        network_configuration = network_configuration,
+        idmap_configuration = idmap_configuration,
+        gui_configuration = gui_configuration,
+        autostart = params['autostart']
+    )
+
+
+def install():
+    '''
+    Main installation procedure.
+    '''
+    check_prerequisites()
+    prepare_media()
+    debootstrap_base_system()
+    base_system_tweaks()
+
+    # install desktop environment
+    desktop_script = globals()[desktop_script_name]
+    desktop_script()
+
+    # create containers
+    for container_name, container_config in containers.items():
+        script_name = container_script_template\
+                      .format(container_name=container_name)\
+                      .replace('-', '_')
+        container_script = globals()[script_name]
+        container_script()
+
+    # configure networking
+    networking_script = globals()[networking_script_name]
+    networking_script()
+
+    # finally, setup apt cacher for all containers
+    setup_apt_cacher()
+
+
+def check_prerequisites():
+
+    required_commands = '''
+        chmod
+        chpasswd
+        chroot
+        lsblk
+        rsync
+    '''.split()
+
+    devuan = '''
+        debootstrap
+    '''.split()
+
+    non_devuan = '''
+        git
+        gpg
+    '''.split()
+
+    media_formatting = '''
+        mkfs.ext4
+        mount
+    '''.split()
+    media_partitioning = '''
+        parted
+    '''.split()
+
+    print('Checking prerequisites')
+
+    if is_devuan():
+        required_commands.extend(devuan)
+    else:
+        required_commands.extend(non_devuan)
+
+    if dest_device is not None:
+        required_commands.extend(media_formatting)
+
+    if dest_partition is not None:
+        required_commands.extend(media_partitioning)
+
+    failed = False
+    for cmd in required_commands:
+        if run(f'which {cmd}', check=False).returncode != 0:
+            print(f'{cmd} is required')
+            failed = True
+    if failed:
+        sys.exit(1)
+
+
+def is_devuan():
+    distro = run('lsb_release -is').stdout.strip()
+    return distro == 'Devuan'
+
+
+def prepare_media():
+    '''
+    Side effect: set dest_partition if None
+    '''
+    if dest_device is None:
+        return
+
+    global dest_partition
+    if dest_partition is None:
+        print('Creating partition table')
+        run(f'parted -s {dest_device} "mklabel gpt"')
+
+        # legacy boot mode for now
+        # TODO EFI
+        run(f'parted -s {dest_device} "mkpart primary 34 2047"')
+        run(f'parted -s {dest_device} "set 1 bios_grub"')
+
+        run(f'parted -s {dest_device} "mkpart primary 2048 -1"')
+        dest_partition = 2
+
+    print('Formatting partition')
+    dev = get_partition_device(dest_device, dest_partition)
+    run(f'mkfs -t ext4 -F -E nodiscard {dev}', capture_output=False)
+
+    print('Mounting partition')
+    run(f'mkdir -p "{dest_dir}"')
+    run(f'mount {dev} "{dest_dir}"', capture_output=False)
+
+
+def debootstrap_base_system():
+
+    env = dict()
+    debootstrap_args = []
+
+    if not is_devuan():
+        run('git clone https://git.devuan.org/devuan/debootstrap.git')
+        env['DEBOOTSTRAP_DIR'] = run('realpath debootstrap').stdout.strip()
+
+        run('gpg --no-default-keyring --keyserver keyring.devuan.org '\
+            '--keyring ./devuan-keyring.gpg '\
+            f'--recv-keys {" ".join(devuan_keys)}')
+        debootstrap_args.append('--keyring=./devuan-keyring.gpg')
+
+    command = f'debootstrap --variant=minbase '\
+              f'--include={",".join(essentials_include + flavor_include)} '\
+              f'--exclude={",".join(flavor_exclude)} '\
+              f'{" ".join(debootstrap_args)}' \
+              f'{codename} "{dest_dir}" {devuan_mirror}'
+
+    run(command, env=env, capture_output=False)
+
+
+def base_system_tweaks():
+
+    # configure locales
+    chroot(dest_dir, 'dpkg-reconfigure locales', capture_output=False);
+
+    # install more packages
+    configure_apt(dest_dir)
+    packages = list(base_system_packages)
+    packages.extend(networking_config[networking]['base_system_packages'])
+    packages.extend(desktop_config[desktop]['packages'])
+    apt_install(dest_dir, packages)
+
+    # declarative tweaks
+    lxc_net_tweaks()
+    console_tweaks()
+    keyboard_tweaks()
+
+    # prepare /etc/fstab
+    if dest_device is not None:
+        uuid = get_partition_uuid(dest_device, dest_partition)
+        write_file(dest_dir, '/etc/fstab', fstab_template.format(uuid=uuid))
+
+    configure_hostname(dest_dir, hostname)
+
+    # module blacklisting
+    if blacklist_nvidia:
+        run(f'mkdir -p "{dest_dir}/etc/modprobe.d"')
+        write_file(dest_dir, '/etc/modprobe.d/blacklist-nvidia-nouveau.conf', dedent('''\
+            blacklist nouveau
+            options nouveau modeset=0
+            '''
+        ))
+
+    # LXC security tweaks
+    run(f'chmod 751 "{dest_dir}/var/lib/lxc"')  # don't let anyone list your containers
+    change_option(dest_dir, '/etc/sysctl.conf', 'kernel.dmesg_restrict', 1)  # disable dmesg in containers
+
+    # IPv6
+    if disable_ipv6:
+        change_option(dest_dir, '/etc/sysctl.conf', 'net.ipv6.conf.all.disable_ipv6', 1)
+        change_option(dest_dir, '/etc/sysctl.conf', 'net.ipv6.conf.default.disable_ipv6', 1)
+
+    # disable su root
+    add_line_to_file(
+        dest_dir, '/etc/pam.d/su',
+        'auth       requisite pam_rootok.so',
+        after=r'auth\s+sufficient\s+pam_rootok.so'
+    )
+
+    # set root password
+    if root_password is not None:
+        if root_password == 'ask':
+            passwd = ask_password('Enter password for root')
+        else:
+            passwd = root_password
+        run(f'chpasswd --root "{dest_dir}"', input=f'root:{passwd}')
+
+    # add SSH keys
+    if root_ssh_keys.strip():
+        run(f'mkdir "{dest_dir}/root/.ssh"')
+        run(f'chmod 600 "{dest_dir}/root/.ssh"')
+        write_file(dest_dir, '/root/.ssh/authorized_keys', root_ssh_keys)
+
+    # generate subuid and subgid for root
+    subordinate_ids = ''.join(f'root:{sub_id}:65536\n' for sub_id in subid_range())
+    write_file(dest_dir, '/etc/subuid', f'{subordinate_ids}\n')
+    write_file(dest_dir, '/etc/subgid', f'{subordinate_ids}\n')
+
+    # copy /etc/skel from common-files
+    install_dir('common-files', dest_dir, '/etc/skel')
+    # copy .bashrc for root
+    chroot(dest_dir, 'cp /etc/skel/.bashrc /root/')
+
+    # create user #1
+    chroot(dest_dir, f'useradd -u {user_number_one_id} -g users '\
+                     '-G audio,video,pipewire '\
+                     '--create-home --skel /etc/skel '\
+                     f'--shell {user_number_one_shell} {user_number_one}')
+    if user_number_one_password is not None:
+        if user_number_one_password == 'ask':
+            passwd = ask_password('Enter password for root')
+        else:
+            passwd = user_number_one_password
+        run(f'chpasswd --root "{dest_dir}"', input=f'{user_number_one}:{passwd}')
+
+    install_user_services('base-system/home/user/.config/sv', dest_dir, 0)
+
+    # install lxc hooks, start-user-containers script, and sudo file for desktop integration
+    install_dir('base-system', dest_dir, '/usr/local/share/lxcex')
+    install_file('base-system', dest_dir, '/usr/local/bin/start-user-containers')
+    install_file('base-system', dest_dir, '/etc/sudoers.d/50-start-user-containers')
+
+    # install kernel and bootloader
+    if dest_device is not None:
+        chroot(dest_dir, f'apt install -y {" ".join(kernel_packages)}', capture_output=False)
+
+        grub_cmdline_linux = get_env_var(dest_dir, '/etc/default/grub', 'GRUB_CMDLINE_LINUX')
+        grub_cmdline_linux += ' '
+        grub_cmdline_linux += linux_cmdline
+        grub_cmdline_linux += ' net.ifnames=1'
+        grub_cmdline_linux = grub_cmdline_linux.strip()
+        change_env_var(dest_dir, '/etc/default/grub', 'GRUB_CMDLINE_LINUX', f'"{grub_cmdline_linux}"')
+
+        # apply GRUB theme
+        chroot(dest_dir, 'dpkg-reconfigure desktop-base', capture_output=False);
+
+        run(f'mount --bind /dev "{dest_dir}/dev"')
+        run(f'mount --bind /proc "{dest_dir}/proc"')
+        run(f'mount --bind /sys "{dest_dir}/sys"')
+        try:
+            chroot(dest_dir, 'update-initramfs -u', capture_output=False)
+            chroot(dest_dir, 'update-grub', capture_output=False)
+            chroot(dest_dir, f'grub-install {dest_device}', capture_output=False)
+        finally:
+            run(f'umount "{dest_dir}/dev"')
+            run(f'umount "{dest_dir}/proc"')
+            run(f'umount "{dest_dir}/sys"')
+
+    # clean apt cache
+    chroot(dest_dir, 'apt clean')
+
+
+def configure_sway_desktop():
+
+    # XXX use login manager?
+    add_line_to_file(dest_dir, f'/home/{user_number_one}/.profile', dedent('''
+        # if logged in from console
+        if [ x"$TERM" = "xlinux" ] ; then
+            exec /usr/bin/dbus-run-session -- /usr/local/bin/sway-session
+        fi
+    '''))
+
+    install_file('base-system', dest_dir, '/usr/local/bin/sway-session')
+    install_dir2('base-system/home/user/.config/sway', dest_dir, f'/home/{user_number_one}/.config/sway')
+
+
+def create_base_container():
+
+    container_rootfs = f'{dest_dir}/var/lib/lxc/base/rootfs'
+    run(f'mkdir -p "{container_rootfs}"')
+
+    env = dict()
+    debootstrap_args = []
+
+    if not is_devuan():
+        env['DEBOOTSTRAP_DIR'] = run('realpath debootstrap').stdout.strip()
+        debootstrap_args.append('--keyring=./devuan-keyring.gpg')
+
+    command = f'debootstrap --variant=minbase '\
+              f'--include={",".join(essentials_include + flavor_include)} '\
+              f'--exclude={",".join(flavor_exclude + base_container_exclude)} '\
+              f'{" ".join(debootstrap_args)}' \
+              f'{codename} "{container_rootfs}" {devuan_mirror}'
+
+    run(command, env=env, capture_output=False)
+
+    lxc_config = make_container_config('base')
+    write_file(dest_dir, '/var/lib/lxc/base/config', lxc_config)
+
+    # configure locales
+    chroot(container_rootfs, 'dpkg-reconfigure locales', capture_output=False);
+
+    # install more packages
+    configure_apt(container_rootfs)
+    chroot(container_rootfs, 'apt update', capture_output=False);
+    apt_install(container_rootfs, base_container_packages)
+
+    configure_hostname(container_rootfs, 'base')
+
+    # setup runit in native boot mode
+    chroot(container_rootfs, 'touch /etc/runit/native.boot.run')
+    chroot(container_rootfs, 'touch /etc/runit/no.emulate.sysv')
+    chroot(container_rootfs, 'mkdir /etc/runit/boot-run')
+    chroot(container_rootfs, 'mkdir /etc/runit/shutdown-run')
+    chroot(container_rootfs, 'sh -s', input='for f in /etc/service/getty* ; do unlink $f ; done')
+
+    install_dir('containers/base/rootfs', container_rootfs, '/etc/runit/boot-run')
+
+    # copy /etc/skel from common-files
+    install_dir('common-files', container_rootfs, '/etc/skel')
+    # copy .bashrc for root
+    chroot(container_rootfs, 'cp /etc/skel/.bashrc /root/')
+
+    # create user #1 in the container
+    chroot(
+        container_rootfs,
+        f'useradd -u {user_number_one_id} -g users '\
+            '--create-home --skel /etc/skel '\
+            f'--shell {user_number_one_shell} {user_number_one}'
+    )
+
+    # clean apt cache
+    chroot(container_rootfs, 'apt clean')
+
+
+def create_networking_container():
+
+    subid = containers['networking'].get('subid', 0)
+    container_rootfs = f'{dest_dir}/var/lib/lxc/networking/rootfs'
+    run(f'mkdir -p "{container_rootfs}"')
+
+    copy_lxc_rootfs('base', 'networking')
+
+    lxc_config = make_container_config('networking')
+    lxc_config += dedent(f'''
+        # physical interfaces:
+        lxc.net.1.type = phys
+        lxc.net.1.link = {primary_network_interface}
+        lxc.net.1.flags = up
+    '''))
+
+    write_file(dest_dir, '/var/lib/lxc/networking/config', lxc_config)
+
+    configure_hostname(container_rootfs, 'networking')
+
+    # install packages
+    packages = networking_container_packages + networking_config[networking]['networking_container_packages']
+    apt_install(container_rootfs, packages)
+
+    # configure forwarding
+    change_option(container_rootfs, '/etc/sysctl.conf', 'net.ipv4.ip_forward', 1)
+    # XXX same for ipv6 if not disabled
+
+    # configure firewall
+    write_file(container_rootfs, '/etc/nftables.conf', nftables_conf)
+    run(f'chmod +x "{container_rootfs}/etc/nftables.conf"')
+
+    # configure apt-cacher-ng
+    ipv4_addr = containers['networking']['ipv4_addr'].split('/')[0]
+    chroot(
+        container_rootfs,
+        'sed -i '\
+        f'-e "s/# BindAddress:.*/BindAddress: {ipv4_addr}/" '\
+        '-e "s/# PassThroughPattern: \\.\\*.*/PassThroughPattern: \\.\\* # allow CONNECT to everything/" '\
+        '/etc/apt-cacher-ng/acng.conf'
+    )
+    # setup runit service
+    chroot(container_rootfs, 'mkdir -p /etc/sv/apt-cacher-ng')
+    install_file('containers/networking/rootfs', container_rootfs, '/etc/sv/apt-cacher-ng/run')
+    chroot(container_rootfs, 'ln -sf /etc/sv/apt-cacher-ng /etc/service/')
+
+    # clean apt cache
+    chroot(container_rootfs, 'apt clean')
+
+    # shift ids
+    if subid:
+        chroot(dest_dir, f'uidmapshift -b /var/lib/lxc/networking 0 {subid} 65536')
+
+
+def create_gui_base_container():
+
+    subid = containers['gui-base'].get('subid', 0)
+    container_rootfs = f'{dest_dir}/var/lib/lxc/gui-base/rootfs'
+    run(f'mkdir -p "{container_rootfs}"')
+
+    copy_lxc_rootfs('base', 'gui-base')
+
+    lxc_config = make_container_config('gui-base')
+    write_file(dest_dir, '/var/lib/lxc/gui-base/config', lxc_config)
+
+    configure_hostname(container_rootfs, 'gui-base')
+
+    # install packages
+    apt_install(container_rootfs, gui_base_packages)
+
+    # install x11-common runit script
+    install_file('containers/gui-base/rootfs', container_rootfs, '/etc/runit/boot-run/50-x11-common.sh')
+
+    # create user service
+    run(f'mkdir -p "{container_rootfs}/etc/sv/runsvdir-user"')
+    write_file(container_rootfs, '/etc/sv/runsvdir-user/run', dedent(f'''\
+        #!/bin/sh
+
+        export USER={user_number_one}
+        export HOME=/home/$USER
+
+        groups="$(id -Gn "$USER" | tr ' ' ':')"
+        svdir="$HOME/.local/service"
+
+        . /usr/local/share/lxcex-xdg.sh
+
+        exec chpst -u "$USER:$groups" runsvdir "$svdir"
+    '''))
+    run(f'chmod +x "{container_rootfs}/etc/sv/runsvdir-user/run"')
+    chroot(container_rootfs, f'ln -sf /etc/sv/runsvdir-user /etc/service')
+    install_file('containers/gui-base/rootfs', container_rootfs, '/usr/local/share/lxcex-xdg.sh')
+    add_line_to_file(container_rootfs, f'/home/{user_number_one}/.bashrc', '. /usr/local/share/lxcex-xdg.sh')
+    run(f'mkdir -p "{container_rootfs}/home/{user_number_one}/.config/sv"')
+    run(f'mkdir -p "{container_rootfs}/home/{user_number_one}/.local/service"')
+
+    # clean apt cache
+    chroot(container_rootfs, 'apt clean')
+
+    # shift ids
+    if subid:
+        chroot(dest_dir, f'uidmapshift -b /var/lib/lxc/gui-base 0 {subid} 65536')
+
+
+def create_weston_container():
+
+    subid = containers['weston'].get('subid', 0)
+    container_rootfs = f'{dest_dir}/var/lib/lxc/weston/rootfs'
+    run(f'mkdir -p "{container_rootfs}"')
+
+    copy_lxc_rootfs('gui-base', 'weston')
+
+    lxc_config = make_container_config('weston')
+    write_file(dest_dir, '/var/lib/lxc/weston/config', lxc_config)
+
+    configure_hostname(container_rootfs, 'weston')
+
+    # install packages
+    apt_install(container_rootfs, weston_packages)
+
+    # create weston service
+    install_user_services('containers/weston/rootfs/home/user/.config/sv', container_rootfs, subid)
+
+    # clean apt cache
+    chroot(container_rootfs, 'apt clean')
+
+    # shift ids
+    if subid:
+        chroot(dest_dir, f'uidmapshift -b /var/lib/lxc/weston 0 {subid} 65536')
+
+
+def create_xfce4_container():
+
+    subid = containers['xfce4'].get('subid', 0)
+    container_rootfs = f'{dest_dir}/var/lib/lxc/xfce4/rootfs'
+    run(f'mkdir -p "{container_rootfs}"')
+
+    copy_lxc_rootfs('gui-base', 'xfce4')
+
+    lxc_config = make_container_config('xfce4')
+    write_file(dest_dir, '/var/lib/lxc/xfce4/config', lxc_config)
+
+    configure_hostname(container_rootfs, 'xfce4')
+
+    # install packages
+    apt_install(container_rootfs, xfce4_packages)
+
+    # create services
+    install_user_services('containers/xfce4/rootfs/home/user/.config/sv', container_rootfs, subid)
+
+    # clean apt cache
+    chroot(container_rootfs, 'apt clean')
+
+    # shift ids
+    if subid:
+        chroot(dest_dir, f'uidmapshift -b /var/lib/lxc/xfce4 0 {subid} 65536')
+
+
+def configure_basic_networking():
+
+    # configure base system
+
+    internal_gateway = containers['networking']['ipv4_addr'].split('/')[0]
+
+    install_file('base-system', dest_dir, '/etc/init.d/virtual-network')
+    write_file(dest_dir, '/etc/default/virtual-network', dedent(f'''\
+        BRIDGE={internal_bridge}
+        VETH_HOST_SIDE=vhost
+        VETH_BRIDGE_SIDE=vbridge
+        IP_ADDR={internal_ipv4_addr}
+        ROUTE1="default via {internal_gateway}"
+        ROUTE2="{ipv4_local_network} via {internal_gateway}"
+    '''))
+    chroot(dest_dir, 'update-rc.d virtual-network defaults')
+
+    # configure container
+
+    networking_rootfs = f'{dest_dir}/var/lib/lxc/networking/rootfs'
+
+    install_file('containers/networking/rootfs', networking_rootfs, '/etc/runit/boot-run/30-basic-networking.sh')
+    write_file(networking_rootfs, '/etc/default/basic-networking', dedent(f'''\
+        INTERFACE={primary_network_interface}
+        IP_ADDR={ipv4_address}
+        GATEWAY={ipv4_gateway}
+    '''))
+
+    subid = containers['networking']['subid']
+    chroot(dest_dir, f'chown {subid}:{subid} /var/lib/lxc/networking/rootfs/etc/runit/boot-run/30-basic-networking.sh')
+    chroot(dest_dir, f'chown {subid}:{subid} /var/lib/lxc/networking/rootfs/etc/default/basic-networking')
+
+
+def configure_ifupdown_networking():
+    # TODO
+    pass
+
+
+def setup_apt_cacher():
+
+    roots = [dest_dir]
+    roots.extend(f'{dest_dir}/var/lib/lxc/{name}/rootfs'
+                 for name in containers.keys() if name != 'networking'
+    )
+
+    address = containers['networking']['ipv4_addr'].split('/')[0]
+
+    for rootfs in roots:
+        write_file(rootfs, '/etc/apt/apt.conf.d/00aptproxy', dedent(f'''\
+            Acquire::http::Proxy "http://{address}:3142";
+        '''))
+
+
+def install_user_services(src_sv_dir, rootfs_dir, subid):
+    install_dir2(
+        src_sv_dir,
+        rootfs_dir, f'/home/{user_number_one}/.config/sv'
+    )
+    run(f'mkdir -p "{rootfs_dir}/home/{user_number_one}/.local/service"')
+    chroot(
+        rootfs_dir,
+        'sh -s',
+        input=f'for s in /home/{user_number_one}/.config/sv/* ; do '\
+              f'  ln -sf ../../.config/sv/`basename $s` /home/{user_number_one}/.local/service/ ; '\
+              f'done'
+    )
+    users_subgid = subid + 100  # XXX how to get id of `users` group?
+    chroot(rootfs_dir, f'chown -R {user_number_one_id + subid}:{users_subgid} /home/{user_number_one}/.config')
+    chroot(rootfs_dir, f'chown -R {user_number_one_id + subid}:{users_subgid} /home/{user_number_one}/.local')
+
+
+def configure_hostname(dest_dir, hostname):
+
+    # prepare /etc/hostname
+    write_file(dest_dir, '/etc/hostname', f'{hostname}\n')
+
+    # add hostname to /etc/hosts
+    if os.path.exists(f'{dest_dir}/etc/hosts'):
+        hosts = read_file(dest_dir, '/etc/hosts')
+        hosts = re.sub('(127.0.0.1\\s+localhost)', f'\\1 {hostname}', hosts)
+        hosts = re.sub('(::1\\s+localhost)', f'\\1 {hostname}', hosts)
+        write_file(dest_dir, '/etc/hosts', hosts)
+
+
+def configure_apt(dest_dir):
+
+    write_file(dest_dir, '/etc/apt/sources.list', apt_sources_list)
+
+    install_file('common-files', dest_dir, '/etc/apt/apt.conf.d/01norecommends')
+    # XXX codename is hardcoded, convert to template:
+    install_file('common-files', dest_dir, '/etc/apt/sources.list.d/lxcex.sources')
+    # XXX hack for now:
+    if codename != 'daedalus':
+        chroot(dest_dir, f'sed -i s/daedalus/{codename}/ /etc/apt/sources.list.d/lxcex.sources')
+    install_file('common-files', dest_dir, '/etc/apt/preferences.d/99lxcex')
+
+
+def apt_install(dest_dir, packages):
+
+    if not packages:
+        return
+
+    chroot(dest_dir, 'apt update', capture_output=False);
+
+    # disable starting services during apt install:
+    write_file(dest_dir, '/usr/sbin/policy-rc.d', dedent('''\
+        #!/bin/sh
+        exit 101
+    '''))
+    run(f'chmod +x "{dest_dir}/usr/sbin/policy-rc.d"')
+
+    try:
+        chroot(dest_dir, f'apt install -y {" ".join(packages)}', capture_output=False)
+    finally:
+        run(f'rm "{dest_dir}/usr/sbin/policy-rc.d"')
+
+
+def copy_lxc_rootfs(src_name, dest_name):
+
+    run(f'rsync -rltWpogH --specials --devices "{dest_dir}/var/lib/lxc/{src_name}/rootfs" "{dest_dir}/var/lib/lxc/{dest_name}/"')
+
+
+def get_partition_device(device, partition_num):
+
+    # the device may not be available immediately after partitioning,
+    # try a few times with some delay
+    for _ in range(5):
+        time.sleep(2)
+        devices = json.loads(
+            run(f'lsblk -J {device}').stdout
+        )
+        dev_info = devices['blockdevices'][0]
+        if 'children' in dev_info:
+            break
+
+    dev_name = dev_info['children'][partition_num - 1]['name']
+    return f'/dev/{dev_name}'
+
+
+def get_partition_uuid(device, partition_num):
+
+    devices = json.loads(
+        run(f'lsblk -J -o +UUID {device}').stdout
+    )
+    return devices['blockdevices'][0]['children'][partition_num - 1]['uuid']
+
+
+def get_env_var(directory, relative_path, name):
+    '''
+    Read environment variable from file
+    pointed by relative_path, which is relative to `directory`.
+    '''
+    content = read_file(directory, relative_path)
+
+    # make sure file has trailing newline
+    if not content.endswith('\n'):
+        content += '\n'
+
+    matchobj = re.search(f'(^|\\n)(\\s*{name}=)', content)
+    if matchobj is None:
+        return ''
+
+    start = matchobj.start(2)
+    end = matchobj.end(2)
+    newline_pos = content.find('\n', end)
+    var = content[start:newline_pos]
+    return run('sh -s', input=f'{var}\necho "${name}"\n').stdout.strip()
+
+
+def change_env_var(directory, relative_path, name, value):
+    '''
+    Change or set shell environment variable in a file
+    pointed by relative_path, which is relative to `directory`.
+    '''
+    content = read_file(directory, relative_path)
+
+    # make sure file has trailing newline
+    if not content.endswith('\n'):
+        content += '\n'
+
+    matchobj = re.search(f'(^|\\n)(\\s*{name}=)', content)
+    if matchobj is None:
+        # set variable
+        content += f'\n{name}={value}\n'
+    else:
+        # change value
+        start = matchobj.start(2)
+        end = matchobj.end(2)
+        newline_pos = content.find('\n', end)
+        content = f'{content[:start]}{name}={value}{content[newline_pos:]}'
+
+    write_file(directory, relative_path, content)
+
+
+def change_option(directory, relative_path, name, value):
+    '''
+    Change or set configuration option in a file
+    pointed by relative_path, which is relative to `directory`.
+
+    Unlike environment variables, configuration options
+    allow spaces around =
+    '''
+    content = read_file(directory, relative_path)
+
+    # make sure file has trailing newline
+    if not content.endswith('\n'):
+        content += '\n'
+
+    matchobj = re.search(f'(^|\\n)(\\s*{name}\s*=)', content)
+    if matchobj is None:
+        # set option
+        content += f'\n{name} = {value}\n'
+    else:
+        # change value
+        start = matchobj.start(2)
+        end = matchobj.end(2)
+        newline_pos = content.find('\n', end)
+        content = f'{content[:start]}{name} = {value}{content[newline_pos:]}'
+
+    write_file(directory, relative_path, content)
+
+
+def add_line_to_file(directory, relative_path, line, after=None, flags=0):
+
+    content = read_file(directory, relative_path)
+
+    # make sure file has trailing newline
+    if not content.endswith('\n'):
+        content += '\n'
+
+    if after is None:
+        content += line
+    else:
+        lines = content.splitlines()
+        matched = None
+        for i, s in enumerate(lines):
+            matchobj = re.search(after, s, flags)
+            if matchobj is not None:
+                matched = i
+                break
+        if matched is None:
+            content += line
+        else:
+            lines.insert(matched + 1, line)
+            content = '\n'.join(lines)
+
+    # again, make sure file has trailing newline
+    if not content.endswith('\n'):
+        content += '\n'
+
+    write_file(directory, relative_path, content)
+
+
+def install_file(src_dir, dest_dir, relative_path):
+
+    full_src_path, full_dest_path = _make_full_paths(relative_path, src_dir, dest_dir)
+    os.makedirs(os.path.dirname(full_dest_path), exist_ok=True)
+    sh_copy(full_src_path, full_dest_path)
+
+
+def install_dir(src_dir, dest_dir, relative_path):
+
+    full_src_path, full_dest_path = _make_full_paths(relative_path, src_dir, dest_dir)
+    os.makedirs(os.path.dirname(full_dest_path), exist_ok=True)
+    shutil.copytree(full_src_path, full_dest_path,
+                    copy_function=sh_copy, dirs_exist_ok=True)
+
+
+def install_dir2(full_src_path, dest_dir, relative_path):
+
+    full_dest_path = os.path.join(dest_dir, relative_path.lstrip('/'))
+    os.makedirs(os.path.dirname(full_dest_path), exist_ok=True)
+    shutil.copytree(full_src_path, full_dest_path,
+                    copy_function=sh_copy, dirs_exist_ok=True)
+
+
+def sh_copy(src, dst, *, follow_symlinks=True):
+    # copy file and mode only, omit owner/group
+    shutil.copyfile(src, dst, follow_symlinks=follow_symlinks)
+    shutil.copymode(src, dst, follow_symlinks=follow_symlinks)
+
+
+def _make_full_paths(relative_path, src_dir, dest_dir):
+
+    if not os.path.abspath(src_dir):
+        # make relative src_dir start from script location
+        src_dir = os.path.join(os.path.dirname(sys.argv[0]), src_dir)
+
+    full_src_path = os.path.join(src_dir, relative_path.lstrip('/'))
+    full_dest_path = os.path.join(dest_dir, relative_path.lstrip('/'))
+    return full_src_path, full_dest_path
+
+
+def run(command, check=True, shell=False, capture_output=True, env=None, **kwargs):
+    print('>>>', command)
+
+    if shell:
+        args = command
+    else:
+        args = shlex.split(command)
+
+    environment = os.environ
+    if env:
+        environment.update(env)
+
+    result = subprocess.run(args, capture_output=capture_output,
+                            text=True, shell=shell, env=environment, **kwargs)
+
+    if check and result.returncode != 0:
+        raise Exception(f'Failed {command}: {result.stderr or result.stdout}')
+
+    return result
+
+
+def chroot(directory, command, **kwargs):
+    return run(f'chroot "{directory}" {command}', **kwargs)
+
+
+def read_file(directory, relative_path):
+    full_path = os.path.join(directory, relative_path.lstrip('/'))
+    with open(full_path, 'r', encoding='utf-8') as f:
+        return f.read()
+
+
+def write_file(directory, relative_path, content):
+    full_path = os.path.join(directory, relative_path.lstrip('/'))
+    with open(full_path, 'w', encoding='utf-8') as f:
+        f.write(content)
+
+
+def ask_password(prompt):
+    while True:
+        passwd = getpass(prompt)
+        confirm = getpass('Confirm password')
+        if passwd == confirm:
+            return passwd
+        print('Password mismatch')
+
+
+import json
+import os
+import re
+import shlex
+import shutil
+import subprocess
+import sys
+from textwrap import dedent
+import time
+
+if __name__ == '__main__':
+    install()

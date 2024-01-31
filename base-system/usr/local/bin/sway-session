@@ -1,6 +1,6 @@
 #!/bin/sh
 
-/usr/bin/runsvdir /home/$USER/service &
+/usr/bin/runsvdir $HOME/.local/service &
 runit_pid=$?
 
 /usr/bin/sway

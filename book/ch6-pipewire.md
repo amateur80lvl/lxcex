@@ -15,15 +15,15 @@ Services should be started in the following order:
 3. pipewire-pulse
 
 Let's use `runit` to manage them. As user, create the following files:
-* [sv/pipewire/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/sv/pipewire/run)
-* [sv/wireplumber/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/sv/wireplumber/run)
-* [sv/pipewire-pulse/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/sv/pipewire-pulse/run)
+* [.config/sv/pipewire/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/.config/sv/pipewire/run)
+* [.config/sv/wireplumber/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/.config/sv/wireplumber/run)
+* [.config/sv/pipewire-pulse/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/.config/sv/pipewire-pulse/run)
 
 Make `run` files executable and create symlinks:
 ```bash
 for s in pipewire wireplumber pulse ; do
-    chmod +x sv/$s/run
-    ln ../sv/$s service/
+    chmod +x .config/sv/$s/run
+    ln ../../.config/sv/$s .local/service/
 done
 ```
 Now, replace the line
@@ -38,7 +38,7 @@ Let's create [/usr/local/bin/sway-session](https://github.com/amateur80lvl/lxcex
 ```bash
 #!/bin/sh
 
-/usr/bin/runsvdir /home/$USER/service &
+/usr/bin/runsvdir $HOME/.local/service &
 runit_pid=$?
 
 /usr/bin/sway
@@ -84,8 +84,8 @@ Waybar was restarted because I restarted my containers with meta-shift-c
 That's who reset those permissions and this happened when waybar's
 pulseaudio module opened the socket!
 
-As a workaround I made a fixer service:
-[sv/pulse-fixer/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/sv/pulse-fixer/run).
+If you don't trust patched libpulse, here's a fixer service as an alternative:
+[.config/sv/pulse-fixer/run](https://github.com/amateur80lvl/lxcex/tree/main/base-system/home/user/.config/sv-extra/pulse-fixer/run).
 Add it to user services on the base system.
 
 Basically, everything should work seamlessly in containers.

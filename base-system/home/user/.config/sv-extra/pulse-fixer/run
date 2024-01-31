@@ -9,7 +9,7 @@ if [ -e /etc/runit/verbose ]; then
     echo "invoke-run: starting ${PWD##*/}"
 fi
 
-SVDIR=/home/user/service sv start pipewire-pulse || exit 1
+SVDIR=$HOME/.local/service sv start pipewire-pulse || exit 1
 
 pulse_dir=/run/user/`id -u`/pulse
 

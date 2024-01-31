@@ -56,7 +56,8 @@ lxc.mount.auto =
 ```
 This, however will make `lxcfs` to fail because it depends on `/proc` and `/sys`.
 Hopefully, they fixed `/usr/share/lxcfs/lxc.mount.hook`, see https://github.com/lxc/lxcfs/pull/626.
-But while it's not in your release you have to fix that manually.
+Patched package is included in `lxcex` repository, but if you don't trust it
+you can fix that manually.
 
 The position of empty `lxc.mount.auto` directive in the end of file is important.
 Strictly speaking, it should be placed after all `lxc.include` directives, as long as

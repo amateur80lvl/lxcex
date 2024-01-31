@@ -316,7 +316,7 @@ i.e. when you exit `su user`. Also, if we used PAM we'd have to create links by 
 There's `libpam-script` package, but its configuration is weird and default priorities is not what
 we need, i.e. scripts start when `/run/user/<uid>` does not exist yet.
 
-For now, runtime directories and links are created by runit script
+For now, runtime directories and links are created by
 [/usr/local/share/lxcex-xdg.sh](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/usr/local/share/lxcex-xdg.sh).
 It's not a nice solution either.
 
@@ -366,7 +366,7 @@ and create sample Weston service:
 ```bash
 mkdir -p sv/weston
 ```
-[sv/weston/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/gui-base/rootfs/home/user/sv/weston/run):
+[.config/sv/weston/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/weston/rootfs/home/user/sv/weston/run):
 ```bash
 #!/usr/bin/env /lib/runit/invoke-run
 
@@ -380,11 +380,11 @@ export XDG_SESSION_ID=2
 
 exec /usr/bin/weston -Swayland-2 --width 1280 --height 720
 ```
-make it executable and symlink the service to `~/services`:
+make it executable and symlink the service to `~/.local/services`:
 ```bash
-chmod +x sv/sv/run
-mkdir service
-ln -s ../sv/weston service
+chmod +x .config/sv/weston/run
+mkdir -p .local/service
+ln -s ../../.config/sv/weston service
 ```
 
 Now stop the container
@@ -395,7 +395,7 @@ and press logo key+shift+c to reload Sway configuration.
 If everything is done correctly, Weston should start.
 
 Finally, I recommend to disable weston service by unlinking
-`/home/user/service/weston`.
+`/home/user/.local/service/weston`.
 It's just an example and could be annoying
 because `gui-base` is not a container for work,
 it's just the base for others.
@@ -405,9 +405,9 @@ it's just the base for others.
 
 Let's install XFCE in a cloned `gui-base` container:
 ```bash
-lxc-copy -n gui-base -N xfce
-lxc-start xfce
-lxc-attach xfce
+lxc-copy -n gui-base -N xfce4
+lxc-start xfce4
+lxc-attach xfce4
 apt install xfce4 xfce4-terminal at-spi2-core
 ```
 Notes on packages:
@@ -440,13 +440,13 @@ Although I failed to set initial screen size with -geometry option,
 this can be changed in XFCE display settings and this setting is preserved.
 
 If you want to start XFCE when container starts, create the following files:
-* [/home/user/sv/xwayland/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xwayland/run)
-* [/home/user/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce/rootfs/home/user/sv/xfce/run)
+* [/home/user/.config/sv/xwayland/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce4/rootfs/home/user/.config/sv/xwayland/run)
+* [/home/user/.config/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce4/rootfs/home/user/.config/sv/xfce4/run)
 
 and create links:
 ```bash
-ln -s ../sv/xwayland /home/user/service
-ln -s ../sv/xfce4 /home/user/service
+ln -s ../../.config/sv/xwayland /home/user/.local/service
+ln -s ../../.config/sv/xfce4 /home/user/.local/service
 ```
 
 Note that we use the following command instead of `exec startxfce4`:

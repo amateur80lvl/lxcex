@@ -4,7 +4,7 @@ export USER=user
 export HOME=/home/user
 
 groups="$(id -Gn "$USER" | tr ' ' ':')"
-svdir="$HOME/service"
+svdir="$HOME/.local/service"
 
 . /usr/local/share/lxcex-xdg.sh
 

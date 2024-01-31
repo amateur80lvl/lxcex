@@ -1,5 +1,5 @@
 # start user containers
-exec_always sudo /usr/local/bin/start-user-containers gui-base
+exec_always sudo /usr/local/bin/start-user-containers xfce4
 
 # start foot terminal emulator "server"
 exec foot -s
