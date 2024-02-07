@@ -129,7 +129,7 @@ containers = {
         'subid': 300000,
         'ipv4_addr': '10.0.0.4/24',
         'gui': True,
-        'autostart': 1
+        'autostart': 0
     }
 }
 if tuple(containers.keys())[:3] != ('base', 'networking', 'gui-base'):
