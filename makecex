@@ -194,7 +194,6 @@ base_system_packages = [
     'procps',
     'psmisc',
     'psutils',
-    'screen',
     'smartmontools',
     'sysfsutils',
     'tree',
@@ -212,6 +211,7 @@ base_system_packages = [
     'openssh-server',
     'openssh-sftp-server',
     'rsync',
+    'screen',
 
     # LXC
     'cgroupfs-mount',
