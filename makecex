@@ -233,6 +233,10 @@ base_system_packages = [
     'pavucontrol',
     'runit',          # for managing user sessions
 
+    # for plausible deniability setups
+    'bc',
+    'cryptsetup',
+
     # lxcex packages
     'uidmapshift'     # nice utility by Serge Hallyn
 ]
