@@ -1,11 +1,15 @@
 #!/bin/sh
 
 export USER=user
-export HOME=/home/user
+export HOME=/home/$USER
 
 groups="$(id -Gn "$USER" | tr ' ' ':')"
 svdir="$HOME/.local/service"
 
 . /usr/local/share/lxcex-xdg.sh
+
+. /etc/default/locale
+export LANG
+export LANGUAGE
 
 exec chpst -u "$USER:$groups" runsvdir "$svdir"
