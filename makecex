@@ -892,21 +892,7 @@ def create_gui_base_container():
     install_file('containers/gui-base/rootfs', container_rootfs, '/etc/runit/boot-run/50-x11-common.sh')
 
     # create user service
-    run(f'mkdir -p "{container_rootfs}/etc/sv/runsvdir-user"')
-    write_file(container_rootfs, '/etc/sv/runsvdir-user/run', dedent(f'''\
-        #!/bin/sh
-
-        export USER={user_number_one}
-        export HOME=/home/$USER
-
-        groups="$(id -Gn "$USER" | tr ' ' ':')"
-        svdir="$HOME/.local/service"
-
-        . /usr/local/share/lxcex-xdg.sh
-
-        exec chpst -u "$USER:$groups" runsvdir "$svdir"
-    '''))
-    run(f'chmod +x "{container_rootfs}/etc/sv/runsvdir-user/run"')
+    install_file('containers/gui-base/rootfs', container_rootfs, '/etc/sv/runsvdir-user/run')
     chroot(container_rootfs, f'ln -sf /etc/sv/runsvdir-user /etc/service')
     install_file('containers/gui-base/rootfs', container_rootfs, '/usr/local/share/lxcex-xdg.sh')
     add_line_to_file(container_rootfs, f'/home/{user_number_one}/.bashrc', '. /usr/local/share/lxcex-xdg.sh')
