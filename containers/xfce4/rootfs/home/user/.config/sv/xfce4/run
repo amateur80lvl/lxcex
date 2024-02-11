@@ -11,4 +11,6 @@ SVDIR=$HOME/.local/service sv start xwayland || exit 1
 export WAYLAND_DISPLAY=
 export DISPLAY=:0
 
+cd $HOME
+
 exec /usr/bin/dbus-run-session /usr/bin/xfce4-session
