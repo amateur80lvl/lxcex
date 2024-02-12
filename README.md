@@ -59,7 +59,7 @@ Sandbox section.
   gnome-font-viewer xfce4-xkb-plugin xfce4-screenshooter ristretto gthumb
 * When installed in XFCE, `kate` needs some theme. I used `breeze-icon-theme`.
   Plus, `systemsettings`, just in case, zero profit so far.
-* `menulibre` looks like a kind of bloatware and currently is totally broken in excalibur.
+* `menulibre` looks kinda bloatware and currently is totally broken in excalibur.
   Okay, will edit menus manually from now on. It's easy:
   * All menu entries are listed in `.config/menus/xfce-applications.menu`
   * Configuration files for each entry are in `.local/share/applications`
@@ -97,6 +97,26 @@ Sandbox section.
   a try in an unprivileged container but it failed.
   Yes, I tried to play with /dev/fuse and read all those hints on the Internet. No luck.
   Had to setup nfs-common and autofs in the base system.
+
+### NFS+autofs details
+
+Let's create autofs configuration:
+
+```
+mkdir /etc/auto.maps
+echo "/mnt/myserver /etc/auto.maps/myserver" >/etc/auto.master.d/myserver.autofs
+echo "shared-dir myserver.example.com:/var/share/top-secret" >/etc/auto.maps/myserver
+```
+and restart autofs.
+
+Then, add the following lines to container's config:
+```
+lxc.hook.start-host = mount --make-rshared /mnt/myserver
+lxc.mount.entry = /mnt/myserver mnt/myserver none create=dir,bind 0 0
+```
+Start the container. Inside, `ls /mnt/myserver/shared-dir`
+should work as expected.
+It does work for me, at least.
 
 ## Quirks
 
