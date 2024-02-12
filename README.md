@@ -51,17 +51,21 @@ The script contains parameters at the beginning, revise them carefully before ru
 * [Chapter 6. Pipewire](https://github.com/amateur80lvl/lxcex/tree/main/book/ch6-pipewire.md)
 
 
+## Experience
+
+* When installed in `xfce`, `kate` needs some theme. I used `breeze-icon-theme`.
+  Plus, `systemsettings`, just in case, zero profit so far.
+
+
 ## Quirks
 
-* Drop-down menus in Kate have significant offset to the right:
-  * fixed after playing with systemsettings, need to reproduce
-  * appear with a significant delay
-    * sympthoms look like those described in merge request 1123
-  * XFCE apps, e.g. Thunar, don't have such quirks. -- because of XWayland?
+* Under Weston, drop-down menus in Kate appear with a significant delay.
+  Sympthoms look like those described in merge request 1123
 * Weston terminal does not honour user's shell from /etc/passwd and uses `sh`
   if Weston is started by runit, where parent shell is `sh`.
 * When maximizing Chromium, top left position sometimes remains unchanged.
 * Copy-pasting from Kate to Weston terminal drops newlines.
+  This might be a security precaution, but I'd like a dialog then. Same as in linuxmint.
 
 ## TODO
 
