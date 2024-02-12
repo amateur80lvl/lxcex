@@ -1,4 +1,1 @@
-Defaults!/usr/local/bin/start-user-containers env_keep+="XDG_* WAYLAND_*"
-Defaults:user env_keep+="XDG_* WAYLAND_*"
-
-user ALL = NOPASSWD: /usr/local/bin/start-user-containers xfce4
+user ALL = NOPASSWD: /usr/local/bin/start-user-containers user xfce4

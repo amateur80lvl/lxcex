@@ -1,5 +1,18 @@
 #!/bin/sh
 
+if [ $# = 0 ] ; then
+    echo "ERROR: username argument is required"
+    exit 1
+fi
+
+USER=$1
+shift
+
+if ! id -u $USER >/dev/null 2>&1 ; then
+    echo "ERROR: user $USER does not exist"
+    exit 1
+fi
+
 # Make sure /run is shared.
 # This is necessary for containers to be able to re-reconnect
 # to the base compositor after it gets restarted.
@@ -8,27 +21,36 @@ mount --make-shared /run
 
 # Pass essentials to container startup hooks via HOST_* environment variables.
 
-if [ -n "${XDG_RUNTIME_DIR}" ] ; then
-    export HOST_XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}"
+export HOST_XDG_RUNTIME_DIR=/run/user/`id -u $USER`
+if [ ! -d "${HOST_XDG_RUNTIME_DIR}" ] ; then
+    echo "ERROR: ${HOST_XDG_RUNTIME_DIR} does not exist"
+    exit 1
 fi
 
-if [ -n "${WAYLAND_DISPLAY}" ] ; then
-    export HOST_WAYLAND_DISPLAY="${WAYLAND_DISPLAY}"
-fi
-
-if [ -n "${PIPEWIRE_REMOTE}" ] ; then
-    export HOST_PIPEWIRE_REMOTE="${PIPEWIRE_REMOTE}"
+WAYLAND_SOCKET=`ls ${HOST_XDG_RUNTIME_DIR}/wayland-? | head -n 1`
+if [ -S "$WAYLAND_SOCKET" ] ; then
+    export HOST_WAYLAND_DISPLAY=`basename $WAYLAND_SOCKET`
 else
+    echo "ERROR: no wayland socket found"
+    exit 1
+fi
+
+PIPEWIRE_SOCKET=`ls ${HOST_XDG_RUNTIME_DIR}/pipewire-? | head -n 1`
+if [ -S "$PIPEWIRE_SOCKET" ] ; then
+    export HOST_PIPEWIRE_REMOTE=`basename $PIPEWIRE_SOCKET`
+else
+    echo "WARNING: no wayland socket found"
     export HOST_PIPEWIRE_REMOTE=pipewire-0
 fi
 
 # Start containers.
+
 for container_name in $@ ; do
     CONTAINER_ROOTFS="/var/lib/lxc/${container_name}/rootfs"
     if [ x`lxc-info -sH ${container_name}` = xSTOPPED ] ; then
         lxc-start -n ${container_name} --logfile=/tmp/${container_name}.log --logpriority=DEBUG
     else
-        # If container is already running, grant permission on wayland socket:
+        # If container is already running, grant permission on sockets:
         # invoke xdg-runtime-dir.start-host exactly as in config, with group id
         cmd=`lxc-info -n ${container_name} -c lxc.hook.start-host | grep xdg-runtime-dir`
         if [ -n "${cmd}" ] ; then

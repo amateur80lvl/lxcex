@@ -71,7 +71,7 @@ It 's a restructured version of the original `/etc/sway/config` with the followi
 
 This line
 ```
-exec_always sudo /usr/local/bin/start-user-containers gui-base
+exec_always sudo /usr/local/bin/start-user-containers user gui-base
 ```
 in the beginning of Sway configuration file starts user's containers.
 We don't have any yet, so comment it out for now.
@@ -325,15 +325,12 @@ It's not a nice solution either.
 Create file
 [/etc/sudoers.d/50-start-user-containers](https://github.com/amateur80lvl/lxcex/tree/main/base-system/etc/sudoers.d/50-start-user-containers):
 ```
-Defaults!/usr/local/bin/start-user-containers env_keep+="XDG_* WAYLAND_*"
-Defaults:user env_keep+="XDG_* WAYLAND_*"
-
-user ALL = NOPASSWD: /usr/local/bin/start-user-containers gui-base
+user ALL = NOPASSWD: /usr/local/bin/start-user-containers user gui-base
 ```
 
 Uncomment this line in `~/.config/sway/config`:
 ```
-exec_always sudo /usr/local/bin/start-user-containers gui-base
+exec_always sudo /usr/local/bin/start-user-containers user gui-base
 ```
 
 Make sure
