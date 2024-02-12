@@ -836,11 +836,11 @@ def create_networking_container():
         lxc.net.1.type = phys
         lxc.net.1.link = {primary_network_interface}
         lxc.net.1.flags = up
-    '''))
+    ''')
 
     write_file(dest_dir, '/var/lib/lxc/networking/config', lxc_config)
 
-    configure_hostname(container_rootfs, 'networking')
+    configure_hostname(container_rootfs, 'networking', old_hostname='base')
 
     # install packages
     packages = networking_container_packages + networking_config[networking]['networking_container_packages']
@@ -887,7 +887,7 @@ def create_gui_base_container():
     lxc_config = make_container_config('gui-base')
     write_file(dest_dir, '/var/lib/lxc/gui-base/config', lxc_config)
 
-    configure_hostname(container_rootfs, 'gui-base')
+    configure_hostname(container_rootfs, 'gui-base', old_hostname='base')
 
     # install packages
     apt_install(container_rootfs, gui_base_packages)
@@ -922,7 +922,7 @@ def create_weston_container():
     lxc_config = make_container_config('weston')
     write_file(dest_dir, '/var/lib/lxc/weston/config', lxc_config)
 
-    configure_hostname(container_rootfs, 'weston')
+    configure_hostname(container_rootfs, 'weston', old_hostname='gui-base')
 
     # install packages
     apt_install(container_rootfs, weston_packages)
@@ -949,7 +949,7 @@ def create_xfce4_container():
     lxc_config = make_container_config('xfce4')
     write_file(dest_dir, '/var/lib/lxc/xfce4/config', lxc_config)
 
-    configure_hostname(container_rootfs, 'xfce4')
+    configure_hostname(container_rootfs, 'xfce4', old_hostname='gui-base')
 
     # install packages
     apt_install(container_rootfs, xfce4_packages)
@@ -1036,7 +1036,7 @@ def install_user_services(src_sv_dir, rootfs_dir, subid):
     chroot(rootfs_dir, f'chown -R {user_number_one_id + subid}:{users_subgid} /home/{user_number_one}/.local')
 
 
-def configure_hostname(dest_dir, hostname):
+def configure_hostname(dest_dir, hostname, old_hostname=None):
 
     # prepare /etc/hostname
     write_file(dest_dir, '/etc/hostname', f'{hostname}\n')
@@ -1044,6 +1044,8 @@ def configure_hostname(dest_dir, hostname):
     # add hostname to /etc/hosts
     if os.path.exists(f'{dest_dir}/etc/hosts'):
         hosts = read_file(dest_dir, '/etc/hosts')
+        if old_hostname:
+            hosts = hosts.replace(f' {old_hostname}', '')
         hosts = re.sub('(127.0.0.1\\s+localhost)', f'\\1 {hostname}', hosts)
         hosts = re.sub('(::1\\s+localhost)', f'\\1 {hostname}', hosts)
         write_file(dest_dir, '/etc/hosts', hosts)
