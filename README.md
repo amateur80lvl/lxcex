@@ -73,6 +73,7 @@ Sandbox section.
   There are two options:
   * add --display=:0.0 command line option
   * set WAYLAND_DISPLAY when running firefox
+
   I tried both and chose the latter. Here's the script:
   ```
   #!/bin/sh
