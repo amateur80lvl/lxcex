@@ -75,17 +75,17 @@ Sandbox section.
   * set WAYLAND_DISPLAY when running firefox
   I tried both and chose the latter. Here's the script:
   ```
-#!/bin/sh
+  #!/bin/sh
 
-if [ -n "$X_WAYLAND_DISPLAY" ] ; then
-    export WAYLAND_DISPLAY=$X_WAYLAND_DISPLAY
-else
-    # fallback
-    export WAYLAND_DISPLAY=wayland-1
-fi
+  if [ -n "$X_WAYLAND_DISPLAY" ] ; then
+      export WAYLAND_DISPLAY=$X_WAYLAND_DISPLAY
+  else
+      # fallback
+      export WAYLAND_DISPLAY=wayland-1
+  fi
 
-firefox-devedition
-```
+  firefox
+  ```
 * Fonts for all languages:
   fonts-arphic-ukai fonts-arphic-uming fonts-beng fonts-deva fonts-gujr fonts-guru
   fonts-indic fonts-knda fonts-lklug-sinhala fonts-mlym fonts-orya fonts-sarai
