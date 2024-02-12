@@ -93,7 +93,7 @@ Sandbox section.
   fonts-taml fonts-telu fonts-thai-tlwg fonts-tibetan-machine fonts-unfonts-core
   fonts-unfonts-extra fonts-uniol
 * Also: fonts-font-awesome
-* NFS: gave [this userspace client]()
+* NFS: gave [this userspace client](https://github.com/sahlberg/fuse-nfs)
   a try in an unprivileged container but it failed.
   Yes, I tried to play with /dev/fuse and read all those hints on the Internet. No luck.
   Had to setup nfs-common and autofs in the base system.
