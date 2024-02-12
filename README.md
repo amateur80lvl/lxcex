@@ -53,7 +53,7 @@ The script contains parameters at the beginning, revise them carefully before ru
 
 ## Experience
 
-Sandbox section.
+Drafts/Sandbox section.
 
 * Additional XFCE packages you might need:
   gnome-font-viewer xfce4-xkb-plugin xfce4-screenshooter ristretto gthumb
