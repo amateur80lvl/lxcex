@@ -8,6 +8,11 @@ fi
 
 SVDIR=$HOME/.local/service sv start xwayland || exit 1
 
+# preserve WAYLAND_DISPLAY for wayland apps
+export X_WAYLAND_DISPLAY=$WAYLAND_DISPLAY
+
+# reset WAYLAND_DISPLAY because XFCE does not support wayland yet,
+# but some Gnome apps do and this causes problems.
 export WAYLAND_DISPLAY=
 export DISPLAY=:0
 
