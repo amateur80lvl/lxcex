@@ -122,12 +122,14 @@ containers = {
     'weston': {
         'subid': 200000,
         'ipv4_addr': '10.0.0.3/24',
+        'ipv4_gateway': '10.0.0.1',
         'gui': True,
         'autostart': 0
     },
     'xfce4': {
         'subid': 300000,
         'ipv4_addr': '10.0.0.4/24',
+        'ipv4_gateway': '10.0.0.1',
         'gui': True,
         'autostart': 0
     }
@@ -419,6 +421,7 @@ lxc.net.0.name = ethv
 lxc.net.0.link = {internal_bridge}
 lxc.net.0.flags = up
 lxc.net.0.ipv4.address = {ipv4_addr}
+lxc.net.0.ipv4.gateway = {ipv4_gateway}
 '''
 
 idmap_configuration_template = '''\
@@ -471,7 +474,8 @@ def make_container_config(container_name):
         network_configuration = network_configuration_template.format(
             primary_network_interface = primary_network_interface,
             internal_bridge = internal_bridge,
-            ipv4_addr = ipv4_addr
+            ipv4_addr = ipv4_addr,
+            ipv4_gateway = params.get('ipv4_gateway', '')
         )
 
     if params.get('gui', False):
