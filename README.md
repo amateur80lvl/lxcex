@@ -53,9 +53,46 @@ The script contains parameters at the beginning, revise them carefully before ru
 
 ## Experience
 
-* When installed in `xfce`, `kate` needs some theme. I used `breeze-icon-theme`.
-  Plus, `systemsettings`, just in case, zero profit so far.
+Sandbox section.
 
+* Additional XFCE packages you might need:
+  gnome-font-viewer xfce4-xkb-plugin xfce4-screenshooter ristretto gthumb
+* When installed in XFCE, `kate` needs some theme. I used `breeze-icon-theme`.
+  Plus, `systemsettings`, just in case, zero profit so far.
+* `menulibre` looks like a kind of bloatware and currently is totally broken in excalibur.
+  Okay, will edit menus manually from now on. It's easy:
+  * All menu entries are listed in `.config/menus/xfce-applications.menu`
+  * Configuration files for each entry are in `.local/share/applications`
+* Firefox lauched their apt repository, so it's worth to follow
+  [their instructions](https://support.mozilla.org/en-US/kb/install-firefox-linux)
+* At the time of writing, firefox (version 123) uses wayland by default.
+  As you remember, WAYLAND_DISPLAY is reset in
+  [/home/user/.config/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce4/rootfs/home/user/.config/sv/xfce4/run)
+  and this makes firefox to enter infinite loop saying
+  `Warning: ConnectToCompositor() try again : Connection refused`
+  There are two options:
+  * add --display=:0.0 command line option
+  * set WAYLAND_DISPLAY when running firefox
+  I tried both and chose the latter. Here's the script:
+  ```
+#!/bin/sh
+
+if [ -n "$X_WAYLAND_DISPLAY" ] ; then
+    export WAYLAND_DISPLAY=$X_WAYLAND_DISPLAY
+else
+    # fallback
+    export WAYLAND_DISPLAY=wayland-1
+fi
+
+firefox-devedition
+```
+* Fonts for all languages:
+  fonts-arphic-ukai fonts-arphic-uming fonts-beng fonts-deva fonts-gujr fonts-guru
+  fonts-indic fonts-knda fonts-lklug-sinhala fonts-mlym fonts-orya fonts-sarai
+  fonts-sil-mondulkiri fonts-sil-mondulkiri-extra fonts-sil-padauk fonts-smc
+  fonts-taml fonts-telu fonts-thai-tlwg fonts-tibetan-machine fonts-unfonts-core
+  fonts-unfonts-extra fonts-uniol
+* Also: fonts-font-awesome
 
 ## Quirks
 
