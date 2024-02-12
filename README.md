@@ -115,6 +115,9 @@ Sandbox section.
 * shared folders
 * pipewire (video)
 * composefs, when kernel 6.6 gets in stable release
+* LibreOffice complains /proc is not mounted. What, excuse me, fucking for?
+  Even such a malware as modern web browsers does not need it.
+  Given that it's mounted, indeed. With restrictions.
 
 ## Wishes (TODO list?)
 
