@@ -25,6 +25,9 @@ do_start()
 {
     log_action_begin_msg "Initializing virtual network"
 
+    ip link set lo up
+    ip address add 127.0.0.1/32 dev lo
+
     if ! ip link add name $BRIDGE type bridge ; then
         log_action_end_msg 1 "Cannot add device $BRIDGE"
         return 1
@@ -76,6 +79,7 @@ do_stop()
     log_action_begin_msg "Stopping virtual network"
     ip link del dev $VETH_HOST_SIDE
     ip link del dev $BRIDGE
+    ip address del 127.0.0.1/32 dev lo
     log_action_end_msg 0
 }
 
