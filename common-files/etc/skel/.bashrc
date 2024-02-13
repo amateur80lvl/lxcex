@@ -28,6 +28,12 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
+# TERM=foot eventually leads to weird "Error opening terminal: foot."
+# so replace it
+if [ "$TERM" = foot ] ; then
+    export TERM=xterm-256color
+fi
+
 # set a fancy prompt
 case "$TERM" in
     *color*)
