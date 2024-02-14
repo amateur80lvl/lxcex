@@ -34,7 +34,7 @@ In any scheme, there are always red flags for criminals which will torture you. 
 if they find such tools, as shufflecake, or any other custom kernel driver in your system.
 The best solution is not to keep any cryptographic tools, and even not to install them. Including `cryptsetup`.
 Configure ssh entry and bootstrap the system remotely, from an offshore system.
-With ssh you can setup a tmpfs volume and upload and run all you need.
+Over ssh you can setup a tmpfs volume and then upload and run all you need.
 
 I won't propose any security scheme, I'll focus on LXCex-specific aspects only.
 You should think through your own by yourself and analyse all risks.
