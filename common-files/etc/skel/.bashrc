@@ -29,7 +29,8 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 # TERM=foot eventually leads to weird "Error opening terminal: foot."
-# so replace it
+# so replace it.
+# Alternatively, try setting TERM in foot.ini
 if [ "$TERM" = foot ] ; then
     export TERM=xterm-256color
 fi
