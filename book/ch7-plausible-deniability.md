@@ -49,7 +49,7 @@ You should not leave any traces. This requires the folowing minimal precautions 
   This is plausibly deniable for spinning disks, consider using them instead of SSD.
 * High entropy in unused sectors. Deniable, but... still a red flag.
 * No swap. Deniable as an SSD wearing avoidance. BTW does anyone still use swap?
-  If you do, consider use a file on your hidden volume. Buying RAM is a better option.
+  If you do, consider using a file on your hidden volume. Buying RAM is a better option.
 
 Mind bash history and type
 ```
