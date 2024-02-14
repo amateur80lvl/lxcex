@@ -49,6 +49,7 @@ The script contains parameters at the beginning, revise them carefully before ru
 * [Chapter 4. Networking](https://github.com/amateur80lvl/lxcex/tree/main/book/ch4-networking.md)
 * [Chapter 5. Desktop Environment](https://github.com/amateur80lvl/lxcex/tree/main/book/ch5-desktop-environment.md)
 * [Chapter 6. Pipewire](https://github.com/amateur80lvl/lxcex/tree/main/book/ch6-pipewire.md)
+* [Chapter 7. Plausible Deniability](https://github.com/amateur80lvl/lxcex/tree/main/book/ch7-plausible-deniability.md)
 
 
 ## Experience
@@ -153,7 +154,18 @@ It does work for me, at least.
   is lost. Need re-connect feature.
 
 
-## Changelog
+## Changeblog
+
+### Feb 14, 2024
+
+Three months since inception, and now I can say farewell, linuxmint.
+LXCex is on all my laptops from now onwards.
+
+Major updates:
+* Bugfixes, of course.
+* start-user-containers now detects running system compositor, so it's much easier to run GUI containers manually.
+* dist-upgrade script
+* chapter 7
 
 ### Jan 31, 2024
 
