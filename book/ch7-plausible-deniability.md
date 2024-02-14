@@ -33,7 +33,7 @@ from the last allocated cluster + some reserved space up to the end of disk or p
 In any scheme, there are always red flags for criminals which will torture you. Your deniability will sound childish
 if they find such tools, as shufflecake, or any other custom kernel driver in your system.
 The best solution is not to keep any cryptographic tools, and even not to install them. Including `cryptsetup`.
-Setup ssh entry and bootstrap the system remotely, from an offshore system.
+Configure ssh entry and bootstrap the system remotely, from an offshore system.
 With ssh you can setup a tmpfs volume and upload and run all you need.
 
 I won't propose any security scheme, I'll focus on LXCex-specific aspects only.
@@ -44,11 +44,12 @@ Be creative. Be smart.
 
 You should not leave any traces. This requires the folowing minimal precautions which can be treated as red flags:
 
-* `/var/log` and `/tmp` on a tmpfs. Deniable as SSD wearing avoidance.
-* TRIM off on the cover filesystem. Otherwise, your hidden volume will be destroyed. Deniable for spinning disks,
-  consider using them instead of SSD.
+* `/var/log` and `/tmp` on a tmpfs. Deniable as an SSD wearing avoidance.
+* Disabled TRIM on the cover filesystem. With TRIM enabled, your hidden volume will be destroyed, so you have to.
+  This is plausibly deniable for spinning disks, consider using them instead of SSD.
 * High entropy in unused sectors. Deniable, but... still a red flag.
-* No swap. However, you could use a file on your hidden volume if necessary. Buying RAM is a better option.
+* No swap. Deniable as an SSD wearing avoidance. BTW does anyone still use swap?
+  If you do, consider use a file on your hidden volume. Buying RAM is a better option.
 
 Mind bash history and type
 ```
@@ -171,10 +172,10 @@ trap "trap - EXIT ; lxc-start -n networking" INT
 [ -x /mnt/$VOLUME_NAME/bootstrap-lxcex ] && /mnt/$VOLUME_NAME/bootstrap-lxcex $VOLUME_NAME
 ```
 
-The script does the very minimum, delegating all the rest to `bootstrap-lxcex` located on hidden volume.
+The script does the very minimum, delegating all the rest to `bootstrap-lxcex` located on the hidden volume.
 Some aspects:
 * Device is identified by serial number. Run `lsblk -d -pno NAME,SERIAL` to list them all.
-* Cerpent cipher can be faster than AES on retro hardware with no AES acceleration.
+* Serpent cipher can be faster than AES on retro hardware with no AES acceleration.
   On modern CPUs AES is preferred.
 * /mnt is overlapped with tmpfs to avoid exposing the use of hidden volume
 * The script stops if hidden volume is not formatted. So when you run it for the first time, you can proceed with formatting manually.
@@ -280,9 +281,9 @@ fi
 The script is self-explaining, you can add necessary functionality by your taste.
 
 I strongly recommend to overlap /root directory because you'll definitely need absolutely different SSH keys
-and you may want to keep your bash history, avoiding the risk to accidentally expose it.
+and you may want to keep your bash history, avoiding the risk of accidental exposure.
 
-Also, you may want to overlap some files in /etc, but I strongly recommend avoid this. Personally, I overlap only /etc/hosts.
+Also, you may want to overlap some files in /etc, but I strongly recommend not to do this. Personally, I overlap only /etc/hosts.
 
 ## Good luck
 
