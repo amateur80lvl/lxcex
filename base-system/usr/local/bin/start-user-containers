@@ -45,9 +45,16 @@ fi
 
 # Start containers.
 
+# XXX hack, sway --get-socketpath does not work from different session
+SWAY_SOCKET=`ls /run/user/1000/sway-ipc.*.sock | head -n 1`
+
 for container_name in $@ ; do
     CONTAINER_ROOTFS="/var/lib/lxc/${container_name}/rootfs"
     if [ x`lxc-info -sH ${container_name}` = xSTOPPED ] ; then
+        # create new workspace in Sway
+        NEXT_WORKSPACE=$((`swaymsg -s $SWAY_SOCKET -t get_workspaces -p | grep Workspace | grep -oE "[[:digit:]]+" | sort -nr | head -n 1` + 1))
+        swaymsg -s $SWAY_SOCKET workspace $NEXT_WORKSPACE
+        # start container
         lxc-start -n ${container_name} --logfile=/tmp/${container_name}.log --logpriority=DEBUG
     else
         # If container is already running, grant permission on sockets:
