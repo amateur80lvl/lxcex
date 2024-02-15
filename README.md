@@ -56,69 +56,7 @@ The script contains parameters at the beginning, revise them carefully before ru
 
 Drafts/Sandbox section.
 
-* Additional XFCE packages you might need:
-  gnome-font-viewer xfce4-xkb-plugin xfce4-screenshooter ristretto gthumb
-* When installed in XFCE, `kate` needs some theme. I used `breeze-icon-theme`.
-  Plus, `systemsettings`, just in case, zero profit so far.
-* `menulibre` looks kinda bloatware and currently is totally broken in excalibur.
-  Okay, will edit menus manually from now on. It's easy:
-  * All menu entries are listed in `.config/menus/xfce-applications.menu`
-  * Configuration files for each entry are in `.local/share/applications`
-* Firefox lauched their apt repository, so it's worth to follow
-  [their instructions](https://support.mozilla.org/en-US/kb/install-firefox-linux)
-* At the time of writing, firefox (version 123) uses wayland by default.
-  As you remember, WAYLAND_DISPLAY is reset in
-  [/home/user/.config/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce4/rootfs/home/user/.config/sv/xfce4/run)
-  and this makes firefox to enter infinite loop saying
-  `Warning: ConnectToCompositor() try again : Connection refused`
-  There are two options:
-  * add --display=:0.0 command line option
-  * set WAYLAND_DISPLAY when running firefox
-
-  I tried both and chose the latter. Here's the script:
-  ```
-  #!/bin/sh
-
-  if [ -n "$X_WAYLAND_DISPLAY" ] ; then
-      export WAYLAND_DISPLAY=$X_WAYLAND_DISPLAY
-  else
-      # fallback
-      export WAYLAND_DISPLAY=wayland-1
-  fi
-
-  firefox
-  ```
-* Fonts for all languages:
-  fonts-arphic-ukai fonts-arphic-uming fonts-beng fonts-deva fonts-gujr fonts-guru
-  fonts-indic fonts-knda fonts-lklug-sinhala fonts-mlym fonts-orya fonts-sarai
-  fonts-sil-mondulkiri fonts-sil-mondulkiri-extra fonts-sil-padauk fonts-smc
-  fonts-taml fonts-telu fonts-thai-tlwg fonts-tibetan-machine fonts-unfonts-core
-  fonts-unfonts-extra fonts-uniol
-* Also: fonts-font-awesome
-* NFS: gave [this userspace client](https://github.com/sahlberg/fuse-nfs)
-  a try in an unprivileged container but it failed.
-  Yes, I tried to play with /dev/fuse and read all those hints on the Internet. No luck.
-  Had to setup nfs-common and autofs in the base system.
-
-### NFS+autofs details
-
-Let's create autofs configuration:
-
-```
-mkdir /etc/auto.maps
-echo "/mnt/myserver /etc/auto.maps/myserver" >/etc/auto.master.d/myserver.autofs
-echo "shared-dir myserver.example.com:/var/share/top-secret" >/etc/auto.maps/myserver
-```
-and restart autofs.
-
-Then, add the following lines to container's config:
-```
-lxc.hook.start-host = mount --make-rshared /mnt/myserver
-lxc.mount.entry = /mnt/myserver mnt/myserver none create=dir,bind 0 0
-```
-Start the container. Inside, `ls /mnt/myserver/shared-dir`
-should work as expected.
-It does work for me, at least.
+Previous points are moved to appropriate sections and/or applied as patches.
 
 ## Quirks
 
@@ -201,6 +139,85 @@ Tag: 0.0.2
 ### Dec 29, 2023
 
 Initial commit and release.
+
+## Tips and tricks
+
+### Firefox
+
+They lauched apt repository, so it's worth to follow
+[their instructions](https://support.mozilla.org/en-US/kb/install-firefox-linux)
+
+At the time of writing, firefox (version 123) uses wayland by default.
+If you remember, WAYLAND_DISPLAY is reset in
+[/home/user/.config/sv/xfce4/run](https://github.com/amateur80lvl/lxcex/tree/main/containers/xfce4/rootfs/home/user/.config/sv/xfce4/run)
+and this makes firefox to enter infinite loop saying
+
+`Warning: ConnectToCompositor() try again : Connection refused`
+
+There are two options:
+* add --display=:0.0 command line option
+* set WAYLAND_DISPLAY when running firefox
+
+I tried both. Initially I chose the latter, using a script:
+```
+#!/bin/sh
+
+if [ -n "$X_WAYLAND_DISPLAY" ] ; then
+    export WAYLAND_DISPLAY=$X_WAYLAND_DISPLAY
+else
+    # fallback
+    export WAYLAND_DISPLAY=wayland-1
+fi
+
+firefox
+```
+
+However, this makes copy-paste troublesome so I returned to X mode for now.
+
+### NFS + autofs
+
+As long as NFS client is implemented in kernel, it's troublesome to use it from unprivileged containers.
+The only working recipe is to mount necessary shares on the host system and then bind them to containers.
+However, autofs sucks. The recipe below sometimes work, sometimes does not.
+
+Let's create autofs configuration:
+
+```
+mkdir /etc/auto.maps
+echo "/mnt/myserver /etc/auto.maps/myserver" >/etc/auto.master.d/myserver.autofs
+echo "shared-dir myserver.example.com:/var/share/top-secret" >/etc/auto.maps/myserver
+```
+and restart autofs.
+
+Then, add the following lines to container's config:
+```
+lxc.hook.start-host = mount --make-rshared /mnt/myserver
+lxc.mount.entry = /mnt/myserver mnt/myserver none create=dir,bind 0 0
+```
+Start the container. Inside, `ls /mnt/myserver/shared-dir`
+should work as expected.
+
+The solution is fragile. If autofs is restarted, it remounts top directories and contaner does not see them anymore.
+
+A better approach could be a NFS client in userspace, but there are not so many implementations in the wild.
+I gave [this one](https://github.com/sahlberg/fuse-nfs) a try but it failed.
+Yes, I tried to play with `/dev/fuse` and read all those hints on the Internet. No luck.
+
+### Editing main menu
+
+`menulibre` looks kinda bloatware and currently is totally broken in excalibur.
+However, its quite easy to edit menus manually:
+* All menu entries are listed in `.config/menus/xfce-applications.menu`
+* Configuration files for each entry are in `.local/share/applications`
+
+### More packages
+
+My extra packages, just for the record.
+
+* Fonts: `gnome-font-viewer`, looks unnecessary
+* Images: `gthumb`
+* Kate: when installed in XFCE, it needs some theme. I used `breeze-icon-theme`.
+* KDE `systemsettings`: installed just in case, zero profit so far.
 
 
 ## Miscellaneous notes

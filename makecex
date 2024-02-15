@@ -82,6 +82,16 @@ networking_script_name = f'configure_{networking}_networking'
 internal_bridge = 'br0'
 internal_ipv4_addr = '10.0.0.2/24'
 
+fonts_packages = [
+    # With this list you won't see undefined glyphs. Well, I hope so.
+    'fonts-arphic-ukai', 'fonts-arphic-uming', 'fonts-beng', 'fonts-deva', 'fonts-gujr', 'fonts-guru',
+    'fonts-indic', 'fonts-knda', 'fonts-lklug-sinhala', 'fonts-mlym', 'fonts-orya', 'fonts-sarai',
+    'fonts-sil-mondulkiri', 'fonts-sil-mondulkiri-extra', 'fonts-sil-padauk', 'fonts-smc',
+    'fonts-taml', 'fonts-telu', 'fonts-thai-tlwg', 'fonts-tibetan-machine', 'fonts-unfonts-core',
+    'fonts-unfonts-extra', 'fonts-uniol',
+    'fonts-font-awesome'
+]
+
 desktop = 'sway'  # no other options for now
 
 desktop_config = {
@@ -90,9 +100,9 @@ desktop_config = {
             'sway',    # you may want wayfire
             'bemenu',  # application launcher
             'waybar',  # slightly better than the default swaybar
-            'fonts-font-awesome', # necessary to display icons in waybar
-            'foot'     # terminal application
-            #'wev'      # could be useful to discover key codes
+            'foot',    # terminal application
+            #'wev',      # could be useful to discover key codes
+            *fonts_packages
         ]
     }
 }
@@ -335,7 +345,8 @@ networking_container_packages = [
 ]
 
 gui_base_packages = [
-    'x11-common'       # lots of software still need it so let it be here
+    'x11-common',      # lots of software still need it so let it be here
+    *fonts_packages
 ]
 
 weston_packages = [
@@ -346,11 +357,17 @@ weston_packages = [
 ]
 
 xfce4_packages = [
+    # basic packages
     'xfce4',
-    'xfce4-terminal',
     'xwayland',       # XFCE does not support Wayland yet
     'libegl1',        # Xwayland needs this but has no strict dependency
-    'at-spi2-core'    # this package doesn't contain too much harm but makes XFCE a little bit happier
+    'at-spi2-core',   # this package doesn't contain too much harm but makes XFCE a little bit happier
+
+    # productivity packages
+    'ristretto',            # absolutely necessary to view pics of cats and porno
+    'xfce4-terminal',       # comment out if you can do without it
+    'xfce4-xkb-plugin',     # comment out if you don't know other languages
+    'xfce4-screenshooter'   # comment out if you don't need screenshots
 ]
 
 nftables_conf = f'''\
