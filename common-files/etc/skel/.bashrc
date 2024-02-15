@@ -37,7 +37,7 @@ fi
 
 # set a fancy prompt
 case "$TERM" in
-    *color*)
+    *color*|linux)
         if [[ ${EUID} == 0 ]] ; then
             PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
         else
