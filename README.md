@@ -178,7 +178,6 @@ However, this makes copy-paste troublesome so I returned to X mode for now.
 
 As long as NFS client is implemented in kernel, it's troublesome to use it from unprivileged containers.
 The only working recipe is to mount necessary shares on the host system and then bind them to containers.
-However, autofs sucks. The recipe below sometimes work, sometimes does not.
 
 Let's create autofs configuration:
 
@@ -192,14 +191,14 @@ and restart autofs.
 Then, add the following lines to container's config:
 ```
 lxc.hook.start-host = mount --make-rshared /mnt/myserver
-lxc.mount.entry = /mnt/myserver mnt/myserver none create=dir,bind 0 0
+lxc.mount.entry = /mnt/myserver mnt/myserver none create=dir,rbind 0 0
 ```
 Start the container. Inside, `ls /mnt/myserver/shared-dir`
 should work as expected.
 
 The solution is fragile. If autofs is restarted, it remounts top directories and contaner does not see them anymore.
 
-A better approach could be a NFS client in userspace, but there are not so many implementations in the wild.
+Another approach could be a NFS client in userspace, but there are not so many implementations in the wild.
 I gave [this one](https://github.com/sahlberg/fuse-nfs) a try but it failed.
 Yes, I tried to play with `/dev/fuse` and read all those hints on the Internet. No luck.
 
@@ -218,6 +217,7 @@ My extra packages, just for the record.
 * Images: `gthumb`
 * Kate: when installed in XFCE, it needs some theme. I used `breeze-icon-theme`.
 * KDE `systemsettings`: installed just in case, zero profit so far.
+* Ungoogled chromium needs: `libnss3`, `libasound2`
 
 
 ## Miscellaneous notes
