@@ -251,3 +251,16 @@ mount --make-shared /run
 ```
 i.e. `/run`, not `/run/user` if I `mount --rbind /run/user "${LXC_ROOTFS_MOUNT}/run/host/run/user"`
 in containers and want all uid submounts to propagate.
+
+### smartd tweaks
+
+`smartd` is the most reliable tool to disable HDD spindowns thus far:
+1. edit `/etc/default/smartmontools`:
+   ```
+   smartd_opts="--interval=10 --attributelog=- --savestate=-"
+   ```
+   Key option is `--interval`, others disable saving state which I never needed.
+2. Make sure `-n` option is `never` in `etc/smartd.conf`, i.e.:
+   ```
+   DEVICESCAN -d removable -n never -m root -M exec /usr/share/smartmontools/smartd-runner
+   ```
