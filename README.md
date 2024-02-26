@@ -196,7 +196,7 @@ lxc.mount.entry = /mnt/myserver mnt/myserver none create=dir,rbind 0 0
 Start the container. Inside, `ls /mnt/myserver/shared-dir`
 should work as expected.
 
-The solution is fragile. If autofs is restarted, it remounts top directories and contaner does not see them anymore.
+The solution is fragile. If autofs is restarted, it remounts top directories and containers do not see them anymore.
 
 Another approach could be a NFS client in userspace, but there are not so many implementations in the wild.
 I gave [this one](https://github.com/sahlberg/fuse-nfs) a try but it failed.
