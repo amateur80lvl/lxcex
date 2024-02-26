@@ -76,7 +76,6 @@ Previous points are moved to appropriate sections and/or applied as patches.
 * DHCP
 * improve UX
 * copy-paste across containers
-* shared folders
 * pipewire (video)
 * composefs, when kernel 6.6 gets in stable release
 * LibreOffice complains /proc is not mounted. What, excuse me, fucking for?
@@ -201,6 +200,26 @@ The solution is fragile. If autofs is restarted, it remounts top directories and
 Another approach could be a NFS client in userspace, but there are not so many implementations in the wild.
 I gave [this one](https://github.com/sahlberg/fuse-nfs) a try but it failed.
 Yes, I tried to play with `/dev/fuse` and read all those hints on the Internet. No luck.
+
+### Shared folders
+
+For now, the solution is a common directory with sticky bit set.
+
+On the host:
+```
+mkdir /var/share
+chmod 1777 /var/share
+```
+
+In the container's configuration:
+```
+lxc.mount.entry = /var/share var/share none bind,create=dir 0 0
+```
+
+Ideally, I'd like file uid:gid be same as for current user regardless of who put files to a shared directory,
+and anyone could delete them. `lxc.mount.entry` has a still not documented `idmap` option but the current
+syntax allows path to user namespace only. Frankly, I have no idea what to do with this.
+
 
 ### Editing main menu
 
