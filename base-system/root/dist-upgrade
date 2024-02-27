@@ -6,16 +6,10 @@ upgrade()
     echo "--------------------"
     echo "Upgrading $container"
     echo "--------------------"
-    subid=`stat -c %u /var/lib/lxc/$container/rootfs`
-    if [ $subid = 0 ] ; then
-        chroot /var/lib/lxc/$container/rootfs apt update
-        chroot /var/lib/lxc/$container/rootfs apt -y dist-upgrade
-        chroot /var/lib/lxc/$container/rootfs apt clean
-    else
-        lxc-usernsexec -m b:0:$subid:65536 -- chroot /var/lib/lxc/$container/rootfs apt update
-        lxc-usernsexec -m b:0:$subid:65536 -- chroot /var/lib/lxc/$container/rootfs apt -y dist-upgrade
-        lxc-usernsexec -m b:0:$subid:65536 -- chroot /var/lib/lxc/$container/rootfs apt clean
-    fi
+    lxc-chroot $container apt update
+    lxc-chroot $container apt -y dist-upgrade
+    lxc-chroot $container apt -y autoremove
+    lxc-chroot $container apt clean
 }
 
 if [ $# = 0 ] ; then

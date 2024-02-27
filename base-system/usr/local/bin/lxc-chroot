@@ -1,0 +1,21 @@
+#!/bin/sh -e
+
+container="$1"
+shift
+
+if [ -z "$container" ] ; then
+    echo "Container name is required as the first argument"
+    exit 1
+fi
+
+if [ ! -d /var/lib/lxc/"$container"/rootfs ] ; then
+    echo "Bad container: $container"
+    exit 1
+fi
+
+subid=`stat -c %u /var/lib/lxc/"$container"/rootfs`
+if [ $subid = 0 ] ; then
+    chroot /var/lib/lxc/"$container"/rootfs "$@"
+else
+    lxc-usernsexec -m b:0:$subid:65536 -- chroot /var/lib/lxc/"$container"/rootfs "$@"
+fi
