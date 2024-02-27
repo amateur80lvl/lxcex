@@ -58,7 +58,7 @@ Drafts/Sandbox section.
 
 Previous points are moved to appropriate sections and/or applied as patches.
 
-### uidmapped mounts vs uidmapshift
+### idmapped mounts vs uidmapshift
 
 Which is better in terms of security, if some malicious software, say, a python package
 from notorious pypi, breaks out of container? Or nothing will help then?
