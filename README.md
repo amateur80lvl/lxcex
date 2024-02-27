@@ -58,6 +58,14 @@ Drafts/Sandbox section.
 
 Previous points are moved to appropriate sections and/or applied as patches.
 
+### uidmapped mounts vs uidmapshift
+
+Which is better in terms of security, if some malicious software, say, a python package
+from notorious pypi, breaks out of container? Or nothing will help then?
+
+Ideally, I'd like to get rid of all custom packages so `uidmapshift` would be unnecessary, but...
+
+
 ## Quirks
 
 * Under Weston, drop-down menus in Kate appear with a significant delay.
