@@ -203,12 +203,10 @@ Yes, I tried to play with `/dev/fuse` and read all those hints on the Internet. 
 
 ### Shared folders
 
-For now, the solution is a common directory with sticky bit set.
-
 On the host:
 ```
 mkdir /var/share
-chmod 1777 /var/share
+chmod 777 /var/share
 ```
 
 In the container's configuration:
@@ -216,8 +214,8 @@ In the container's configuration:
 lxc.mount.entry = /var/share var/share none bind,create=dir 0 0
 ```
 
-Ideally, I'd like file uid:gid be same as for current user regardless of who put files to a shared directory,
-and anyone could delete them. `lxc.mount.entry` has a still not documented `idmap` option but the current
+Ideally, I'd like file uid:gid be same as for current user regardless of who put files to a shared directory.
+`lxc.mount.entry` has a still not documented `idmap` option but the current
 syntax allows path to user namespace only. Frankly, I have no idea what to do with this.
 
 
