@@ -56,7 +56,68 @@ The script contains parameters at the beginning, revise them carefully before ru
 
 Drafts/Sandbox section.
 
-Previous points are moved to appropriate sections and/or applied as patches.
+### Running programs as a different users
+
+Containers are great to isolate workspaces as if they were running on separate machines.
+This greatly simplifies such things as networking which are too error-prone
+or impossible to maintain within a single system.
+
+But at container level everything is still the same: single home directory where all
+applications have full access to user's data.
+
+This is dangerous.
+Potentially, every program that use network may leak your sensitive data, even unintentially.
+
+Basically, all programs that work with your data should be run in a container with
+disabled networking, and probably I'll end up with such arrangement.
+
+But for now I have a few legacy XFCE environments each running in its own container.
+A temporary solution I deployed within those containers is restricted network access
+for the main user and running all networking software as a different users.
+This software includes Firefox, CHromium, Mullvad, and Tor browsers, plus Thunderbird.
+Of course, some does support Wayland already but LXCex still has copy-pasting issues
+and it's a blocking factor to run them natively.
+
+Here's the setup, on the example of Firefox,
+which ban be used as a boilerplate for other programs.
+
+First, create a separate user:
+```
+useradd -g users --skel /etc/skel --shell /bin/bash --create-home firefox
+```
+Then, move directories:
+```
+mv /home/user/{.mozilla,.cache/firefox} /home/firefox/
+chown -R firefox /home/firefox
+```
+Create shared directory for downloads:
+```
+mkdir -p /var/share
+chgrp users /var/share
+chmod 710 /var/share
+mv /home/user/Downloads /var/share/
+chmod 777 /var/share/Downloads
+ln -s /var/share/Downloads /home/user/
+ln -s /var/share/Downloads /home/firefox/
+```
+Next, prepare a script `/usr/local/bin/start-firefox`:
+```
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+    xhost +SI:localuser:firefox
+    sudo $0 run
+else
+    su -c "cd /home/firefox ; DISPAY=:0.0 firefox --display=:0.0" firefox
+fi
+```
+Finally, create `/etc/sudoers.d/50-start-firefox` (alas, sudo is required):
+```
+user ALL = NOPASSWD: /usr/local/bin/start-firefox run
+```
+You may need to modify XFCE start menu entry.
+And to add -P option for the first time, otherwise firefox may start with a blank profile.
+
 
 ### idmapped mounts vs uidmapshift
 
