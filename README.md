@@ -74,12 +74,12 @@ disabled networking, and probably I'll end up with such arrangement.
 But for now I have a few legacy XFCE environments each running in its own container.
 A temporary solution I deployed within those containers is restricted network access
 for the main user and running all networking software as a different users.
-This software includes Firefox, CHromium, Mullvad, and Tor browsers, plus Thunderbird.
+This software includes Firefox, Chromium, Mullvad, and Tor browsers, plus Thunderbird.
 Of course, some does support Wayland already but LXCex still has copy-pasting issues
 and it's a blocking factor to run them natively.
 
 Here's the setup, on the example of Firefox,
-which ban be used as a boilerplate for other programs.
+which can be used as a boilerplate for other programs.
 
 First, create a separate user:
 ```
@@ -87,7 +87,9 @@ useradd -g users --skel /etc/skel --shell /bin/bash --create-home firefox
 ```
 Then, move directories:
 ```
-mv /home/user/{.mozilla,.cache/firefox} /home/firefox/
+mkdir /home/firefox/.cache
+mv /home/user/.mozilla /home/firefox/
+mv /home/user/.cache/firefox /home/firefox/.cache/
 chown -R firefox /home/firefox
 ```
 Create shared directory for downloads:
