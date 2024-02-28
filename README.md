@@ -56,71 +56,6 @@ The script contains parameters at the beginning, revise them carefully before ru
 
 Drafts/Sandbox section.
 
-### Running programs as a different users
-
-Containers are great to isolate workspaces as if they were running on separate machines.
-This greatly simplifies such things as networking which are too error-prone
-or impossible to maintain within a single system.
-
-But at container level everything is still the same: single home directory where all
-applications have full access to user's data.
-
-This is dangerous.
-Potentially, every program that use network may leak your sensitive data, even unintentially.
-
-Basically, all programs that work with your data should be run in a container with
-disabled networking, and probably I'll end up with such arrangement.
-
-But for now I have a few legacy XFCE environments each running in its own container.
-A temporary solution I deployed within those containers is restricted network access
-for the main user and running all networking software as a different users.
-This software includes Firefox, Chromium, Mullvad, and Tor browsers, plus Thunderbird.
-Of course, some does support Wayland already but LXCex still has copy-pasting issues
-and it's a blocking factor to run them natively.
-
-Here's the setup, on the example of Firefox,
-which can be used as a boilerplate for other programs.
-
-First, create a separate user:
-```
-useradd -g users --skel /etc/skel --shell /bin/bash --create-home firefox
-```
-Then, move directories:
-```
-mkdir /home/firefox/.cache
-mv /home/user/.mozilla /home/firefox/
-mv /home/user/.cache/firefox /home/firefox/.cache/
-chown -R firefox /home/firefox
-```
-Create shared directory for downloads:
-```
-mkdir -p /var/share
-chgrp users /var/share
-chmod 710 /var/share
-mv /home/user/Downloads /var/share/
-chmod 777 /var/share/Downloads
-ln -s /var/share/Downloads /home/user/
-ln -s /var/share/Downloads /home/firefox/
-```
-Next, prepare a script `/usr/local/bin/start-firefox`:
-```
-#!/bin/sh
-
-if [ -z "$1" ] ; then
-    xhost +SI:localuser:firefox
-    sudo $0 run
-else
-    su -c "cd /home/firefox ; DISPAY=:0.0 firefox --display=:0.0" firefox
-fi
-```
-Finally, create `/etc/sudoers.d/50-start-firefox` (alas, sudo is required):
-```
-user ALL = NOPASSWD: /usr/local/bin/start-firefox run
-```
-You may need to modify XFCE start menu entry.
-And to add -P option for the first time, otherwise firefox may start with a blank profile.
-
-
 ### idmapped mounts vs uidmapshift
 
 Which is better in terms of security, if some malicious software, say, a python package
@@ -289,7 +224,6 @@ Ideally, I'd like file uid:gid be same as for current user regardless of who put
 `lxc.mount.entry` has a still not documented `idmap` option but the current
 syntax allows path to user namespace only. Frankly, I have no idea what to do with this.
 
-
 ### Editing main menu
 
 `menulibre` looks kinda bloatware and currently is totally broken in excalibur.
@@ -297,15 +231,69 @@ However, its quite easy to edit menus manually:
 * All menu entries are listed in `.config/menus/xfce-applications.menu`
 * Configuration files for each entry are in `.local/share/applications`
 
-### More packages
+### Running programs as a different users
 
-My extra packages, just for the record.
+Containers are great to isolate workspaces as if they were running on separate machines.
+This greatly simplifies such things as networking which are too error-prone
+or impossible to maintain within a single system.
 
-* Fonts: `gnome-font-viewer`, looks unnecessary
-* Images: `gthumb`
-* Kate: when installed in XFCE, it needs some theme. I used `breeze-icon-theme`.
-* KDE `systemsettings`: installed just in case, zero profit so far.
-* Ungoogled chromium needs: `libnss3`, `libasound2`
+But at container level everything is still the same: single home directory where all
+applications have full access to user's data.
+
+This is dangerous.
+Potentially, every program that use network may leak your sensitive data, even unintentially.
+
+Basically, all programs that work with your data should be run in a container with
+disabled networking, and probably I'll end up with such arrangement.
+
+But for now I have a few legacy XFCE environments each running in its own container.
+A temporary solution I deployed within those containers is restricted network access
+for the main user and running all networking software as a different users.
+This software includes Firefox, Chromium, Mullvad, and Tor browsers, plus Thunderbird.
+Of course, some does support Wayland already but LXCex still has copy-pasting issues
+and it's a blocking factor to run them natively.
+
+Here's the setup, on the example of Firefox,
+which can be used as a boilerplate for other programs.
+
+First, create a separate user:
+```
+useradd -g users --skel /etc/skel --shell /bin/bash --create-home firefox
+```
+Then, move directories:
+```
+mkdir /home/firefox/.cache
+mv /home/user/.mozilla /home/firefox/
+mv /home/user/.cache/firefox /home/firefox/.cache/
+chown -R firefox /home/firefox
+```
+Create shared directory for downloads:
+```
+mkdir -p /var/share
+chgrp users /var/share
+chmod 710 /var/share
+mv /home/user/Downloads /var/share/
+chmod 777 /var/share/Downloads
+ln -s /var/share/Downloads /home/user/
+ln -s /var/share/Downloads /home/firefox/
+```
+Next, prepare a script `/usr/local/bin/start-firefox`:
+```
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+    xhost +SI:localuser:firefox
+    sudo $0 run
+else
+    su -c "cd /home/firefox ; DISPAY=:0.0 firefox --display=:0.0" firefox
+fi
+```
+Finally, create `/etc/sudoers.d/50-start-firefox` (alas, sudo is required):
+```
+user ALL = NOPASSWD: /usr/local/bin/start-firefox run
+```
+You may need to modify XFCE start menu entry.
+And to add -P option for the first time, otherwise firefox may start with a blank profile.
 
 
 ## Miscellaneous notes
@@ -352,3 +340,13 @@ in containers and want all uid submounts to propagate.
    ```
    DEVICESCAN -d removable -n never -m root -M exec /usr/share/smartmontools/smartd-runner
    ```
+
+### More packages
+
+My extra packages, just for the record.
+
+* Fonts: `gnome-font-viewer`, looks unnecessary
+* Images: `gthumb`
+* Kate: when installed in XFCE, it needs some theme. I used `breeze-icon-theme`.
+* KDE `systemsettings`: installed just in case, zero profit so far.
+* Ungoogled chromium needs: `libnss3`, `libasound2`
