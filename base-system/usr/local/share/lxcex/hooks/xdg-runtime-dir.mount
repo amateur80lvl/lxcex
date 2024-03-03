@@ -1,4 +1,4 @@
-!/bin/sh -e
+#!/bin/sh -e
 
 # We're dealing with mount entries, so expand any symlink
 LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
