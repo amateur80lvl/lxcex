@@ -1,0 +1,34 @@
+#!/bin/sh -e
+
+# bind idmapped thunk mounts to $HOME/$share_basename
+
+share="$1"
+
+if [ -z "$share" ] ; then
+    echo "shared directory argument is required"
+    exit 1
+fi
+
+share_basename=`basename "$share"`
+
+# We're dealing with mount entries, so expand any symlink
+LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
+
+for home in "${LXC_ROOTFS_MOUNT}"/home/* ; do
+
+    [ -d "$home/$share_basename" ] || continue
+
+    username=`basename "$home"`
+    thunk="/mnt/thunks/share/$share_basename/$LXC_NAME/$username"
+    if [ -d "$thunk" ] ; then
+        mount --rbind "$thunk" "$home/$share_basename"
+    fi
+done
+
+root_share="$LXC_ROOTFS_MOUNT/root/$share_basename"
+if [ -d "$root_share" ] ; then
+    thunk="/mnt/thunks/share/$share_basename/$LXC_NAME/root"
+    if [ -d "$thunk" ] ; then
+        mount --rbind "$thunk" "$root_share"
+    fi
+fi

@@ -1,0 +1,28 @@
+#!/bin/sh -e
+
+# Share project directories:
+#
+# external container rootfs/home/<identity>/projects -> idmapped mount to:
+# this container rootfs/home/<username>/projects/<identity>
+#
+# This script binds idmapped thunks to container's rootfs.
+
+[ -d "/mnt/thunks/share-projects/$LXC_NAME" ] || exit 0
+
+# We're dealing with mount entries, so expand any symlink
+LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
+
+# bind mount thunks
+
+for user_dir in "/mnt/thunks/share-projects/$LXC_NAME"/* ; do
+
+    username=`basename "$user_dir"`
+    home="${LXC_ROOTFS_MOUNT}/home/$username"
+
+    for thunk in "$user_dir"/* ; do
+        identity=`basename "$thunk"`
+        projects_dir="$home/projects/$identity"
+        mkdir -p "$projects_dir"
+        mount --rbind "$thunk" "$projects_dir"
+    done
+done

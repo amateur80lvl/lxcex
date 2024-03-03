@@ -50,6 +50,7 @@ The script contains parameters at the beginning, revise them carefully before ru
 * [Chapter 5. Desktop Environment](https://github.com/amateur80lvl/lxcex/tree/main/book/ch5-desktop-environment.md)
 * [Chapter 6. Pipewire](https://github.com/amateur80lvl/lxcex/tree/main/book/ch6-pipewire.md)
 * [Chapter 7. Plausible Deniability](https://github.com/amateur80lvl/lxcex/tree/main/book/ch7-plausible-deniability.md)
+* [Chapter 8. Sharing files](https://github.com/amateur80lvl/lxcex/tree/main/book/ch8-sharing-files.md)
 
 
 ## Experience
@@ -206,23 +207,6 @@ The solution is fragile. If autofs is restarted, it remounts top directories and
 Another approach could be a NFS client in userspace, but there are not so many implementations in the wild.
 I gave [this one](https://github.com/sahlberg/fuse-nfs) a try but it failed.
 Yes, I tried to play with `/dev/fuse` and read all those hints on the Internet. No luck.
-
-### Shared folders
-
-On the host:
-```
-mkdir /var/share
-chmod 777 /var/share
-```
-
-In the container's configuration:
-```
-lxc.mount.entry = /var/share var/share none bind,create=dir 0 0
-```
-
-Ideally, I'd like file uid:gid be same as for current user regardless of who put files to a shared directory.
-`lxc.mount.entry` has a still not documented `idmap` option but the current
-syntax allows path to user namespace only. Frankly, I have no idea what to do with this.
 
 ### Editing main menu
 

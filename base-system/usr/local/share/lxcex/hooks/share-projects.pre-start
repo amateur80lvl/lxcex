@@ -1,0 +1,71 @@
+#!/bin/sh -e
+
+# Share project directories:
+#
+# external container rootfs/home/<identity>/projects -> idmapped mount to:
+# this container rootfs/home/<username>/projects/<identity>
+#
+# This script creates idmapped thunk mounts which are bind mounted
+# in container's rootfs by share-projects.mount script.
+# That's because mount-idmapped hungs forever if called from mount hook.
+#
+# This script accepts pairs of arguments: external-container local-user
+#
+# Limitations:
+#
+# * external containers with their rootfs must be in /var/lib/lxc (hardcoded)
+
+
+# unmount existing thunks
+
+for thunk in `findmnt -nlo TARGET | grep "/mnt/thunks/share-projects/$LXC_NAME"` ; do
+    umount "$thunk"
+done
+if [ -d "/mnt/thunks/share-projects/$LXC_NAME" ] ; then
+    for thunks in "/mnt/thunks/share-projects/$LXC_NAME"/* ; do
+        [ -d "$thunks" ] || continue
+        for thunk in "$thunks"/* ; do
+            [ -d "$thunk" ] || continue
+            rmdir "$thunk"
+        done
+    done
+fi
+
+# mount thunks
+
+if [ "$#" = 0 ] ; then
+    echo "Missing username argument"
+    exit 1
+fi
+username="$1"
+shift
+
+to_uid=`stat -c %u "$LXC_ROOTFS_PATH/home/$username"`
+to_gid=`stat -c %g "$LXC_ROOTFS_PATH/home/$username"`
+
+while [ "$#" != 0 ] ; do
+
+    external_container="$1"
+    if [ -z "$external_container" ] ; then
+        break
+    fi
+    shift
+
+    # process home directories (identities) of external containers
+    for home in /var/lib/lxc/"$external_container"/rootfs/home/* ; do
+        [ -d "$home" ] || continue
+
+        projects_dir="$home/projects"
+        [ -d "$projects_dir" ] || continue
+
+        identity=`basename "$home"`
+
+        thunk="/mnt/thunks/share-projects/$LXC_NAME/$username/$identity"
+        mkdir -p "$thunk"
+
+        from_uid=`stat -c %u "$projects_dir"`
+        from_gid=`stat -c %g "$projects_dir"`
+
+        mount-idmapped --map-mount u:$from_uid:$to_uid:1 --map-mount g:$from_gid:$to_gid:1 "$projects_dir" "$thunk"
+    done
+done
