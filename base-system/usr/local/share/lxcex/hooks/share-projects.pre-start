@@ -9,7 +9,7 @@
 # in container's rootfs by share-projects.mount script.
 # That's because mount-idmapped hungs forever if called from mount hook.
 #
-# This script accepts pairs of arguments: external-container local-user
+# Arguments: local-user external-container-1, external-container-2, ...
 #
 # Limitations:
 #
