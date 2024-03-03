@@ -41,7 +41,7 @@ gcc -o /usr/local/bin/mount-idmapped mount-idmapped.c
 ```
 
 There's one point for LXC containers, however: if `mount-idmapped` is called
-from `mount` hook, it hangs indefinetely.
+from `mount` hook, it hangs indefinitely.
 This can be worked around by mounting idmapped points to intermediate
 locations in `pre-start` hook and then `rbind` them to final destinations
 in `mount` hook.
