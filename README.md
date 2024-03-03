@@ -148,6 +148,16 @@ Initial commit and release.
 
 ## Tips and tricks
 
+### Upgrading the system
+
+You may wonder how to issue `apt upgrade` for a dozen of containers including the base system.
+That's what
+[dist-upgrade](https://github.com/amateur80lvl/lxcex/tree/main/base-system/root/dist-upgrade)
+script is for.
+It is based on
+[lxc-chroot](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/bin/lxc-chroot)
+which runs arbitraty command, properly chrooting to the container's rootfs.
+
 ### Firefox
 
 They lauched apt repository, so it's worth to follow
