@@ -736,6 +736,10 @@ def base_system_tweaks():
     install_file('base-system', dest_dir, '/usr/local/bin/start-user-containers')
     install_file('base-system', dest_dir, '/etc/sudoers.d/50-start-user-containers')
 
+    # install dist-upgrade script
+    install_file('base-system', dest_dir, '/root/dist-upgrade')
+    install_file('base-system', dest_dir, '/usr/local/bin/lxc-chroot')
+
     # install kernel and bootloader
     if dest_device is not None:
         chroot(dest_dir, f'apt install -y {" ".join(kernel_packages)}', capture_output=False)
