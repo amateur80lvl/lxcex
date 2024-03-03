@@ -100,6 +100,10 @@ Ideally, I'd like to get rid of all custom packages so `uidmapshift` would be un
 
 ## Changeblog
 
+### Mar 3, 2024
+
+So far so good. New Chapter 8 is out.
+
 ### Feb 14, 2024
 
 Three months since inception, and now I can say farewell, linuxmint.
