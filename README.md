@@ -234,7 +234,7 @@ But for now I have a few legacy XFCE environments each running in its own contai
 A temporary solution I deployed within those containers is restricted network access
 for the main user and running all networking software as a different users.
 This software includes Firefox, Chromium, Mullvad, and Tor browsers, plus Thunderbird.
-Of course, some does support Wayland already but LXCex still has copy-pasting issues
+Of course, some do support Wayland already but LXCex still has copy-pasting issues
 and it's a blocking factor to run them natively.
 
 Here's the setup, on the example of Firefox,
