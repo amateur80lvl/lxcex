@@ -68,7 +68,7 @@ mount-idmapped \
 Actually, the above code won't work, it just illustrates the idea.
 You'll need an idmapped mount for each user participating in file sharing.
 They say the number of idmaps is limited by 340, and I suppose
-there's a fixed-size array somewhere in kernel.
+there's a fixed-size array somewhere in the kernel.
 Nevertheless, I think it's more than enough for a desktop system.
 
 Note that shared directory must have non-root owner.
