@@ -707,6 +707,13 @@ def base_system_tweaks():
         run(f'chmod 600 "{dest_dir}/root/.ssh"')
         write_file(dest_dir, '/root/.ssh/authorized_keys', root_ssh_keys)
 
+    # remove runit ssh service: even in native boot mode
+    # this hook /lib/lsb/init-functions.d/40-runit
+    # interferes with sysvinit -- runit bug?
+    run(f'unlink "{dest_dir}/etc/service/ssh"')
+    run(f'rm -rf "{dest_dir}/etc/sv/ssh"')
+
+
     # generate subuid and subgid for root
     subordinate_ids = ''.join(f'root:{sub_id}:65536\n' for sub_id in subid_range())
     write_file(dest_dir, '/etc/subuid', f'{subordinate_ids}\n')
