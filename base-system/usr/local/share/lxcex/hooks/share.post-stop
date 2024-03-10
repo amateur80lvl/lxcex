@@ -12,8 +12,8 @@ fi
 
 share_basename=`basename "$share"`
 
-[ -d "/mnt/thunks/share/$share_basename"] || exit 0
-[ -d "/mnt/thunks/share/$share_basename/$LXC_NAME"] || exit 0
+[ -d "/mnt/thunks/share/$share_basename" ] || exit 0
+[ -d "/mnt/thunks/share/$share_basename/$LXC_NAME" ] || exit 0
 
 for thunk in "/mnt/thunks/share/$share_basename/$LXC_NAME"/* ; do
     if findmnt "$thunk" >/dev/null ; then

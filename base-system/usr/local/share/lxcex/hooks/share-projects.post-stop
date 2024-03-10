@@ -7,6 +7,6 @@ for thunk in `findmnt -nlo TARGET | grep "/mnt/thunks/share-projects/$LXC_NAME"`
 done
 if [ -d "/mnt/thunks/share-projects/$LXC_NAME" ] ; then
     for thunks in "/mnt/thunks/share-projects/$LXC_NAME"/* ; do
-        rmdir  "$thunks"/*
+        rmdir "$thunks"/*
     done
 fi

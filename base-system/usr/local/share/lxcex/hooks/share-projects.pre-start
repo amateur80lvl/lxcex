@@ -53,6 +53,8 @@ while [ "$#" != 0 ] ; do
 
     # process home directories (identities) of external containers
     for home in /var/lib/lxc/"$external_container"/rootfs/home/* ; do
+
+        home=`readlink -f "$home"`
         [ -d "$home" ] || continue
 
         projects_dir="$home/projects"
@@ -66,6 +68,8 @@ while [ "$#" != 0 ] ; do
         from_uid=`stat -c %u "$projects_dir"`
         from_gid=`stat -c %g "$projects_dir"`
 
-        mount-idmapped --map-mount u:$from_uid:$to_uid:1 --map-mount g:$from_gid:$to_gid:1 "$projects_dir" "$thunk"
+        if ! findmnt "$thunk" >/dev/null ; then
+            mount-idmapped --map-mount u:$from_uid:$to_uid:1 --map-mount g:$from_gid:$to_gid:1 "$projects_dir" "$thunk"
+        fi
     done
 done

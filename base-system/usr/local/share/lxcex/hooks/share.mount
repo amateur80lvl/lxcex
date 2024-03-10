@@ -16,6 +16,7 @@ LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
 
 for home in "${LXC_ROOTFS_MOUNT}"/home/* ; do
 
+    home=`readlink -f "$home"`
     [ -d "$home/$share_basename" ] || continue
 
     username=`basename "$home"`
@@ -25,10 +26,10 @@ for home in "${LXC_ROOTFS_MOUNT}"/home/* ; do
     fi
 done
 
-root_share="$LXC_ROOTFS_MOUNT/root/$share_basename"
-if [ -d "$root_share" ] ; then
+root_share_dir="$LXC_ROOTFS_MOUNT/root/$share_basename"
+if [ -d "$root_share_dir" ] ; then
     thunk="/mnt/thunks/share/$share_basename/$LXC_NAME/root"
     if [ -d "$thunk" ] ; then
-        mount --rbind "$thunk" "$root_share"
+        mount --rbind "$thunk" "$root_share_dir"
     fi
 fi

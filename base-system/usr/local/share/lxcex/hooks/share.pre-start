@@ -23,6 +23,7 @@ from_gid=`stat -c %g "$share"`
 
 for home in "${LXC_ROOTFS_PATH}"/home/* ; do
 
+    home=`readlink -f "$home"`
     [ -d "$home/$share_basename" ] || continue
 
     to_uid=`stat -c %u "$home"`
@@ -38,8 +39,8 @@ for home in "${LXC_ROOTFS_PATH}"/home/* ; do
     fi
 done
 
-root_share="${LXC_ROOTFS_PATH}/root/$share_basename"
-if [ -d "$root_share" ] ; then
+root_share_dir="${LXC_ROOTFS_PATH}/root/$share_basename"
+if [ -d "$root_share_dir" ] ; then
 
     to_uid=`stat -c %u "${LXC_ROOTFS_MOUNT}/root"`
     to_gid=`stat -c %g "${LXC_ROOTFS_MOUNT}/root"`
@@ -48,6 +49,6 @@ if [ -d "$root_share" ] ; then
     mkdir -p "$thunk"
 
     if ! findmnt "$thunk" >/dev/null ; then
-        mount-idmapped --map-mount u:$from_uid:$to_uid:1 --map-mount g:$from_gid:$to_gid:1 "$share" "$thunk"
+        mount-idmapped --map-mount u:$from_uid:$to_uid:1 --map-mount g:$from_gid:$to_gid:1 "$root_share_dir" "$thunk"
     fi
 fi
