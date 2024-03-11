@@ -265,7 +265,7 @@ kernel_packages = [
     'amd64-microcode'
 ]
 
-linux_cmdline = 'tsc=unstable lapic=notscdeadline intel_iommu=off'
+linux_cmdline = 'tsc=unstable lapic=notscdeadline intel_iommu=off transparent_hugepage=madvise'
 
 def lxc_net_tweaks():
     change_env_var(dest_dir, '/etc/default/lxc-net', 'USE_LXC_BRIDGE', '"false"')
