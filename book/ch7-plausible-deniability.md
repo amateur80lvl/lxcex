@@ -57,6 +57,12 @@ HISTFILE=
 ```
 before bootstrapping your combat system.
 
+## The kernel strikes back
+
+https://lwn.net/Articles/941764/
+
+The scheme won't work after they turn BLK_DEV_WRITE_MOUNTED on by default.
+
 ## Bootstrapping
 
 One possible implementation could be as follows. It's a script you can feed to `sh` either local or remotely
