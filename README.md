@@ -21,7 +21,7 @@ Work in progress.
 
 At the moment, this system reflects my experience and is full of personal preferences.
 Some of them are quite baseless.
-I swear I'll get rid of them as soon as the number of users go beyond 1.5.
+I swear I'll get rid of them as soon as the number of users will go beyond 1.5.
 But in general, the rationale is as follows:
 
 ## Rationale
