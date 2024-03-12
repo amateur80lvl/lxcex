@@ -249,6 +249,10 @@ base_system_packages = [
     'bc',
     'cryptsetup',
 
+    # to run binaries/containers of foreign architecture
+    'qemu-user-static',
+    'binfmt-support',
+
     # lxcex packages
     'uidmapshift'     # nice utility by Serge Hallyn
 ]
