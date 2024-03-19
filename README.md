@@ -282,7 +282,7 @@ Next, prepare a script `/usr/local/bin/start-firefox`:
 USER=firefox
 
 if [ -z "$1" ] ; then
-    xhost +SI:localuser:firefox
+    xhost +SI:localuser:$USER
     sudo $0 dosu
 elif [ "$1" = "dosu" ] ; then
     su -l -c "$0 run" $USER
