@@ -279,16 +279,26 @@ Next, prepare a script `/usr/local/bin/start-firefox`:
 ```
 #!/bin/sh
 
+USER=firefox
+
 if [ -z "$1" ] ; then
     xhost +SI:localuser:firefox
-    sudo $0 run
-else
-    su -c "cd /home/firefox ; DISPAY=:0.0 firefox --display=:0.0" firefox
+    sudo $0 dosu
+elif [ "$1" = "dosu" ] ; then
+    su -l -c "$0 run" $USER
+elif [ "$1" = "run" ] ; then
+    cd /home/$USER
+    . /usr/local/share/lxcex-xdg.sh
+    export DISPAY=:0.0
+    firefox --display=:0.0
 fi
 ```
+Actually, `DISPLAY` environment variable is not necessary here, but this script
+can be used as a boilerplate to run other apps so I intentionally left it.
+
 Finally, create `/etc/sudoers.d/50-start-firefox` (alas, sudo is required):
 ```
-user ALL = NOPASSWD: /usr/local/bin/start-firefox run
+user ALL = NOPASSWD: /usr/local/bin/start-firefox dosu
 ```
 You may need to modify XFCE start menu entry.
 And to add -P option for the first time, otherwise firefox may start with a blank profile.
