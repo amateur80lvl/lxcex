@@ -283,14 +283,14 @@ USER=firefox
 
 if [ -z "$1" ] ; then
     xhost +SI:localuser:$USER
-    sudo $0 dosu
+    exec sudo $0 dosu
 elif [ "$1" = "dosu" ] ; then
-    su -l -c "$0 run" $USER
+    exec su -l -c "$0 run" $USER
 elif [ "$1" = "run" ] ; then
     cd /home/$USER
     . /usr/local/share/lxcex-xdg.sh
     export DISPAY=:0.0
-    firefox --display=:0.0
+    exec firefox --display=:0.0
 fi
 ```
 Actually, `DISPLAY` environment variable is not necessary here, but this script
