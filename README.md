@@ -77,6 +77,9 @@ Ideally, I'd like to get rid of all custom packages so `uidmapshift` would be un
 
 ## TODO
 
+* drop packages from git for security reasons; instead, provide instructions and/or script
+  for creating user's own repo
+* get rid of hardcoded `lxcex`, let the user to customize that?
 * find the best way to create /run/user/<uid> in containers
 * automatic move network adapters to container (udev rule?)
 * wifi
