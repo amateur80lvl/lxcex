@@ -340,6 +340,7 @@ base_container_exclude = [
 
 networking_container_packages = [
     'apt-cacher-ng',
+    'ethtool',
     'iw',
     'nftables',
     'rfkill',
