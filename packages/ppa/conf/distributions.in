@@ -1,0 +1,7 @@
+Origin: lxcex
+Label: apt repository
+Codename: {codename}
+Architectures: amd64 arm64 source
+Components: main
+Description: LXCex devuan package repo
+SignWith: {key_id}
