@@ -1,15 +1,3 @@
---- a/debian/changelog	2022-09-22 19:00:13.000000000 +0000
-+++ b/debian/changelog	2024-01-29 18:36:41.300056241 +0000
-@@ -1,3 +1,9 @@
-+pulseaudio (16.1+dfsg1-2+lxcex1) daedalus; urgency=medium
-+
-+  * Fix directory permissions.
-+
-+ -- Anonymous Person <amateur80lvl@gmail.com>  Mon, 29 Jan 2024 17:18:50 +0000
-+
- pulseaudio (16.1+dfsg1-2) unstable; urgency=medium
- 
-   * Team upload
 --- a/debian/patches/series	2022-09-22 19:00:13.000000000 +0000
 +++ b/debian/patches/series	2024-01-29 17:41:14.334129514 +0000
 @@ -1 +1,2 @@
