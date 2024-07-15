@@ -1,5 +1,0 @@
-Component: main
-Origin: lxcex
-Label: apt repository
-Architecture: amd64
-Description: LXCex devuan package repo
