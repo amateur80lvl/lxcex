@@ -1,19 +1,11 @@
---- a/debian/patches/series	2022-09-22 19:00:13.000000000 +0000
-+++ b/debian/patches/series	2024-01-29 17:41:14.334129514 +0000
-@@ -1 +1,2 @@
- disable-autospawn.patch
-+socket-dir-group-traversable.patch
---- a/debian/patches/socket-dir-group-traversable.patch	1970-01-01 00:00:00.000000000 +0000
-+++ b/debian/patches/socket-dir-group-traversable.patch	2024-01-29 18:07:24.990897928 +0000
-@@ -0,0 +1,11 @@
-+--- a/src/pulsecore/core-util.c	2024-01-29 17:39:02.607045839 +0000
-++++ b/src/pulsecore/core-util.c	2024-01-29 17:36:36.787635272 +0000
-+@@ -1767,7 +1767,7 @@
-+      * set create a directory in $HOME and link it to a random subdir
-+      * in /tmp, if it was not explicitly configured. */
-+ 
-+-    m = pa_in_system_mode() ? 0755U : 0700U;
-++    m = pa_in_system_mode() ? 0755U : 0710U;
-+ 
-+     /* Use the explicitly configured value if it is set */
-+     d = getenv("PULSE_RUNTIME_PATH");
+--- a/src/pulsecore/core-util.c	2024-01-29 17:39:02.607045839 +0000
++++ b/src/pulsecore/core-util.c	2024-01-29 17:36:36.787635272 +0000
+@@ -1767,7 +1767,7 @@
+      * set create a directory in $HOME and link it to a random subdir
+      * in /tmp, if it was not explicitly configured. */
+ 
+-    m = pa_in_system_mode() ? 0755U : 0700U;
++    m = pa_in_system_mode() ? 0755U : 0710U;
+ 
+     /* Use the explicitly configured value if it is set */
+     d = getenv("PULSE_RUNTIME_PATH");

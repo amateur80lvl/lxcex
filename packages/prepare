@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+
+# Run this script as root!
+# The procedure is simple:
+
+def main():
+    install_packages()
+    install_nginx()
+    create_user()
+    create_signing_key()
+    uncomment_deb_src()
+
+# Some configuration parameters, change if necessary:
+
+username = 'lxcex'  # unprivileged user to build PPA
+email = 'Anonymous <anonymous@example.com>'  # for signing key and changelog entries
+
+nginx_key_fingerprint = '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62'
+
+# Devuan to Debian codename mapping
+devdeb_codenames = {
+    'daedalus': 'bookworm'
+}
+
+
+def install_packages():
+    print('*******************')
+    print('Installing packages')
+    print()
+    run(f'apt install -y git devscripts reprepro {libpulse_dependencies} {lxcfs_dependencies}')
+
+libpulse_dependencies = ' '.join('''
+    meson ninja-build check desktop-file-utils dh-exec intltool libasound2-dev
+    libasyncns-dev libavahi-client-dev libbluetooth-dev libsbc-dev libcap-dev
+    libfftw3-dev libglib2.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+    libgtk-3-dev libice-dev libjack-dev liblircclient-dev liborc-0.4-dev libsndfile1-dev
+    libsoxr-dev libspeexdsp-dev libssl-dev libsystemd-dev libtdb-dev libudev-dev
+    libwebrtc-audio-processing-dev libwrap0-dev libx11-xcb-dev libxcb1-dev libxml2-utils
+    libxtst-dev
+'''.split())
+
+lxcfs_dependencies = 'help2man libfuse3-dev python3-jinja2'
+
+
+def install_nginx():
+    # https://nginx.org/en/linux_packages.html#Debian
+    print('****************')
+    print('Installing NGINX')
+    print()
+
+    run('apt install -y curl gnupg2 ca-certificates lsb-release debian-archive-keyring')
+
+    # get proxy from apt
+    proxy = run('apt-config shell proxy "Acquire::http::Proxy"', capture_output=True).stdout
+    if proxy:
+        data = dict()
+        exec(proxy, data, data)
+        proxy = f'--proxy {data["proxy"]}'
+
+    nginx_key = run(f'curl {proxy} https://nginx.org/keys/nginx_signing.key', text=False, capture_output=True).stdout
+    nginx_key = run('gpg --dearmor', input=nginx_key, text=False, capture_output=True).stdout
+    with open('/usr/share/keyrings/nginx-archive-keyring.gpg', 'wb') as f:
+        f.write(nginx_key)
+
+    result = run(
+        'gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg',
+        capture_output = True
+    )
+    if nginx_key_fingerprint not in result.stdout:
+        raise Exception(f'Bad NGINX key fingerprint. Expected {nginx_key_fingerprint} here:\n\n{result.stdout}')
+
+    codename = run('lsb_release -cs', capture_output=True).stdout.strip()
+    codename = devdeb_codenames.get(codename, codename)
+
+    arch = run('arch', capture_output=True).stdout.strip()
+    if arch == 'aarch64':
+        # RPi fix
+        arch = 'arch=arm64 '
+    else:
+        arch = ''
+
+    with open('/etc/apt/sources.list.d/nginx.list', 'w') as f:
+        f.write(f'deb [{arch}signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/debian {codename} nginx\n')
+
+    with open('/etc/apt/preferences.d/99nginx', 'w') as f:
+        f.write('Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n')
+
+    run('apt update')
+    run('apt install -y nginx')
+
+
+def create_user():
+    print('**************' + '*' * len(username))
+    print(f'Creating user {username}')
+    print()
+    run(f'useradd -g nginx --create-home --skel /etc/skel --shell /bin/bash {username}')
+
+
+def create_signing_key():
+    print('********************')
+    print('Creating signing key')
+    print()
+
+    run(f'su -c "gpg --batch --passphrase \'\' --quick-gen-key \'{email}\'" {username}')
+
+    # save public key for makecex
+    run(f'su -c "gpg --armor --output /home/{username}/lxcex-signing-key.gpg --export-options export-minimal --export \'{email}\'" {username}')
+
+
+def uncomment_deb_src():
+    # Make sure deb-src are uncommented in /etc/apt/sources.list
+    print('********************')
+    print('Uncommenting deb-src')
+    print()
+    with open('/etc/apt/sources.list', 'r') as f:
+        sources_list = f.read()
+    sources_list = re.sub('#\s*deb-src', 'deb-src', sources_list)
+    with open('/etc/apt/sources.list', 'w') as f:
+        f.write(sources_list)
+    run('apt update')
+
+
+def run(command, check=True, shell=False, capture_output=False, env=None, text=True, **kwargs):
+    print('>>>', command)
+
+    if shell:
+        args = command
+    else:
+        args = shlex.split(command)
+
+    environment = os.environ
+    if env:
+        environment.update(env)
+
+    result = subprocess.run(args, capture_output=capture_output,
+                            text=text, shell=shell, env=environment, **kwargs)
+
+    if check and result.returncode != 0:
+        raise Exception(f'Failed {command}: {result.stderr or result.stdout}')
+
+    return result
+
+
+if __name__ == '__main__':
+
+    import os
+    import re
+    import shlex
+    import subprocess
+    import sys
+
+    main()

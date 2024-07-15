@@ -1,0 +1,61 @@
+#!/bin/bash
+
+CODENAME=daedalus
+export EMAIL="Anonymous <anonymous@example.com>"
+
+pushd `dirname $0`
+
+# build uidmapshift
+
+uidmapshift_orig=uidmapshift_27.orig.tar.gz
+rm -f $uidmapshift_orig
+tar -czf $uidmapshift_orig uidmapshift
+pushd uidmapshift
+debuild
+popd
+
+# build libpulse0 (entire pulseaudio, actually)
+
+apt source pulseaudio
+pushd pulseaudio-*
+dch --local +lxcex -D $CODENAME "Fix directory permissions."
+patch -Np1 <../patches/pulseaudio.patch
+dpkg-source --commit . socket-dir-group-traversable.patch
+debuild
+popd
+
+# build lxcfs
+
+apt source lxcfs
+pushd lxcfs-*
+dch --local +lxcex -D $CODENAME "Backported https://github.com/lxc/lxcfs/pull/626"
+patch -Np1 <../patches/lxcfs.patch
+dpkg-source --commit . pr626.patch
+debuild
+popd
+
+
+# populate PPA
+
+KEY_ID=`gpg --list-options show-only-fpr-mbox --list-secret-keys "$EMAIL" | cut -d ' ' -f 1`
+
+python3 << EOF
+
+import os
+import sys
+
+codename = '$CODENAME'
+key_id = '$KEY_ID'
+
+ppa_conf_dir = os.path.join(os.path.dirname(sys.argv[0]), 'ppa', 'conf')
+with open(os.path.join(ppa_conf_dir, 'distributions.in'), 'r') as f:
+    conf = f.read()
+conf = conf.format_map(globals())
+with open(os.path.join(ppa_conf_dir, 'distributions'), 'w') as f:
+    f.write(conf)
+
+EOF
+
+reprepro -b ppa includedeb $CODENAME *.deb
+
+popd

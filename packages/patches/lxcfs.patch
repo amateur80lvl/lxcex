@@ -1,21 +1,11 @@
---- a/debian/patches/pr626.patch	1970-01-01 00:00:00.000000000 +0000
-+++ b/debian/patches/pr626.patch	2024-01-30 12:33:24.788049360 +0000
-@@ -0,0 +1,13 @@
-+diff --git a/share/lxc.mount.hook.in b/share/lxc.mount.hook.in
-+index cf81d2c6..6fd13b06 100755
-+--- a/share/lxc.mount.hook.in
-++++ b/share/lxc.mount.hook.in
-+@@ -24,7 +24,7 @@ if [ -d {{LXCFSTARGETDIR}}/proc/ ]; then
-+ fi
-+ 
-+ # /sys/devices/system/cpu
-+-if [ -d {{LXCFSTARGETDIR}}/sys/devices/system/cpu ] ; then
-++if [ -d {{LXCFSTARGETDIR}}/sys/devices/system/cpu ] && [ -d "${LXC_ROOTFS_MOUNT}/sys/devices/system/cpu" ]; then
-+     if [ -f {{LXCFSTARGETDIR}}/sys/devices/system/cpu/uevent ]; then
-+         mount -n --bind {{LXCFSTARGETDIR}}/sys/devices/system/cpu "${LXC_ROOTFS_MOUNT}/sys/devices/system/cpu"
-+     else
---- a/debian/patches/series	2023-09-15 21:32:11.000000000 +0000
-+++ b/debian/patches/series	2024-01-30 12:33:47.296576163 +0000
-@@ -1 +1,2 @@
- 000-fix-arm32-personality.patch
-+pr626.patch
+--- a/share/lxc.mount.hook.in
++++ b/share/lxc.mount.hook.in
+@@ -24,7 +24,7 @@ if [ -d {{LXCFSTARGETDIR}}/proc/ ]; then
+ fi
+ 
+ # /sys/devices/system/cpu
+-if [ -d {{LXCFSTARGETDIR}}/sys/devices/system/cpu ] ; then
++if [ -d {{LXCFSTARGETDIR}}/sys/devices/system/cpu ] && [ -d "${LXC_ROOTFS_MOUNT}/sys/devices/system/cpu" ]; then
+     if [ -f {{LXCFSTARGETDIR}}/sys/devices/system/cpu/uevent ]; then
+         mount -n --bind {{LXCFSTARGETDIR}}/sys/devices/system/cpu "${LXC_ROOTFS_MOUNT}/sys/devices/system/cpu"
+     else
