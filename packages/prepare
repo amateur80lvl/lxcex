@@ -14,6 +14,8 @@ def main():
 
 username = 'lxcex'  # unprivileged user to build PPA
 email = 'Anonymous <anonymous@example.com>'  # for signing key and changelog entries
+project_dir = 'lxcex'  # LXCex project subdirectory ion the user's home directory,
+                       # i.e. /home/{username}/{project_dir}
 
 nginx_key_fingerprint = '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62'
 
@@ -88,6 +90,23 @@ def install_nginx():
     run('apt update')
     run('apt install -y nginx')
 
+    hostname = run('hostname', capture_output=True).stdout.strip()
+    site_config = dedent(f'''\
+        server {{
+            listen 80;
+            server_name {hostname};
+
+            root /home/{username}/{project_dir}/packages/ppa;
+            location / {{
+                autoindex on;
+            }}
+        }}
+        ''')
+    with open(f'/etc/nginx/conf.d/{hostname}.conf', 'w') as f:
+        f.write(site_config)
+
+    run('nginx -s reload')
+
 
 def create_user():
     print('**************' + '*' * len(username))
@@ -148,5 +167,6 @@ if __name__ == '__main__':
     import shlex
     import subprocess
     import sys
+    from textwrap import dedent
 
     main()
