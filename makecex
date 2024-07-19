@@ -654,8 +654,16 @@ def base_system_tweaks():
     # configure locales
     chroot(dest_dir, 'dpkg-reconfigure locales', capture_output=False);
 
-    # install more packages
+    # configure apt
     configure_apt(dest_dir)
+    # XXX codename is hardcoded, convert to template:
+    install_file('base-files', dest_dir, '/etc/apt/sources.list.d/lxcex.sources')
+    # XXX hack for now:
+    if codename != 'daedalus':
+        chroot(dest_dir, f'sed -i s/daedalus/{codename}/ /etc/apt/sources.list.d/lxcex.sources')
+    install_file('base-files', dest_dir, '/etc/apt/preferences.d/99lxcex')
+
+    # install more packages
     packages = list(base_system_packages)
     packages.extend(networking_config[networking]['base_system_packages'])
     packages.extend(desktop_config[desktop]['packages'])
@@ -1087,14 +1095,7 @@ def configure_hostname(dest_dir, hostname, old_hostname=None):
 def configure_apt(dest_dir):
 
     write_file(dest_dir, '/etc/apt/sources.list', apt_sources_list)
-
     install_file('common-files', dest_dir, '/etc/apt/apt.conf.d/01norecommends')
-    # XXX codename is hardcoded, convert to template:
-    install_file('common-files', dest_dir, '/etc/apt/sources.list.d/lxcex.sources')
-    # XXX hack for now:
-    if codename != 'daedalus':
-        chroot(dest_dir, f'sed -i s/daedalus/{codename}/ /etc/apt/sources.list.d/lxcex.sources')
-    install_file('common-files', dest_dir, '/etc/apt/preferences.d/99lxcex')
 
 
 def apt_install(dest_dir, packages):
