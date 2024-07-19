@@ -658,11 +658,11 @@ def base_system_tweaks():
     # configure apt
     configure_apt(dest_dir)
     # XXX codename is hardcoded, convert to template:
-    install_file('base-files', dest_dir, '/etc/apt/sources.list.d/lxcex.sources')
+    install_file('base-system', dest_dir, '/etc/apt/sources.list.d/lxcex.sources')
     # XXX hack for now:
     if codename != 'daedalus':
         chroot(dest_dir, f'sed -i s/daedalus/{codename}/ /etc/apt/sources.list.d/lxcex.sources')
-    install_file('base-files', dest_dir, '/etc/apt/preferences.d/99lxcex')
+    install_file('base-system', dest_dir, '/etc/apt/preferences.d/99lxcex')
 
     # install more packages
     packages = list(base_system_packages)
