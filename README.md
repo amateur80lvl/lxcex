@@ -42,6 +42,7 @@ You'll need a PPA which can be created with
 Only legacy boot mode is supported for amd64 for now.
 
 The script contains parameters at the beginning, revise them carefully before running.
+You can write modified parameters to `makecex.conf` instead of making changes to the script.
 
 
 ### by hands

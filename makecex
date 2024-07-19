@@ -534,6 +534,8 @@ def install():
     '''
     Main installation procedure.
     '''
+    load_config()
+
     check_prerequisites()
     prepare_media()
     debootstrap_base_system()
@@ -557,6 +559,20 @@ def install():
 
     # finally, setup apt cacher for all containers
     setup_apt_cacher()
+
+
+def load_config():
+    # read configuration file makecex.conf and replace globals
+    conf_filename = sys.argv[0] + '.conf'
+    if not os.path.exists(conf_filename):
+        return
+    with open(conf_filename, 'r') as f:
+        config = f.read()
+    data = dict()
+    exec(config, data)
+    _globals = globals()
+    for k, v in data.items():
+        _globals[k] = v
 
 
 def check_prerequisites():
