@@ -1251,7 +1251,7 @@ def change_option(directory, relative_path, name, value):
     if not content.endswith('\n'):
         content += '\n'
 
-    matchobj = re.search(f'(^|\\n)(\\s*{name}\s*=)', content)
+    matchobj = re.search(f'(^|\\n)(\\s*{name}\\s*=)', content)
     if matchobj is None:
         # set option
         content += f'\n{name} = {value}\n'
