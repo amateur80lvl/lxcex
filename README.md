@@ -67,6 +67,7 @@ Ideally, I'd like to get rid of all custom packages so `uidmapshift` would be un
 
 ## Quirks
 
+* Something smashes `/dev/ptmx` after a while.
 * Under Weston, drop-down menus in Kate appear with a significant delay.
   Sympthoms look like those described in merge request 1123
 * Weston terminal does not honour user's shell from /etc/passwd and uses `sh`
