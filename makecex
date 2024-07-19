@@ -2,7 +2,7 @@
 
 '''
 The script requires root privileges for mounting and formatting
-destination device, for installing grub on it, and for assigning
+destination device, for installing bootloader on it, and for assigning
 file permissions.
 '''
 
@@ -375,6 +375,7 @@ xfce4_packages = [
     'xfce4-screenshooter'   # comment out if you don't need screenshots
 ]
 
+# netfilter configuration for networking container
 nftables_conf = f'''\
 #!/usr/sbin/nft -f
 
