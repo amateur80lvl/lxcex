@@ -339,9 +339,6 @@ base_container_packages = [
     'findutils',
     'lsb-release',
     'lsof',
-    'procps',
-    'psmisc',
-    'psutils',
     'tree',
     'tzdata',
     'xz-utils'
