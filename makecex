@@ -337,8 +337,6 @@ base_container_packages = [
     'bsdextrautils',
     'file',
     'findutils',
-    'lsb-release',
-    'lsof',
     'tree',
     'tzdata',
     'xz-utils'
