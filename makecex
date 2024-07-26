@@ -233,6 +233,7 @@ base_system_packages = [
     'iputils-tracepath',
     'iproute2',
     'netbase',
+    'netcat-openbsd',
 
     # for remote access and/or backups:
     'openssh-server',
@@ -331,6 +332,7 @@ base_container_packages = [
     'iputils-tracepath',
     'iproute2',
     'netbase',
+    'netcat-openbsd',
 
     # useful stuff:
     'bash-completion',
@@ -350,6 +352,7 @@ base_container_exclude = [
 
 networking_container_packages = [
     'apt-cacher-ng',
+    'dnsutils',
     'ethtool',
     'iw',
     'nftables',
