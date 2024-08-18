@@ -1,0 +1,11 @@
+#!/usr/bin/env /lib/runit/invoke-run
+
+exec 2>&1
+
+ if [ -e /etc/runit/verbose ]; then
+     echo "invoke-run: starting ${PWD##*/}"
+fi
+
+. /etc/default/ethwifi
+
+exec /usr/local/bin/ethwifi

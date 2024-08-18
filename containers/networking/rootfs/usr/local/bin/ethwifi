@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+'''
+Manage networking for a host with ethernet and wifi interfaces.
+
+The configuration is provided with environment variables
+which can be put into `/etc/defaults/ethwifi` and loaded
+before starting this script.
+'''
+
+import os
+
+eth_ifname = os.environ['ETH_IFNAME']
+wifi_ifname = os.environ['WIFI_IFNAME']
+
+wpa_ssid = os.environ['WPA_SSID']
+wpa_passphrase = os.environ['WPA_PASSPHRASE']
+
+ipv4_address = os.environ['IP_ADDR']
+ipv4_gateway = os.environ['GATEWAY']
+
+eth_carrier_poll_delay = float(os.environ['ETH_CARRIER_POLL_DELAY'])
+
+# when link gets down, that might be a temporary failure so try a few times:
+linkdown_checks = int(os.environ['LINKDOWN_CHECKS'])
+
+# delay after unanticipated exception
+restart_delay = float(os.environ['RESTART_DELAY'])
+
+
+def main():
+    init_interfaces()
+    start_wpa_supplicant()
+    prev_carrier = None
+    while True:
+        try:
+            eth_carrier = get_carrier_state(eth_ifname)
+            if eth_carrier != prev_carrier:
+                if eth_carrier == '1':
+                    print('Ethernet link up, deinit wifi')
+                    deinit_wifi()
+                    init_eth()
+                else:
+                    print('Ethernet link down, init wifi')
+                    deinit_eth()
+                    init_wifi()
+                prev_carrier = eth_carrier
+            time.sleep(eth_carrier_poll_delay)
+        except Exception:
+            traceback.print_exc()
+            time.sleep(restart_delay)
+
+def init_interfaces():
+    # initialize interfaces so we can check link carrier or scan wifi
+    invoke(f'ip link set {eth_ifname} up')
+    invoke(f'ip link set {wifi_ifname} up')
+    # delete routes and assigned addresses
+    deinit_wifi()
+    deinit_eth()
+
+def start_wpa_supplicant():
+    # start wpa supplicant for wifi interface
+    invoke('killall wpa_supplicant', check=False)
+    wpa_conf = invoke(f'wpa_passphrase {wpa_ssid} {wpa_passphrase}').stdout
+    wpa_conf_filename = f'/etc/wpa_supplicant/{wpa_ssid}.conf'
+    with open(wpa_conf_filename, 'w') as f:
+        f.write(wpa_conf)
+    invoke(f'wpa_supplicant -B -i {wifi_ifname} -c {wpa_conf_filename}')
+
+def init_wifi():
+    # setup ip configuration for wifi
+    invoke(f'ip address add {ipv4_address} broadcast + dev {wifi_ifname}')
+    invoke(f'ip route add default via {ipv4_gateway} dev {wifi_ifname}')
+
+def deinit_wifi():
+    # delete ip configuration for wifi
+    invoke(f'ip route del default via {ipv4_gateway} dev {wifi_ifname}', check=False)
+    invoke(f'ip address del {ipv4_address} broadcast + dev {wifi_ifname}', check=False)
+
+def init_eth():
+    # setup ip configuration for ethernet
+    invoke(f'ip address add {ipv4_address} broadcast + dev {eth_ifname}')
+    invoke(f'ip route add default via {ipv4_gateway} dev {eth_ifname}')
+
+def deinit_eth():
+    # delete ip configuration for ethernet
+    invoke(f'ip route del default via {ipv4_gateway} dev {eth_ifname}', check=False)
+    invoke(f'ip address del {ipv4_address} broadcast + dev {eth_ifname}', check=False)
+
+def get_carrier_state(ifname):
+    for i in range(linkdown_checks):
+        if read_carrier(ifname) == '1':
+            # link is up, return immediately
+            return '1'
+        time.sleep(eth_carrier_poll_delay)
+    return read_carrier(ifname)
+
+def read_carrier(ifname):
+    try:
+        with open(f'/sys/class/net/{ifname}/carrier') as f:
+            return f.read(1)
+    except OSError:
+        return '0'
+
+def invoke(command, check=True, shell=False, **kwargs):
+    if not shell:
+        command = shlex.split(command)
+    result = subprocess.run(command, capture_output=True, text=True, shell=shell, **kwargs)
+    if check and result.returncode != 0:
+        raise Exception(f'Failed {command}: {result.stderr or result.stdout}')
+    return result
+
+import shlex
+import subprocess
+import time
+import traceback
+
+if __name__ == '__main__':
+    main()
