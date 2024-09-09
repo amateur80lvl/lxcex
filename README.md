@@ -63,11 +63,14 @@ Drafts/Sandbox section.
 
 ### idmapped mounts vs uidmapshift
 
-Which is better in terms of security, if some malicious software, say, a python package
-from notorious pypi, breaks out of container? Or nothing will help then?
+For now, using uidmapshift because:
+* `ls -l /var/lib/lxc` shows base uid/gid for containers, it's much easier than looking into config files
+* scripts from [Chapter 8](https://github.com/amateur80lvl/lxcex/tree/main/book/ch8-sharing-files.md)
+  do not work with idmapped root
+* idmapped mount is not a kind of shit that simply works out of the box
 
-Ideally, I'd like to get rid of all custom packages so `uidmapshift` would be unnecessary, but...
-
+When I find a way to mount in a running container on the fly, preferrably with idmapped root and idmapped mounts
+within it, I'll get rid of uidmapshift.
 
 ## Quirks
 
