@@ -393,6 +393,8 @@ xfce4_packages = [
     'libegl1',        # Xwayland needs this but has no strict dependency
     'at-spi2-core',   # this package doesn't contain too much harm but makes XFCE a little bit happier
 
+    'libdbus-glib-1-2',  # recent mullvad browser began depend on this deprecated shit (as of Sept. 2024)
+
     # productivity packages
     'ristretto',            # absolutely necessary to view pics of cats and porno
     'xfce4-terminal',       # comment out if you can do without it
