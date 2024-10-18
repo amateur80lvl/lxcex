@@ -1,1 +1,0 @@
-hostname `cat /etc/hostname`
