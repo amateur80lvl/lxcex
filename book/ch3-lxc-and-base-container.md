@@ -162,7 +162,7 @@ touch /etc/runit/native.boot.run
 touch /etc/runit/no.emulate.sysv
 mkdir /etc/runit/boot-run
 mkdir /etc/runit/shutdown-run
-for f in /etc/service/getty* ; do unlink $f ; done
+rm -rf /etc/service/getty* /etc/sv/getty*
 ```
 
 Put the following files in `/etc/runit/boot-run`:

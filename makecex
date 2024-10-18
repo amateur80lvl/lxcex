@@ -897,7 +897,7 @@ def create_base_container():
     chroot(container_rootfs, 'touch /etc/runit/no.emulate.sysv')
     chroot(container_rootfs, 'mkdir /etc/runit/boot-run')
     chroot(container_rootfs, 'mkdir /etc/runit/shutdown-run')
-    chroot(container_rootfs, 'sh -s', input='for f in /etc/service/getty* ; do unlink $f ; done')
+    chroot(container_rootfs, 'rm -rf /etc/service/getty* /etc/sv/getty*')
 
     install_dir('containers/base/rootfs', container_rootfs, '/etc/runit/boot-run')
 
