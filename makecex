@@ -366,6 +366,7 @@ networking_container_packages = [
     'dnsutils',
     'ethtool',
     'iw',
+    'net-tools',  # arp, etc.
     'nftables',
     'python3',  # for ethwifi script
     'rfkill',
