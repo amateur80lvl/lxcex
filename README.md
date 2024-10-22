@@ -338,15 +338,18 @@ the base compositor gets restarted? Or when a container resumes from hibernation
 
 ### mount namespaces and shared subtrees
 
-* https://lwn.net/Articles/689856/
+Again,
 * https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt
+* https://lwn.net/Articles/689856/
 
-Still don't get why I have to
+I didn't get why I had to
 ```bash
 mount --make-shared /run
 ```
-i.e. `/run`, not `/run/user` if I `mount --rbind /run/user "${LXC_ROOTFS_MOUNT}/run/host/run/user"`
-in containers and want all uid submounts to propagate.
+i.e. `/run`, not `/run/user` if I did `mount --rbind /run/user "${LXC_ROOTFS_MOUNT}/run/host/run/user"`
+in containers and wanted all uid submounts to propagate.
+
+After re-reading that a few times it should be clear, eventually.
 
 ### smartd tweaks
 
