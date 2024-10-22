@@ -88,7 +88,6 @@ within it, I'll get rid of uidmapshift.
 * get rid of hardcoded `lxcex`, let the user to customize that?
 * find the best way to create /run/user/<uid> in containers
 * automatic move network adapters to container (udev rule?)
-* wifi
 * DHCP
 * improve UX
 * copy-paste across containers
@@ -107,6 +106,14 @@ within it, I'll get rid of uidmapshift.
 
 
 ## Changeblog
+
+### Oct 22, 2024
+
+Okay, dropping a line here. I still seem to be a single user of all this shit and,
+as my African friends say, "daz good!"
+
+Lots of features wanted. Number one is to get rid of runit. Number two is UI utils.
+All others wishes are just a little things.
 
 ### Mar 3, 2024
 
