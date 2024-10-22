@@ -204,31 +204,35 @@ However, this makes copy-paste troublesome so I returned to X mode for now.
 
 ### NFS + autofs
 
-As long as NFS client is implemented in kernel, it's troublesome to use it from unprivileged containers.
-The only working recipe is to mount necessary shares on the host system and then bind them to containers.
+My initial setups were weird and fragile simply because of lack of understanding of shared subtrees.
+* https://www.kernel.org/doc/html/latest/filesystems/sharedsubtree.html
+* https://lwn.net/Articles/689856/
 
-Let's create autofs configuration:
+Here's the solution:
+1. Make some mount point recursively shared. You can't make an arbitrary directory in the file system
+   rshared (that was my point of misunderstanding), it should be an actual mount point,
+   i.e. a directory where some filesystem is mounted.
 
-```
-mkdir /etc/auto.maps
-echo "/mnt/myserver /etc/auto.maps/myserver" >/etc/auto.master.d/myserver.autofs
-echo "shared-dir myserver.example.com:/var/share/top-secret" >/etc/auto.maps/myserver
-```
-and restart autofs.
+   I want to use `/mnt/autofs` for autofs so let's mount a tmpfs there and rshare it:
+   ```
+   mkdir -p /mnt/autofs
+   mount -t tmpfs -o size=64K --make-rshared tmpfs /mnt/autofs
+   mkdir /mnt/autofs/myserver
+   ```
+2. Create autofs configuration:
+   ```
+   mkdir /etc/auto.maps
+   echo "/mnt/autofs/myserver /etc/auto.maps/myserver" >/etc/auto.master.d/myserver.autofs
+   echo "shared-dir myserver.example.com:/var/share/top-secret" >/etc/auto.maps/myserver
+   ```
+   and restart autofs.
 
-Then, add the following lines to container's config:
-```
-lxc.hook.start-host = mount --make-rshared /mnt/myserver
-lxc.mount.entry = /mnt/myserver mnt/myserver none create=dir,rbind 0 0
-```
-Start the container. Inside, `ls /mnt/myserver/shared-dir`
-should work as expected.
+3. Add the following line to the container's config:
+   ```
+   lxc.mount.entry = /mnt/autofs mnt/autofs none create=dir,rbind 0 0
+   ```
 
-The solution is fragile. If autofs is restarted, it remounts top directories and containers do not see them anymore.
-
-Another approach could be a NFS client in userspace, but there are not so many implementations in the wild.
-I gave [this one](https://github.com/sahlberg/fuse-nfs) a try but it failed.
-Yes, I tried to play with `/dev/fuse` and read all those hints on the Internet. No luck.
+Start the container. Inside, `ls /mnt/myserver/shared-dir` should work as expected.
 
 ### Editing main menu
 
