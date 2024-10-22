@@ -276,6 +276,10 @@ base_system_packages = [
     'bc',
     'cryptsetup',
 
+    # basic monitoring
+    'sysstat',
+    'iotop',
+
     # to run binaries/containers of foreign architecture
     'qemu-user-static',
     'binfmt-support',
