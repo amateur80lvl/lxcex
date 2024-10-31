@@ -15,6 +15,7 @@ lxc.tty.max = 4
 lxc.arch = amd64
 lxc.pty.max = 1024
 lxc.rootfs.path = dir:/var/lib/lxc/gui-base/rootfs
+lxc.rootfs.options = nodiratime,relatime,commit=120
 lxc.uts.name = gui-base
 
 lxc.include = /usr/share/lxc/config/devuan.userns.conf

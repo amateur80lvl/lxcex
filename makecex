@@ -320,7 +320,7 @@ def keyboard_tweaks():
 fstab_template = '''\
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 
-UUID={uuid} / ext4 relatime,errors=remount-ro,commit=120 0 1
+UUID={uuid} / ext4 relatime,errors=remount-ro,nodiratime,relatime,commit=120 0 1
 
 # The following mounts are for plausible deniability.
 # Note that /var/tmp is heavily used by dpkg-reconfigure, consider using hidden volume
@@ -461,6 +461,7 @@ lxc.include = /usr/share/lxc/config/devuan.common.conf
 
 # Container specific configuration
 lxc.rootfs.path = dir:/var/lib/lxc/{container_name}/rootfs
+lxc.rootfs.options = nodiratime,relatime,commit=120
 lxc.uts.name = {container_name}
 
 {idmap_configuration}
