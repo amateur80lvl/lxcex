@@ -461,7 +461,7 @@ lxc.include = /usr/share/lxc/config/devuan.common.conf
 
 # Container specific configuration
 lxc.rootfs.path = dir:/var/lib/lxc/{container_name}/rootfs
-lxc.rootfs.options = nodiratime,relatime,commit=120
+lxc.rootfs.options = idmap=container,nodiratime,relatime,commit=120
 lxc.uts.name = {container_name}
 
 {idmap_configuration}
@@ -818,6 +818,7 @@ def base_system_tweaks():
 
     # install LXCex scripts
     install_file('base-system', dest_dir, '/usr/local/bin/lxcex-chroot')
+    install_file('base-system', dest_dir, '/usr/local/bin/lxcex-idmap')
     install_file('base-system', dest_dir, '/usr/local/bin/lxcex-share')
 
     # install dist-upgrade script

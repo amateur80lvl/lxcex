@@ -1,7 +1,7 @@
 lxc.apparmor.profile = unconfined
 
 lxc.rootfs.path = dir:/var/lib/lxc/base/rootfs
-lxc.rootfs.options = nodiratime,relatime,commit=120
+lxc.rootfs.options = idmap=container,nodiratime,relatime,commit=120
 
 # Common configuration
 lxc.include = /usr/share/lxc/config/devuan.common.conf

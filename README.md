@@ -61,17 +61,6 @@ You can write modified parameters to `makecex.conf` instead of making changes to
 
 Drafts/Sandbox section.
 
-### idmapped mounts vs uidmapshift
-
-For now, using uidmapshift because:
-* `ls -l /var/lib/lxc` shows base uid/gid for containers, it's much easier than looking into config files
-* scripts from [Chapter 8](https://github.com/amateur80lvl/lxcex/tree/main/book/ch8-sharing-files.md)
-  do not work with idmapped root
-* idmapped mount is not a kind of shit that simply works out of the box
-
-When I find a way to mount in a running container on the fly, preferrably with idmapped root and idmapped mounts
-within it, I'll get rid of uidmapshift.
-
 ## Quirks
 
 * Something smashes `/dev/ptmx` after a while.
@@ -109,7 +98,11 @@ within it, I'll get rid of uidmapshift.
 
 ### Nov 2, 2024
 
-Revised sharing at last. See updated Chapter 8.
+* Revised sharing at last. See updated Chapter 8.
+* Moved to idmapped rootfs. Keeping `uidmapshift` around for now.
+  As a replacement for `ls -l /var/lib/lxc` that showed ids of `uidmapshift`ed, containers,
+  there's an `lxcex-idmap` script now that shows subordinate user ids for each container
+  that use idmap.
 
 ### Oct 22, 2024
 

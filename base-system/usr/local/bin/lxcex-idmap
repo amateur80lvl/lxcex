@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# List containers with their idmap.
+# For now, only user subuid is shown for simplicity.
+
+LXC_PATH=`lxc-config lxc.lxcpath`
+
+MAX_NAME_LEN=0
+MAX_SUBUID_LEN=0
+
+for c in ${LXC_PATH}/* ; do
+    if [ ! -r "${c}/config" ] ; then
+        continue
+    fi
+    CONTAINER_NAME=`basename "$c"`
+    len=${#CONTAINER_NAME}
+    if [ $MAX_NAME_LEN -lt $len ] ; then
+        MAX_NAME_LEN=$len
+    fi
+    SUBUID=`grep "lxc\.idmap\s=\su" "${c}/config" | awk '{print $5}'`
+    len=${#SUBUID}
+    if [ $MAX_SUBUID_LEN -lt $len ] ; then
+        MAX_SUBUID_LEN=$len
+    fi
+done
+
+for c in ${LXC_PATH}/* ; do
+    if [ ! -r "${c}/config" ] ; then
+        continue
+    fi
+    CONTAINER_NAME=`basename "$c"`
+
+    SUBUID=`grep "lxc\.idmap\s=\su" "${c}/config" | awk '{print $5}'`
+    if [ -z "$SUBUID" ] ; then
+        continue
+    fi
+    FORMAT="%-${MAX_NAME_LEN}s  %${MAX_SUBUID_LEN}s\n"
+    printf "$FORMAT" "$CONTAINER_NAME" "$SUBUID"
+done
