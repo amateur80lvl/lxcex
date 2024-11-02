@@ -88,14 +88,14 @@ fi
 # grepping config file directly:
 if [ -r "$LXC_CONFIG_FILE" ] ; then
 
-    UIDMAP=`grep "lxc\.idmap\s=\su" "$LXC_CONFIG_FILE" | awk '{print $5}'`
-    GIDMAP=`grep "lxc\.idmap\s=\sg" "$LXC_CONFIG_FILE" | awk '{print $5}'`
+    SUBUID=`grep "lxc\.idmap\s=\su" "$LXC_CONFIG_FILE" | awk '{print $5}'`
+    SUBGID=`grep "lxc\.idmap\s=\sg" "$LXC_CONFIG_FILE" | awk '{print $5}'`
 
     if [ -z $UIDMAP ] ; then
-        UIDMAP=0
+        SUBUID=0
     fi
     if [ -z $GIDMAP ] ; then
-        GIDMAP=0
+        SUBGID=0
     fi
 fi
 
@@ -121,7 +121,7 @@ create_container_thunks_dir()
     local dir="${THUNKS_DIR%/}/${CONTAINER_NAME}"
     if [ ! -d "$dir" ] ; then
         mkdir -m $THUNKS_DIR_MODE "$dir"
-        chown ${UIDMAP}:${GIDMAP} "$dir"
+        chown ${SUBUID}:${SUBGID} "$dir"
     fi
 }
 
@@ -151,7 +151,7 @@ create_thunk_dir()
     local dir="${base_dir%/}/${dest_dir#/}"
     if [ ! -d "$dir" ] ; then
         mkdir -m $THUNKS_DIR_MODE "$dir"
-        chown ${UIDMAP}:${GIDMAP} "$dir"
+        chown ${SUBUID}:${SUBGID} "$dir"
     fi
 }
 
@@ -173,8 +173,8 @@ create_thunk()
     dest_uid=`chroot "$LXC_ROOTFS_PATH" id -u "$USER"`
     dest_gid=`chroot "$LXC_ROOTFS_PATH" id -g "$USER"`
 
-    dest_uid=$(($UIDMAP + $dest_uid))
-    dest_gid=$(($GIDMAP + $dest_gid))
+    dest_uid=$(($SUBUID + $dest_uid))
+    dest_gid=$(($SUBGID + $dest_gid))
 
     mount-idmapped \
         --map-mount u:$src_uid:$dest_uid:1 \
