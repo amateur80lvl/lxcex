@@ -61,6 +61,16 @@ You can write modified parameters to `makecex.conf` instead of making changes to
 
 Drafts/Sandbox section.
 
+## idmapped mounts vs uidmapshift
+
+**Since LXCex moved to idmapped mounts, file permissions became more important.**
+**With `uidmapshift` all container data was inaccessible from unprivileged user on the base system.**
+**That's no longer the case with idmapped mounts because unprivileged users**
+**across base system and containers have common ids.**
+
+Make sure all subdirectories in `/var/lib/lxc` have minimal permissions and are not readable by `other` at least.
+The same applies to the container data stored elsewhere.
+
 ## Quirks
 
 * Something smashes `/dev/ptmx` after a while.
