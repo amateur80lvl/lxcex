@@ -225,7 +225,18 @@ case "$HOOK_TYPE" in
     # We're dealing with mount entries, so expand any symlink
     LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
 
-    mount --rbind "${THUNKS_DIR%/}/${CONTAINER_NAME}" "${LXC_ROOTFS_MOUNT}${THUNKS_DIR}"
+    thunks_dest_dir="${LXC_ROOTFS_MOUNT}${THUNKS_DIR}"
+
+    if [ ! -e "$thunks_dest_dir" ] ; then
+        mkdir -p -m $THUNKS_DIR_MODE "$thunks_dest_dir"
+    fi
+
+    mount --rbind "${THUNKS_DIR%/}/${CONTAINER_NAME}" "${thunks_dest_dir}"
+
+    # check if this script exists in the container and copy if does not
+    if [ ! -f "${LXC_ROOTFS_MOUNT}/usr/local/bin/lxcex-share" ] ; then
+        cp "$0" "${LXC_ROOTFS_MOUNT}/usr/local/bin/lxcex-share"
+    fi
 
     exit 0
     ;;
