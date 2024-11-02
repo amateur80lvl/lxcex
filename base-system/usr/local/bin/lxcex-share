@@ -1,0 +1,288 @@
+#!/bin/sh -e
+
+THUNKS_DIR=/mnt/share-thunks
+THUNKS_DIR_MODE=711
+THUNKS_TMPFS_SIZE=1M
+
+# determine invocation type
+
+if [ -z "$LXC_HOOK_TYPE" ] ; then
+    if [ x"$2" = xlxc ] ; then
+        # lxc.hook.version = 0
+        CONTAINER_NAME="$1"
+        HOOK_TYPE="$3"
+    else
+        # not a hook
+        HOST_DIR="$1"
+        CONTAINER_NAME="$2"
+        USER="$3"
+        DEST_DIR="$4"
+
+        lxcpath=`lxc-config lxc.lxcpath`
+        LXC_CONFIG_FILE="${lxcpath%/}/${CONTAINER_NAME}/config"
+        LXC_ROOTFS_PATH=`lxc-info -Hc lxc.rootfs.path "${CONTAINER_NAME}"`
+
+        if [ -z "$HOST_DIR" ] ; then
+
+            echo "Share directories across containers."
+            echo
+            echo "Invocation:"
+            echo
+            echo `basename $0` "<host-dir> <container-name> <user-name> <dest-dir>"
+            echo
+            echo "where"
+            echo "<host-dir>: path to directory to share on the host system;"
+            echo "<container-name>, <user-name>: container and user to share with;"
+            echo "<dest-dir>: path to the destination directory inside container"
+            echo
+            echo "Examples:"
+            echo
+            echo "1. Private share:"
+            echo
+            echo "   lxcex-share /var/lib/lxc/alice-container/rootfs/home/alice/share bob-container bob /home/bob/share"
+            echo
+            echo "2. Common share:"
+            echo
+            echo "   lxcex-share /var/local/share/secrets alice-container alice /home/alice/secrets"
+            echo "   lxcex-share /var/local/share/secrets bob-container bob /home/bob/secrets"
+            echo "   lxcex-share /var/share/secrets malory-container malory /home/malory/secrets"
+            echo
+            echo "Using as hook in container configuration file":
+            echo
+            echo "   lxc.hook.pre-start = /usr/local/bin/lxcex-share"
+            echo "   lxc.hook.mount     = /usr/local/bin/lxcex-share"
+            echo "   lxc.hook.start     = /usr/local/bin/lxcex-share"
+            echo "   lxc.hook.post-stop = /usr/local/bin/lxcex-share"
+            echo
+            echo "Shared directories are listed in `sharetab` file"
+            echo "which should be created in the same directory"
+            echo "along with container configuration file:"
+            echo
+            echo "   # host-directory  user-name  dest-directory"
+            echo "   /var/local/share/secrets  alice  /home/alice/share"
+            echo "   /var/lib/lxc/bob-container/rootfs/home/bob/secrets  alice  /home/alice/bob-secrets"
+            echo
+
+            exit 1
+        fi
+    fi
+else
+    # lxc.hook.version = 1
+    CONTAINER_NAME="$LXC_NAME"
+    HOOK_TYPE="$LXC_HOOK_TYPE"
+fi
+
+# check thunks directory
+
+if [ ! -e "$THUNKS_DIR" ] ; then
+    mkdir -p -m $THUNKS_DIR_MODE "$THUNKS_DIR"
+fi
+if [ ! -d "$THUNKS_DIR" ] ; then
+    echo "ERROR: $THUNKS_DIR is not a directory"
+    exit 1
+fi
+
+# get container idmap
+
+# this hangs in a hook: `lxc-info -Hc lxc.idmap "$CONTAINER_NAME"`,
+# grepping config file directly:
+if [ -r "$LXC_CONFIG_FILE" ] ; then
+
+    UIDMAP=`grep "lxc\.idmap\s=\su" "$LXC_CONFIG_FILE" | awk '{print $5}'`
+    GIDMAP=`grep "lxc\.idmap\s=\sg" "$LXC_CONFIG_FILE" | awk '{print $5}'`
+
+    if [ -z $UIDMAP ] ; then
+        UIDMAP=0
+    fi
+    if [ -z $GIDMAP ] ; then
+        GIDMAP=0
+    fi
+fi
+
+ensure_shared()
+#
+# invoked if running on the host
+#
+{
+    local thunks_prop=`findmnt -n -o PROPAGATION "$THUNKS_DIR" || echo -n`
+
+    if [ -z "$thunks_prop" ] ; then
+        # not a mount point, do mount
+        mount -t tmpfs -o mode=${THUNKS_DIR_MODE},size=${THUNKS_TMPFS_SIZE} \
+            --make-rshared tmpfs "$THUNKS_DIR"
+    elif [ "$thunks_prop" != shared ] ; then
+        # fix mount propagation
+        mount --make-rshared "$THUNKS_DIR"
+    fi
+}
+
+create_container_thunks_dir()
+{
+    local dir="${THUNKS_DIR%/}/${CONTAINER_NAME}"
+    if [ ! -d "$dir" ] ; then
+        mkdir -m $THUNKS_DIR_MODE "$dir"
+        chown ${UIDMAP}:${GIDMAP} "$dir"
+    fi
+}
+
+create_thunk_dir()
+#
+# $1 - base dir
+# $2 - dest dir
+#
+# Recursively create dest dir, setting strict permissions
+#
+{
+    local base_dir="$1"
+    local dest_dir="$2"
+
+    local next_dest_dir=`basename "$dest_dir"`
+    if [ -z "$next_dest_dir" ] ; then
+        return
+    fi
+    if [ "$next_dest_dir" = "/" ] ; then
+        return
+    fi
+
+    local next_subdir=`dirname "$dest_dir"`
+
+    create_thunk_dir "$base_dir" "$next_subdir"
+
+    local dir="${base_dir%/}/${dest_dir#/}"
+    if [ ! -d "$dir" ] ; then
+        mkdir -m $THUNKS_DIR_MODE "$dir"
+        chown ${UIDMAP}:${GIDMAP} "$dir"
+    fi
+}
+
+create_thunk()
+{
+    local thunk="${THUNKS_DIR%/}/${CONTAINER_NAME}/${DEST_DIR#/}"
+
+    echo "Setting up thunk $thunk"
+    if findmnt "$thunk" >/dev/null 2>&1 ; then
+        echo "Unmounting $thunk"
+        umount "$thunk"
+    fi
+
+    create_thunk_dir "${THUNKS_DIR%/}/${CONTAINER_NAME}" "${DEST_DIR}"
+
+    src_uid=`stat -c %u "$HOST_DIR"`
+    src_gid=`stat -c %g "$HOST_DIR"`
+
+    dest_uid=`chroot "$LXC_ROOTFS_PATH" id -u "$USER"`
+    dest_gid=`chroot "$LXC_ROOTFS_PATH" id -g "$USER"`
+
+    dest_uid=$(($UIDMAP + $dest_uid))
+    dest_gid=$(($GIDMAP + $dest_gid))
+
+    mount-idmapped \
+        --map-mount u:$src_uid:$dest_uid:1 \
+        --map-mount g:$src_gid:$dest_gid:1 \
+        "$HOST_DIR" "$thunk"
+}
+
+delete_thunk()
+{
+    local thunk="${THUNKS_DIR%/}/${CONTAINER_NAME}/${DEST_DIR#/}"
+
+    echo "Deleting $thunk"
+    if findmnt "$thunk" >/dev/null 2>&1 ; then
+        echo "Unmounting $thunk"
+        umount "$thunk"
+    fi
+    if [ -d "$thunk" ] ; then
+        echo "cd ${THUNKS_DIR} ; rmdir --ignore-fail-on-non-empty -p ${CONTAINER_NAME}/${DEST_DIR#/}" | sh -e
+    fi
+}
+
+#
+# Run as script
+#
+if [ -z "$HOOK_TYPE" ] ; then
+
+    create_container_thunks_dir
+    create_thunk
+
+    # run as start hook inside container
+    # (the script must exist in the container)
+    lxc-attach -n "$CONTAINER_NAME" -- /usr/local/bin/lxcex-share "$CONTAINER_NAME" lxc start
+
+    exit 0
+fi
+
+#
+# Run as hook
+#
+case "$HOOK_TYPE" in
+(pre-start)
+    ensure_shared
+    create_container_thunks_dir
+    # fall through
+    ;;
+
+(mount)
+    # We're dealing with mount entries, so expand any symlink
+    LXC_ROOTFS_MOUNT=$(readlink -f "${LXC_ROOTFS_MOUNT}")
+
+    mount --rbind "${THUNKS_DIR%/}/${CONTAINER_NAME}" "${LXC_ROOTFS_MOUNT}${THUNKS_DIR}"
+
+    exit 0
+    ;;
+
+(start)
+    # we're running in container
+    for thunk in `findmnt --submounts --list -n -o TARGET "${THUNKS_DIR}"` ; do
+        thunk_dest=${thunk#$THUNKS_DIR}
+        if [ -z "$thunk_dest" ] ; then
+            continue
+        fi
+        echo "Binding ${thunk} to ${thunk_dest}"
+        if [ ! -d "$thunk_dest" ] ; then
+            if [ -e "$thunk_dest" ] ; then
+                echo "${thunk_dest} is not a directory"
+                exit 1
+            fi
+            mkdir -p "$thunk_dest"
+            chown --reference="$thunk" "$thunk_dest"
+        fi
+        if ! findmnt "$thunk_dest" >/dev/null 2>&1 ; then
+            mount --bind "${thunk}" "${thunk_dest}"
+        fi
+    done
+
+    exit 0
+    ;;
+
+(post-stop)
+    # fall through
+    ;;
+
+(*)
+    exit 0
+    ;;
+esac
+
+# parse sharetab
+
+CONFIG_DIR=`dirname "$LXC_CONFIG_FILE"`
+
+cat "${CONFIG_DIR}/sharetab" | while read line ; do
+    first_char=$(printf %.1s "$line")
+    if [ -z "$first_char" ] || [ "$first_char" = "#" ] ; then
+        continue
+    fi
+    HOST_DIR=`echo $line | awk '{print $1}'`
+    USER=`echo $line | awk '{print $2}'`
+    DEST_DIR=`echo $line | awk '{print $3}'`
+
+    case "$HOOK_TYPE" in
+    (pre-start)
+        create_thunk
+        ;;
+    (post-stop)
+        delete_thunk
+        ;;
+    esac
+
+done

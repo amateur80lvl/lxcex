@@ -820,6 +820,9 @@ def base_system_tweaks():
     install_file('base-system', dest_dir, '/root/dist-upgrade')
     install_file('base-system', dest_dir, '/usr/local/bin/lxc-chroot')
 
+    # install share script
+    install_file('base-system', dest_dir, '/usr/local/bin/lxcex-share')
+
     # install kernel and bootloader
     if dest_device is not None:
         chroot(dest_dir, f'apt install -y {" ".join(kernel_packages)}', capture_output=False)
@@ -905,6 +908,9 @@ def create_base_container():
     chroot(container_rootfs, 'rm -rf /etc/service/getty* /etc/sv/getty*')
 
     install_dir('containers/base/rootfs', container_rootfs, '/etc/runit/boot-run')
+
+    # install share script
+    install_file('base-system', container_rootfs, '/usr/local/bin/lxcex-share')
 
     # copy /etc/skel from common-files
     install_dir('common-files', container_rootfs, '/etc/skel')

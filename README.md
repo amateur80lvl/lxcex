@@ -107,6 +107,10 @@ within it, I'll get rid of uidmapshift.
 
 ## Changeblog
 
+### Nov 2, 2024
+
+Revised sharing at last. See updated Chapter 8.
+
 ### Oct 22, 2024
 
 Okay, dropping a line here. I still seem to be a single user of all this shit and,
@@ -241,6 +245,9 @@ Here's the solution:
 
 Start the container. Inside, `ls /mnt/myserver/shared-dir` should work as expected.
 
+However, user:group will be nobody:nogroup and I have no idea how to setup correct id mapping.
+
+
 ### Editing main menu
 
 `menulibre` looks kinda bloatware and currently is totally broken in excalibur.
@@ -284,16 +291,6 @@ mv /home/user/.mozilla /home/firefox/
 mv /home/user/.cache/firefox /home/firefox/.cache/
 chown -R firefox /home/firefox
 ```
-Create shared directory for downloads:
-```
-mkdir -p /var/share
-chgrp users /var/share
-chmod 710 /var/share
-mv /home/user/Downloads /var/share/
-chmod 777 /var/share/Downloads
-ln -s /var/share/Downloads /home/user/
-ln -s /var/share/Downloads /home/firefox/
-```
 Next, prepare a script `/usr/local/bin/start-firefox`:
 ```
 #!/bin/sh
@@ -322,6 +319,21 @@ user ALL = NOPASSWD: /usr/local/bin/start-firefox dosu
 You may need to modify XFCE start menu entry.
 And to add -P option for the first time, otherwise firefox may start with a blank profile.
 
+It's a good idea to share `Downloads` directory.
+Previous approach was a group-writeable directory with symlinks to it, but the best way is `lxces-share`.
+
+Let `Downloads` direcroty be in `user`'s home directory, as it used to.
+Then, create the following `sharetab` for the container:
+```
+/var/lib/lxc/<container-name>/rootfs/home/user/Downloads  firefox  /home/firefox/Downloads
+```
+And use hooks in container configuration, as shown in Chapter 8:
+```
+lxc.hook.pre-start = /usr/local/bin/lxcex-share
+lxc.hook.mount     = /usr/local/bin/lxcex-share
+lxc.hook.start     = /usr/local/bin/lxcex-share
+lxc.hook.post-stop = /usr/local/bin/lxcex-share
+```
 
 ## Miscellaneous notes
 
