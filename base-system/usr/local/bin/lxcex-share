@@ -91,10 +91,10 @@ if [ -r "$LXC_CONFIG_FILE" ] ; then
     SUBUID=`grep "lxc\.idmap\s=\su" "$LXC_CONFIG_FILE" | awk '{print $5}'`
     SUBGID=`grep "lxc\.idmap\s=\sg" "$LXC_CONFIG_FILE" | awk '{print $5}'`
 
-    if [ -z $UIDMAP ] ; then
+    if [ -z $SUBUID ] ; then
         SUBUID=0
     fi
-    if [ -z $GIDMAP ] ; then
+    if [ -z $SUBGID ] ; then
         SUBGID=0
     fi
 fi
