@@ -178,7 +178,7 @@ That's what
 [dist-upgrade](https://github.com/amateur80lvl/lxcex/tree/main/base-system/root/dist-upgrade)
 script is for.
 It is based on
-[lxc-chroot](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/bin/lxc-chroot)
+[lxcex-chroot](https://github.com/amateur80lvl/lxcex/tree/main/base-system/usr/local/bin/lxcex-chroot)
 which runs arbitraty command, properly chrooting to the container's rootfs.
 
 ### Firefox

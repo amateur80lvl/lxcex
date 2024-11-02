@@ -816,12 +816,12 @@ def base_system_tweaks():
     install_file('base-system', dest_dir, '/usr/local/bin/start-user-containers')
     install_file('base-system', dest_dir, '/etc/sudoers.d/50-start-user-containers')
 
+    # install LXCex scripts
+    install_file('base-system', dest_dir, '/usr/local/bin/lxcex-chroot')
+    install_file('base-system', dest_dir, '/usr/local/bin/lxcex-share')
+
     # install dist-upgrade script
     install_file('base-system', dest_dir, '/root/dist-upgrade')
-    install_file('base-system', dest_dir, '/usr/local/bin/lxc-chroot')
-
-    # install share script
-    install_file('base-system', dest_dir, '/usr/local/bin/lxcex-share')
 
     # install kernel and bootloader
     if dest_device is not None:

@@ -6,10 +6,10 @@ upgrade()
     echo "--------------------"
     echo "Upgrading $container"
     echo "--------------------"
-    lxc-chroot $container apt update
-    lxc-chroot $container apt -y dist-upgrade
-    lxc-chroot $container apt -y autoremove
-    lxc-chroot $container apt clean
+    lxcex-chroot $container apt update
+    lxcex-chroot $container apt -y dist-upgrade
+    lxcex-chroot $container apt -y autoremove
+    lxcex-chroot $container apt clean
 }
 
 if [ $# = 0 ] ; then
