@@ -71,6 +71,11 @@ Drafts/Sandbox section.
 Make sure all subdirectories in `/var/lib/lxc` have minimal permissions and are not readable by `other` at least.
 The same applies to the container data stored elsewhere.
 
+However, for idmapped mounts to work, the minimal permissions must include directory traversal for others.
+This could be worked around using `setfacl`, but that comlication overweights the convenience.
+
+If all the above is a security concern, do not use idmapped mounts.
+
 ## Quirks
 
 * Something smashes `/dev/ptmx` after a while.
