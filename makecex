@@ -114,7 +114,8 @@ fonts_packages = [
     'fonts-sil-mondulkiri', 'fonts-sil-mondulkiri-extra', 'fonts-sil-padauk', 'fonts-smc',
     'fonts-taml', 'fonts-telu', 'fonts-thai-tlwg', 'fonts-tibetan-machine', 'fonts-unfonts-core',
     'fonts-unfonts-extra', 'fonts-uniol',
-    'fonts-font-awesome'
+    'fonts-font-awesome',
+    'fonts-noto-color-emoji'
 ]
 
 desktop = 'sway'  # no other options for now
