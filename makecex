@@ -1192,6 +1192,7 @@ def configure_apt(dest_dir):
 
     write_file(dest_dir, '/etc/apt/sources.list', apt_sources_list)
     install_file('common-files', dest_dir, '/etc/apt/apt.conf.d/01norecommends')
+    install_file('common-files', dest_dir, '/etc/apt/apt.conf.d/90autocleam')
 
 
 def apt_install(dest_dir, packages):
